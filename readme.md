@@ -9,7 +9,8 @@
 <br />
 <br />
 
-[![Build](https://github.com/sinclairzx81/parsebox/actions/workflows/build.yml/badge.svg)](https://github.com/sinclairzx81/parsebox/actions/workflows/build.yml)
+[![npm version](https://badge.fury.io/js/%40sinclair%2Fparsebox.svg)](https://badge.fury.io/js/%40sinclair%2Fparsebox)
+[![Build](https://github.com/sinclairzx81/parsebox/actions/workflows/build.yml/badge.svg)](https://github.com/sinclairzx81/parsebox/actions/workflows/build.yml) 
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 </div>

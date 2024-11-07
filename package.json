@@ -1,6 +1,6 @@
 {
   "name": "@sinclair/parsebox",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "Parser Combinators in the TypeScript Type System",
   "keywords": [
     "typescript",
