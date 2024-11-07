@@ -4,7 +4,7 @@
 
 <p>Parser Combinators in the TypeScript Type System</p>
 
-<img src="https://github.com/sinclairzx81/parsebox/blob/master/parsebox.png?raw=true" />
+<img src="https://raw.githubusercontent.com/sinclairzx81/parsebox/refs/heads/main/parsebox.png" />
 
 <br />
 <br />
