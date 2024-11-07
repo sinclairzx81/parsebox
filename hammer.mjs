@@ -1,3 +1,5 @@
+import * as Fs from 'node:fs'
+
 // -------------------------------------------------------------------------------
 // Clean
 // -------------------------------------------------------------------------------
@@ -43,9 +45,21 @@ export async function test(filter = '') {
 // -------------------------------------------------------------------------------
 // Build
 // -------------------------------------------------------------------------------
-export async function build() {
-  await shell(`tsc -p src/tsconfig.json --outDir target/build --declaration`)
-  await folder('target/build').add('licence')
-  await folder('target/build').add('package.json')
-  await folder('target/build').add('readme.md')
+export async function build(target = 'target/build') {
+  await test()
+  await shell(`tsc -p src/tsconfig.json --outDir ${target} --declaration`)
+  await folder(target).add('licence')
+  await folder(target).add('package.json')
+  await folder(target).add('readme.md')
+  await shell(`cd ${target} && npm pack`)
+}
+// -------------------------------------------------------------
+// Publish
+// -------------------------------------------------------------
+export async function publish(otp, target = 'target/build') {
+  const { version } = JSON.parse(Fs.readFileSync('package.json', 'utf8'))
+  if(version.includes('-dev')) throw Error(`package version should not include -dev specifier`)
+  await shell(`cd ${target} && npm publish sinclair-parsebox-${version}.tgz --access=public --otp ${otp}`)
+  await shell(`git tag ${version}`)
+  await shell(`git push origin ${version}`)
 }

@@ -1,6 +1,6 @@
 /*--------------------------------------------------------------------------
 
-@sinclair/typebox/parse
+@sinclair/parsebox
 
 The MIT License (MIT)
 

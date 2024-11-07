@@ -6,7 +6,7 @@
     "typescript",
     "parsers",
     "combinators",
-    "inference"
+    "type-system"
   ],
   "author": "sinclairzx81",
   "license": "MIT",
@@ -22,7 +22,8 @@
     "test:static": "hammer task test_static",
     "test:runtime": "hammer tas test_runtime",
     "test": "hammer task test",
-    "build": "hammer task build"
+    "build": "hammer task build",
+    "publish": "hammer task publish"
   },
   "devDependencies": {
     "@sinclair/hammer": "^0.18.0",
