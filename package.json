@@ -1,0 +1,36 @@
+{
+  "name": "@sinclair/parsebox",
+  "version": "0.8.0",
+  "description": "Parser Combinators in the TypeScript Type System",
+  "keywords": [
+    "typescript",
+    "parsers",
+    "combinators",
+    "inference"
+  ],
+  "author": "sinclairzx81",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sinclairzx81/parsebox"
+  },
+  "scripts": {
+    "clean": "hammer task clean",
+    "format": "hammer task format",
+    "start": "hammer task start",
+    "test:typescript": "hammer task test_typescript",
+    "test:static": "hammer task test_static",
+    "test:runtime": "hammer tas test_runtime",
+    "test": "hammer task test",
+    "build": "hammer task build"
+  },
+  "devDependencies": {
+    "@sinclair/hammer": "^0.18.0",
+    "@sinclair/typebox": "^0.33.12",
+    "@types/mocha": "^10.0.9",
+    "@types/node": "^22.7.4",
+    "mocha": "^10.8.2",
+    "prettier": "^3.3.3",
+    "typescript": "^4.9.5"
+  }
+}
