@@ -51,9 +51,9 @@ type R = Static.Parse<T, 'X Y Z W'>                 // type R = [['X', 'Y', 'Z']
 
 ## Overview
 
-ParseBox is a TypeScript parsing library designed to embed domain-specific languages (DSLs) within the TypeScript type system. It provides a core set of declarative combinators for parsing in Static and Runtime environments, with parsers primarily designed to handle context-free grammars.
+ParseBox is a TypeScript parsing library designed to embed domain-specific languages (DSLs) within the TypeScript type system. It provides a core set of declarative combinators for parsing in Static and Runtime environments. The parsing structures created with this library can replicated across environments to ensure symmetric parsing logic in each environment. Declarative parsing structures help to mitigate many problems that arise when replicating explicit logic in seperate languages, with the combinators leading to more managable code overall.
 
-This project is written as a string parsing infrastructure for the TypeBox and LinqBox projects. It is built specifically to support TypeScript versions as low as 4.9.5 to ensure a high degree of compiler compatibility. It is offered as a standalone package for ecosystem experimentation, as well as for research into high-performance DSL parsing in the type system.
+This project is written as a parsing infrastructure for the TypeBox and LinqBox projects. It is built to support TypeScript versions as low as 4.9.5 for high compatibility. It is offered as a standalone package for experimentation, as well as for research into high-performance DSL parsing in the type system.
 
 License MIT
 
@@ -121,7 +121,7 @@ const T = Runtime.Tuple([                           // const T = {
                                                     // }
 
 
-const R = Runtime.Parse(P, 'A B C D')               // const R = [['X', 'Y', 'Z'], ' D']
+const R = Runtime.Parse(P, 'X Y Z W')               // const R = [['X', 'Y', 'Z'], ' D']
 ```
 
 ### Union
