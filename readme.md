@@ -49,11 +49,13 @@ type T = Static.Tuple<[
 type R = Static.Parse<T, 'X Y Z W'>                 // type R = [['X', 'Y', 'Z'], ' W']
 ```
 
+Which can be used to construct [Expression](https://www.typescriptlang.org/play/?moduleResolution=99&module=199#code/JYWwDg9gTgLgBAbzgZRgQxsAxnAvnAMyghDgHIABAZ2ADssAbNYKAejDSioFMAjCAB5kAUMNas4AWmkzZc+QsVLlKyWIkBRAWnANu6qaqPGTq0TACeYbnABK3KgFcG8ALwp0mLADoACpx4AHi0wKAAacgE4ACo4AAoLOABqOAAvAEoyAD44XNzxOEtrOwdnNzgAbQRhPNq6+obGpuaC3L0CGAAuOAAiAR6AbhrmkdGxuta4CGsoDGhunujB4fHVtYmJXKhgAHMACy7EFfWT8cna9sOei2XTu7HzvOnuWZh53qTb++-Gx63dg4LVJfH6gvKTXBDMHQuAFXARHo9AC6ogMpnRGNMBhCUAcNAgtDg-i4LzRmPJFPkojoMBeBDQWBsADlHCAXtgALJoMBgOg7ODcAS02gAEyoHgw2G8AEkuTy+UdchBHDAwCrujA9sAqBUyHQ1TAyEiBULuKLxQADAAkCDoBBeJScLhNwrFcForN4L1wFrgAH5HWU4N1aNwAG6k3DCIrM1nsnDuVCSnwskBeqCBVPxuW82g7LLmKw2ADyMzQorgic8UoAqrRgATAhUk14ZSKzTAIlntlgkQXRAUAEJ0TgWHN87r2EWORnikAYLB7bgiuAAFRepHLK5xcBpEDgvBHUESgtCeIbhNoEHb0aLcGHtFHU5n3ECABluB0XWa3Y5aABrK8AHdaAiWwAXgQVXXFP9AIgECKj7St4mGcD9kg01zUqO0HVLF45nCXdaHtKA7AgiIcNI+wqAw6C4Fg4DaEQlFagDJBLm6D8OgiZ5XnePC+MI7Z0O6B8n2XF9AjQg4wIcGAcijWpOM-GBhHSYQaTpBkbDE49xzzb8sJbKVZW5XN+WqJUVQNDUtR1PVaANI1DLdCpKLgLjOyIkiyPQlyYIAxjmOOANdIsZ9GXfFSwIggslPdcNIwMAAxBk3igfSdm6OUBWATUHR2YhHGsbcBFCKZSIErcNNoWkoHpRk4FSrB0sy-yJVbUz5QMyypms9V4jgY5NW1XV9RVZyoJ-cVdTiMgKOIh0cQiMhMmNAMd06Ya7LGxyJuNKasLcxbKrLUV1rgKqKy22pQwjKBhnUqMYyatLoGQ4yfDrC8m2GT7vFXYq9Cbf6AGECRowIyDmrIImWjqpXB2hIdW7I+zCP7qx8QGwGBiorpFdHhCRCJmtasy+X7F71ygEBV2YBgPqx7xvsbCpMeTAGgdfZtmaRlHomyUm3sImm6YZoncn+nG8bBiGYCh1ghdelroAiMX6eABhJYR7HuabIm+0LYocU1xmq051naF+qXmZlnm5eRhWyCSZWxbhsqoDNnXpf13nOf553JDdjcPdCb3YY51t7YNyOjdvYoxaZzmY4qMm1bXDdvYiMLMqpu8dwt6O-fduBTYlnOjzHCm837IA) or even [Type Syntax](https://www.typescriptlang.org/play/?moduleResolution=99&module=199#code/JYWwDg9gTgLgBAbzgBQIZQM4FM4F84BmUEIcA5AAIbAB2AxgDarBQD0MAnmFgEYQAerDBxoxU-MgChQkWIjgBlMTGB08hYqUrV6TFuy68BUya1Yp02SVn6z4dCDQzwAqtihwAvBcxYAFAAGCJJwcMAAJgBccDQAriA8WFAhMaggWNHOULQA5ilYIMwMmTDZNDlwAD4xsQwMKajh4VBYGBjRaLDAqAwAPMGhoS2NjgwccFlYWDAlZXmDcMPho+N0wJyzuSlDWCM0Y3AOsaJQHJvlKbgAfJK4AQCUkqbmAJI0BEnWttDwnNxwbiSXkUylUvT+WAgBAB7iucDMcAAFhAAG6fJ5AA) parsers at runtime and inside the type system.
+
 ## Overview
 
-ParseBox is a TypeScript parsing library designed to embed domain-specific languages (DSLs) within the TypeScript type system. It provides a core set of declarative combinators for parsing in Static and Runtime environments. The parsing structures created with this library can be replicated across environments to ensure symmetric parsing logic in each environment. Declarative parsing structures help to mitigate many problems that arise when replicating explicit logic in seperate languages, with the combinators leading to more managable code overall.
+ParseBox is a TypeScript parsing library designed to embed domain-specific languages (DSLs) within the TypeScript type system. It provides a core set of declarative combinators for parsing in Static and Runtime environments. The parsing structures created with this library can be replicated across environments to ensure symmetric parsing logic in each environment (Static or Runtime). Declarative parsing structures help to mitigate many problems that arise when replicating explicit logic in different languages, with the declarative combinators leading to more managable code overall.
 
-This project is written as a parsing infrastructure for the TypeBox and LinqBox projects. It is built to support TypeScript versions as low as 4.9.5 for high compatibility. It is offered as a standalone package for experimentation, as well as for research into high-performance DSL parsing in the type system.
+This project is written as a parsing infrastructure for the [TypeBox](https://github.com/sinclairzx81/typebox) and [LinqBox](https://github.com/sinclairzx81/linqbox) projects. It is offered as a standalone package for experimentation, as well as to provide a foundation for advancing string DSL parsing in the TypeScript type system.
 
 License MIT
 
@@ -361,7 +363,7 @@ const R = Module.Parse('List', 'X Y Z Y X E')       // const R = [['X', 'Y', 'Z'
 
 ## Advanced
 
-ParseBox is an LL(1) parser, meaning it uses a single token of lookahead to make parsing decisions. When building parsers for complex grammars, care must be taken to avoid infinite left recursion, which can occur if a recursive grammar refers back to itself in a way that causes the parser to enter an infinite loop. This is particularly common in expression parsers. 
+ParseBox is an LL(1) parser. When building parsers for complex grammars, care must be taken to avoid infinite left recursion, which can occur if a recursive grammar refers back to itself in a way that causes the parser to enter an infinite loop. This is particularly common in expression parsers. 
 
 ### Expression Parsing
 
