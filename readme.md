@@ -123,7 +123,7 @@ const T = Runtime.Tuple([                           // const T = {
                                                     // }
 
 
-const R = Runtime.Parse(P, 'X Y Z W')               // const R = [['X', 'Y', 'Z'], ' D']
+const R = Runtime.Parse(P, 'X Y Z W')               // const R = [['X', 'Y', 'Z'], ' W']
 ```
 
 ### Union
