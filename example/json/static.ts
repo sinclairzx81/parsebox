@@ -28,13 +28,6 @@ THE SOFTWARE.
 
 import { Static } from '@sinclair/parsebox'
 
-// Usage
-type Result = Static.Parse<Json, `{ 
-  "x": 1,
-  "y": 2,
-  "z": 3
-}`>[0]
-
 // -----------------------------------------------------------------------
 // Json
 // -----------------------------------------------------------------------
@@ -79,17 +72,18 @@ interface NullMapping extends Static.IMapping {
 }
 type Null = Static.Const<'null', NullMapping>
 // -----------------------------------------------------------------------
+// Key
+// -----------------------------------------------------------------------
+type Key = Static.Union<[Static.String<['"']>]>
+// -----------------------------------------------------------------------
 // Property
 // -----------------------------------------------------------------------
-type Key = Static.Union<[ /* Static.Ident, */ Static.String<['"']>]>
-
-type Property = Static.Tuple<[Key, Static.Const<':'>, Json], PropertyMapping>
-
 interface PropertyMapping extends Static.IMapping {
   output: this['input'] extends [infer Key extends string, ':', infer Value extends unknown]
     ? { [_ in Key]: Value }
     : never
 }
+type Property = Static.Tuple<[Key, Static.Const<':'>, Json], PropertyMapping>
 // -----------------------------------------------------------------------
 // Properties
 // -----------------------------------------------------------------------

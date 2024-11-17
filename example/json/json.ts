@@ -4,7 +4,7 @@
 
 The MIT License (MIT)
 
-Copyright (c) 2024 Haydn Paterson (sinclair) <haydn.developer@gmail.com>
+Copyright (c) 2024 Haydn Paterson (sinclair) (haydn.developer@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,11 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './json'
-export * from './runtime'
-export * from './static'
+import { Static } from '@sinclair/parsebox'
+import { Module } from './runtime'
+import { Json } from './static'
+
+/** Parses a Json string */
+export function ParseJson<S extends string>(value: S): Static.Parse<Json, S>[0] {
+  return Module.Parse('Json', value)[0]
+}
