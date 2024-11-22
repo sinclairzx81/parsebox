@@ -56,11 +56,11 @@ type R = Static.Parse<T, 'X Y Z W'>                 // type R = [['X', 'Y', 'Z']
 
 ## Overview
 
-ParseBox is a parsing system designed to embed domain-specific languages (DSLs) within the TypeScript type system. It provides a set of type-level and runtime combinators that directly map to BNF notation, which can be used to parse content either at runtime or statically within the type system.
+ParseBox is a parsing library designed to embed domain-specific languages (DSLs) within the TypeScript type system. It provides a set of runtime and type-level combinators that enable EBNF notation to be encoded as types within TypeScript's type system. These combinators can then be used to parse content at runtime or interactively in editor via static type inference.
 
-ParseBox is written as a parsing infrastructure for the [TypeBox](https://github.com/sinclairzx81/typebox) and [LinqBox](https://github.com/sinclairzx81/linqbox) projects, enabling these libraries to support advanced runtime parsing for their respective domains.
+This project was originally developed as a parsing system for the [TypeBox](https://github.com/sinclairzx81/typebox) project, where it facilitates parsing TypeScript syntax into runtime types. It offers a robust, standalone system for type-level parsing within TypeScript's type system.
 
-License MIT
+License: MIT
 
 ## Contents
 
@@ -84,7 +84,7 @@ License MIT
 
 ## Combinators
 
-ParseBox provides a set of combinators that map to notation expressible in (E)BNF (Backus-Naur Form). These combinators are named Const, Tuple, Union, Array, and Optional, respectively, to describe the types produced by each combinator. These combinators serve as building blocks for constructing parsers.
+ParseBox provides a minimal set of combinators that map to structures expressible in BNF (Backus-Naur Form). These combinators serve as building blocks for constructing parsers.
 
 ### Const
 
@@ -130,7 +130,7 @@ const T = Runtime.Tuple([                           // const T = {
                                                     // }
 
 
-const R = Runtime.Parse(P, 'X Y Z W')               // const R = [['X', 'Y', 'Z'], ' W']
+const R = Runtime.Parse(T, 'X Y Z W')               // const R = [['X', 'Y', 'Z'], ' W']
 ```
 
 ### Union
@@ -155,11 +155,11 @@ const T = Runtime.Union([                           // const T = {
                                                     //   ]
                                                     // }
 
-const R1 = Runtime.Parse(P, 'X E')                  // const R1 = ['X', ' E']
+const R1 = Runtime.Parse(T, 'X E')                  // const R1 = ['X', ' E']
 
-const R2 = Runtime.Parse(P, 'Y E')                  // const R2 = ['Y', ' E']
+const R2 = Runtime.Parse(T, 'Y E')                  // const R2 = ['Y', ' E']
 
-const R3 = Runtime.Parse(P, 'Z E')                  // const R3 = ['Z', ' E']
+const R3 = Runtime.Parse(T, 'Z E')                  // const R3 = ['Z', ' E']
 ```
 
 ### Array
@@ -205,7 +205,7 @@ const T = Runtime.Optional(                         // const T = {
 )                                                   //   parser: { type: 'Const', value: 'X' }
                                                     // }
 
-const R1 = Runtime.Parse(T, 'X Y Z')                // const R1 = ['X', ' Y Z']
+const R1 = Runtime.Parse(T, 'X Y Z')                // const R1 = [['X'], ' Y Z']
 
 const R2 = Runtime.Parse(T, 'Y Z')                  // const R2 = [[], 'Y Z']
 ```
