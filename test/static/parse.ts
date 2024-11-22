@@ -3,6 +3,16 @@ import { Static } from '@sinclair/parsebox'
 declare function Assert<Left, _Right extends Left>(): void
 
 // ------------------------------------------------------------------
+// Array
+// ------------------------------------------------------------------
+Assert<Static.Parse<Static.Array<Static.Const<'A'>>, ''>, [[], '']>()
+Assert<Static.Parse<Static.Array<Static.Const<'A'>>, 'AB'>, [['A'], 'B']>()
+Assert<Static.Parse<Static.Array<Static.Const<'A'>>, 'AAB'>, [['A', 'A'], 'B']>()
+Assert<Static.Parse<Static.Array<Static.Const<'AA'>>, 'AAB'>, [['AA'], 'B']>()
+Assert<Static.Parse<Static.Array<Static.Const<'AA'>>, 'AAAB'>, [['AA'], 'AB']>()
+Assert<Static.Parse<Static.Array<Static.Const<'AA'>>, 'B'>, [[], 'B']>()
+
+// ------------------------------------------------------------------
 // Const
 // ------------------------------------------------------------------
 // prettier-ignore
@@ -12,36 +22,27 @@ Assert<Static.Parse<Static.Const<'A'>, '  A'>, ['A', '']>()
 Assert<Static.Parse<Static.Const<'A'>, '  A '>, ['A', ' ']>()
 
 // ------------------------------------------------------------------
-// Tuple
+// Ident
 // ------------------------------------------------------------------
-// prettier-ignore
-type Tuple = Static.Tuple<[Static.Const<'A'>, Static.Const<'B'>, Static.Const<'C'>]>
-
-Assert<Static.Parse<Tuple, ''>, []>()
-Assert<Static.Parse<Tuple, 'A'>, []>()
-Assert<Static.Parse<Tuple, 'A B C'>, [['A', 'B', 'C'], '']>()
-Assert<Static.Parse<Tuple, 'A B C '>, [['A', 'B', 'C'], ' ']>()
-Assert<Static.Parse<Tuple, 'ABC'>, [['A', 'B', 'C'], '']>()
-Assert<Static.Parse<Tuple, '  ABC'>, [['A', 'B', 'C'], '']>()
-Assert<Static.Parse<Tuple, '  ABC '>, [['A', 'B', 'C'], ' ']>()
-
-// ------------------------------------------------------------------
-// Union
-// ------------------------------------------------------------------
-// prettier-ignore
-type Union = Static.Union<[Static.Const<'A'>, Static.Const<'B'>, Static.Const<'C'>]>
-
-Assert<Static.Parse<Union, ''>, []>()
-Assert<Static.Parse<Union, 'A B C'>, ['A', ' B C']>()
-Assert<Static.Parse<Union, 'A B C '>, ['A', ' B C ']>()
-Assert<Static.Parse<Union, 'ABC'>, ['A', 'BC']>()
-Assert<Static.Parse<Union, '  ABC'>, ['A', 'BC']>()
-Assert<Static.Parse<Union, '  ABC '>, ['A', 'BC ']>()
-Assert<Static.Parse<Union, 'B B C'>, ['B', ' B C']>()
-Assert<Static.Parse<Union, 'B B C '>, ['B', ' B C ']>()
-Assert<Static.Parse<Union, 'BBC'>, ['B', 'BC']>()
-Assert<Static.Parse<Union, '  BBC'>, ['B', 'BC']>()
-Assert<Static.Parse<Union, '  BBC '>, ['B', 'BC ']>()
+Assert<Static.Parse<Static.Ident, ''>, []>()
+Assert<Static.Parse<Static.Ident, '0'>, []>()
+Assert<Static.Parse<Static.Ident, '#'>, []>()
+Assert<Static.Parse<Static.Ident, '_'>, ['_', '']>()
+Assert<Static.Parse<Static.Ident, ' _'>, ['_', '']>()
+Assert<Static.Parse<Static.Ident, '_ '>, ['_', ' ']>()
+Assert<Static.Parse<Static.Ident, ' _ '>, ['_', ' ']>()
+Assert<Static.Parse<Static.Ident, '$'>, ['$', '']>()
+Assert<Static.Parse<Static.Ident, ' $'>, ['$', '']>()
+Assert<Static.Parse<Static.Ident, '$ '>, ['$', ' ']>()
+Assert<Static.Parse<Static.Ident, ' $ '>, ['$', ' ']>()
+Assert<Static.Parse<Static.Ident, 'A'>, ['A', '']>()
+Assert<Static.Parse<Static.Ident, ' A'>, ['A', '']>()
+Assert<Static.Parse<Static.Ident, 'A '>, ['A', ' ']>()
+Assert<Static.Parse<Static.Ident, ' A '>, ['A', ' ']>()
+Assert<Static.Parse<Static.Ident, 'A1'>, ['A1', '']>()
+Assert<Static.Parse<Static.Ident, ' A1'>, ['A1', '']>()
+Assert<Static.Parse<Static.Ident, 'A1 '>, ['A1', ' ']>()
+Assert<Static.Parse<Static.Ident, ' A1 '>, ['A1', ' ']>()
 
 // ------------------------------------------------------------------
 // Number
@@ -93,6 +94,14 @@ Assert<Static.Parse<Static.Number, ' -0.1'>, ['-0.1', '']>()
 Assert<Static.Parse<Static.Number, ' -0.1 '>, ['-0.1', ' ']>()
 
 // ------------------------------------------------------------------
+// Optional
+// ------------------------------------------------------------------
+Assert<Static.Parse<Static.Optional<Static.Const<'A'>>, ''>, [[], '']>()
+Assert<Static.Parse<Static.Optional<Static.Const<'A'>>, 'A'>, [['A'], '']>()
+Assert<Static.Parse<Static.Optional<Static.Const<'A'>>, 'AA'>, [['A'], 'A']>()
+Assert<Static.Parse<Static.Optional<Static.Const<'A'>>, 'B'>, [[], 'B']>()
+
+// ------------------------------------------------------------------
 // String
 // ------------------------------------------------------------------
 Assert<Static.Parse<Static.String<['"']>, ''>, []>()
@@ -111,27 +120,36 @@ Assert<Static.Parse<Static.String<['*', '"']>, '"A" '>, ['A', ' ']>()
 Assert<Static.Parse<Static.String<['*', '"']>, ' "A" '>, ['A', ' ']>()
 
 // ------------------------------------------------------------------
-// Ident
+// Tuple
 // ------------------------------------------------------------------
-Assert<Static.Parse<Static.Ident, ''>, []>()
-Assert<Static.Parse<Static.Ident, '0'>, []>()
-Assert<Static.Parse<Static.Ident, '#'>, []>()
-Assert<Static.Parse<Static.Ident, '_'>, ['_', '']>()
-Assert<Static.Parse<Static.Ident, ' _'>, ['_', '']>()
-Assert<Static.Parse<Static.Ident, '_ '>, ['_', ' ']>()
-Assert<Static.Parse<Static.Ident, ' _ '>, ['_', ' ']>()
-Assert<Static.Parse<Static.Ident, '$'>, ['$', '']>()
-Assert<Static.Parse<Static.Ident, ' $'>, ['$', '']>()
-Assert<Static.Parse<Static.Ident, '$ '>, ['$', ' ']>()
-Assert<Static.Parse<Static.Ident, ' $ '>, ['$', ' ']>()
-Assert<Static.Parse<Static.Ident, 'A'>, ['A', '']>()
-Assert<Static.Parse<Static.Ident, ' A'>, ['A', '']>()
-Assert<Static.Parse<Static.Ident, 'A '>, ['A', ' ']>()
-Assert<Static.Parse<Static.Ident, ' A '>, ['A', ' ']>()
-Assert<Static.Parse<Static.Ident, 'A1'>, ['A1', '']>()
-Assert<Static.Parse<Static.Ident, ' A1'>, ['A1', '']>()
-Assert<Static.Parse<Static.Ident, 'A1 '>, ['A1', ' ']>()
-Assert<Static.Parse<Static.Ident, ' A1 '>, ['A1', ' ']>()
+// prettier-ignore
+type Tuple = Static.Tuple<[Static.Const<'A'>, Static.Const<'B'>, Static.Const<'C'>]>
+
+Assert<Static.Parse<Tuple, ''>, []>()
+Assert<Static.Parse<Tuple, 'A'>, []>()
+Assert<Static.Parse<Tuple, 'A B C'>, [['A', 'B', 'C'], '']>()
+Assert<Static.Parse<Tuple, 'A B C '>, [['A', 'B', 'C'], ' ']>()
+Assert<Static.Parse<Tuple, 'ABC'>, [['A', 'B', 'C'], '']>()
+Assert<Static.Parse<Tuple, '  ABC'>, [['A', 'B', 'C'], '']>()
+Assert<Static.Parse<Tuple, '  ABC '>, [['A', 'B', 'C'], ' ']>()
+
+// ------------------------------------------------------------------
+// Union
+// ------------------------------------------------------------------
+// prettier-ignore
+type Union = Static.Union<[Static.Const<'A'>, Static.Const<'B'>, Static.Const<'C'>]>
+
+Assert<Static.Parse<Union, ''>, []>()
+Assert<Static.Parse<Union, 'A B C'>, ['A', ' B C']>()
+Assert<Static.Parse<Union, 'A B C '>, ['A', ' B C ']>()
+Assert<Static.Parse<Union, 'ABC'>, ['A', 'BC']>()
+Assert<Static.Parse<Union, '  ABC'>, ['A', 'BC']>()
+Assert<Static.Parse<Union, '  ABC '>, ['A', 'BC ']>()
+Assert<Static.Parse<Union, 'B B C'>, ['B', ' B C']>()
+Assert<Static.Parse<Union, 'B B C '>, ['B', ' B C ']>()
+Assert<Static.Parse<Union, 'BBC'>, ['B', 'BC']>()
+Assert<Static.Parse<Union, '  BBC'>, ['B', 'BC']>()
+Assert<Static.Parse<Union, '  BBC '>, ['B', 'BC ']>()
 
 // ------------------------------------------------------------------
 // Mapping

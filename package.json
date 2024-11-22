@@ -1,6 +1,6 @@
 {
   "name": "@sinclair/parsebox",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "description": "Parser Combinators in the TypeScript Type System",
   "keywords": [
     "typescript",
@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "@sinclair/hammer": "^0.18.0",
-    "@sinclair/typebox": "^0.33.12",
+    "@sinclair/typebox": "^0.34.7",
     "@types/mocha": "^10.0.9",
     "@types/node": "^22.7.4",
     "mocha": "^10.8.2",
