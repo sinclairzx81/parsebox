@@ -1,6 +1,6 @@
 /*--------------------------------------------------------------------------
 
-@sinclair/typebox
+@sinclair/typebox/syntax
 
 The MIT License (MIT)
 
@@ -26,29 +26,35 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
+import * as Types from '@sinclair/typebox'
 import { Static } from '@sinclair/parsebox'
-import { CreateType } from '@sinclair/typebox'
-import { TSchema, SchemaOptions } from '@sinclair/typebox'
 import { Module } from './runtime'
-import { Type } from './static'
+import { Main } from './static'
 
-/** `[Experimental]` Parses a TypeScript type annotation as an inferred TypeBox type */
-export function Parse<Code extends string, Context extends Record<PropertyKey, TSchema> = {}>(context: Context, code: Code, options?: SchemaOptions): Static.Parse<Type, Code, Context>[0]
-/** `[Experimental]` Parses a TypeScript type annotation as an inferred TypeBox type */
-export function Parse<Code extends string>(code: Code, options?: SchemaOptions): Static.Parse<Type, Code, {}>[0]
-/** `[Experimental]` Parses a TypeScript type annotation as an inferred TypeBox type */
+/** `[Syntax]` Infers a TypeBox type from TypeScript syntax. */
+export type StaticParseAsSchema<Context extends Record<PropertyKey, Types.TSchema>, Code extends string> = Static.Parse<Main, Code, Context>[0]
+
+/** `[Syntax]` Infers a TypeScript type from TypeScript syntax. */
+export type StaticParseAsType<Context extends Record<PropertyKey, Types.TSchema>, Code extends string> = StaticParseAsSchema<Context, Code> extends infer Type extends Types.TSchema ? Types.StaticDecode<Type> : undefined
+
+/** `[Syntax]` Parses a TypeBox type from TypeScript syntax. */
+export function Parse<Context extends Record<PropertyKey, Types.TSchema>, Code extends string>(context: Context, code: Code, options?: Types.SchemaOptions): StaticParseAsSchema<Context, Code>
+/** `[Syntax]` Parses a TypeBox type from TypeScript syntax. */
+export function Parse<Code extends string>(code: Code, options?: Types.SchemaOptions): StaticParseAsSchema<{}, Code>
+/** `[Syntax]` Parses a TypeBox type from TypeScript syntax. */
 export function Parse(...args: any[]): never {
   return ParseOnly.apply(null, args as never) as never
 }
 
-/** `[Experimental]` Parses a TypeScript type annotation as TSchema */
-export function ParseOnly<Code extends string, Context extends Record<PropertyKey, TSchema> = {}>(context: Context, code: Code, options?: SchemaOptions): TSchema | undefined
-/** `[Experimental]` Parses a TypeScript type annotation as TSchema */
-export function ParseOnly<Code extends string>(code: Code, options?: SchemaOptions): TSchema | undefined
-/** `[Experimental]` Parses a TypeScript type annotation as TSchema */
-export function ParseOnly(...args: any[]): TSchema | undefined {
+/** `[Syntax]` Parses a TypeBox TSchema from TypeScript syntax. This function does not infer the type. */
+export function ParseOnly<Context extends Record<PropertyKey, Types.TSchema>, Code extends string>(context: Context, code: Code, options?: Types.SchemaOptions): Types.TSchema | undefined
+/** `[Syntax]` Parses a TypeBox TSchema from TypeScript syntax */
+export function ParseOnly<Code extends string>(code: Code, options?: Types.SchemaOptions): Types.TSchema | undefined
+/** `[Syntax]` Parses a TypeBox TSchema from TypeScript syntax. This function does not infer the type. */
+export function ParseOnly(...args: any[]): Types.TSchema | undefined {
   const withContext = typeof args[0] === 'string' ? false : true
   const [context, code, options] = withContext ? [args[0], args[1], args[2] || {}] : [{}, args[0], args[1] || {}]
-  const type = Module.Parse('Type', code, context)[0] as TSchema | undefined
-  return (type !== undefined ? CreateType(type, options) : undefined) as never
+  const type = Module.Parse('Main', code, context)[0] as Types.TSchema | undefined
+  // Note: Parsing may return either a ModuleInstance or Type. We only apply options on the Type.
+  return Types.KindGuard.IsSchema(type) ? Types.CloneType(type, options) : type
 }

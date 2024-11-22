@@ -30,27 +30,13 @@ import * as Tokens from './token'
 import * as Types from './types'
 
 // ------------------------------------------------------------------
-// Tuple
+// Array
 // ------------------------------------------------------------------
 // prettier-ignore
-type TupleParser<Parsers extends Types.IParser[], Code extends string, Context extends unknown, Result extends unknown[] = []> = (
-  Parsers extends [infer Left extends Types.IParser, ...infer Right extends Types.IParser[]]
-    ? Parse<Left, Code, Context> extends [infer Value extends unknown, infer Rest extends string]
-      ? TupleParser<Right, Rest, Context, [...Result, Value]>
-      : []
+type ArrayParser<Parser extends Types.IParser, Code extends string, Context extends unknown, Result extends unknown[] = []> = (
+  Parse<Parser, Code, Context> extends [infer Value1 extends unknown, infer Rest extends string]
+    ? ArrayParser<Parser, Rest, Context, [...Result, Value1]>
     : [Result, Code]
-)
-
-// ------------------------------------------------------------------
-// Union
-// ------------------------------------------------------------------
-// prettier-ignore
-type UnionParser<Parsers extends Types.IParser[], Code extends string, Context extends unknown> = (
-  Parsers extends [infer Left extends Types.IParser, ...infer Right extends Types.IParser[]]
-    ? Parse<Left, Code, Context> extends [infer Value extends unknown, infer Rest extends string]
-      ? [Value, Rest]
-      : UnionParser<Right, Code, Context>
-    : []
 )
 
 // ------------------------------------------------------------------
@@ -84,6 +70,16 @@ type NumberParser<Code extends string, _Context extends unknown> = (
 )
 
 // ------------------------------------------------------------------
+// Optional
+// ------------------------------------------------------------------
+// prettier-ignore
+type OptionalParser<Parser extends Types.IParser, Code extends string, Context extends unknown> = (
+  Parse<Parser, Code, Context> extends [infer Value extends unknown, infer Rest extends string]
+    ? [[Value], Rest]
+    : [[], Code]
+)
+
+// ------------------------------------------------------------------
 // String
 // ------------------------------------------------------------------
 // prettier-ignore
@@ -94,22 +90,49 @@ type StringParser<Options extends string[], Code extends string, _Context extend
 )
 
 // ------------------------------------------------------------------
+// Tuple
+// ------------------------------------------------------------------
+// prettier-ignore
+type TupleParser<Parsers extends Types.IParser[], Code extends string, Context extends unknown, Result extends unknown[] = []> = (
+  Parsers extends [infer Left extends Types.IParser, ...infer Right extends Types.IParser[]]
+    ? Parse<Left, Code, Context> extends [infer Value extends unknown, infer Rest extends string]
+      ? TupleParser<Right, Rest, Context, [...Result, Value]>
+      : []
+    : [Result, Code]
+)
+
+// ------------------------------------------------------------------
+// Union
+// ------------------------------------------------------------------
+// prettier-ignore
+type UnionParser<Parsers extends Types.IParser[], Code extends string, Context extends unknown> = (
+  Parsers extends [infer Left extends Types.IParser, ...infer Right extends Types.IParser[]]
+    ? Parse<Left, Code, Context> extends [infer Value extends unknown, infer Rest extends string]
+      ? [Value, Rest]
+      : UnionParser<Right, Code, Context>
+    : []
+)
+
+// ------------------------------------------------------------------
 // Parse
 // ------------------------------------------------------------------
 // prettier-ignore
 type ParseCode<Type extends Types.IParser, Code extends string, Context extends unknown = unknown> = (
-  Type extends Types.Union<infer S extends Types.IParser[]> ? UnionParser<S, Code, Context> :
-  Type extends Types.Tuple<infer S extends Types.IParser[]> ? TupleParser<S, Code, Context> :
-  Type extends Types.Const<infer S extends string> ? ConstParser<S, Code, Context> :
-  Type extends Types.String<infer S extends string[]> ? StringParser<S, Code, Context> :
+  Type extends Types.Array<infer Parser extends Types.IParser> ? ArrayParser<Parser, Code, Context> :
+  Type extends Types.Const<infer Value extends string> ? ConstParser<Value, Code, Context> :
   Type extends Types.Ident ? IdentParser<Code, Context> :
   Type extends Types.Number ? NumberParser<Code, Context> :
+  Type extends Types.Optional<infer Parser extends Types.IParser> ? OptionalParser<Parser, Code, Context> :
+  Type extends Types.String<infer Options extends string[]> ? StringParser<Options, Code, Context> :
+  Type extends Types.Tuple<infer Parsers extends Types.IParser[]> ? TupleParser<Parsers, Code, Context> :
+  Type extends Types.Union<infer Parsers extends Types.IParser[]> ? UnionParser<Parsers, Code, Context> :
   []
 )
 // prettier-ignore
 type ParseMapping<Parser extends Types.IParser, Result extends unknown, Context extends unknown = unknown> = (
   (Parser['mapping'] & { input: Result, context: Context })['output']
 )
+
 /** Parses code with the given parser */
 // prettier-ignore
 export type Parse<Type extends Types.IParser, Code extends string, Context extends unknown = unknown> = (

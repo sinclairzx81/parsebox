@@ -32,6 +32,9 @@ export type IModuleProperties = Record<PropertyKey, IParser>
 // Static
 // ------------------------------------------------------------------
 
+/** Force output static type evaluation for Arrays */
+export type StaticEnsure<T> = T extends infer R ? R : never
+
 /** Infers the Output Parameter for a Parser */
 export type StaticParser<Parser extends IParser> = Parser extends IParser<infer Output extends unknown> ? Output : unknown
 
@@ -44,10 +47,8 @@ export type IMapping<Input extends unknown = any, Output extends unknown = unkno
 export const Identity = (value: unknown) => value
 
 /** Maps the output as the given parameter T */
-export const As =
-  <T>(mapping: T): ((value: unknown) => T) =>
-  (_: unknown) =>
-    mapping
+// prettier-ignore
+export const As = <T>(mapping: T): ((value: unknown) => T) => (_: unknown) => mapping
 
 // ------------------------------------------------------------------
 // Parser
@@ -56,51 +57,40 @@ export interface IParser<Output extends unknown = unknown> {
   type: string
   mapping: IMapping<any, Output>
 }
+
 // ------------------------------------------------------------------
-// Tuple
+// Array
 // ------------------------------------------------------------------
-export type TupleParameter<Parsers extends IParser[], Result extends unknown[] = []> = Parsers extends [infer L extends IParser, ...infer R extends IParser[]] ? TupleParameter<R, [...Result, StaticParser<L>]> : Result
-export interface ITuple<Output extends unknown = unknown> extends IParser<Output> {
-  type: 'Tuple'
-  parsers: IParser[]
+// prettier-ignore
+export type ArrayParameter<Parser extends IParser> = StaticEnsure<
+  StaticParser<Parser>[]
+>
+export interface IArray<Output extends unknown = unknown> extends IParser<Output> {
+  type: 'Array'
+  parser: IParser
 }
-/** Creates a Tuple parser */
-export function Tuple<Parsers extends IParser[], Mapping extends IMapping = IMapping<TupleParameter<Parsers>>>(parsers: [...Parsers], mapping: Mapping): ITuple<ReturnType<Mapping>>
-/** Creates a Tuple parser */
-export function Tuple<Parsers extends IParser[]>(parsers: [...Parsers]): ITuple<TupleParameter<Parsers>>
-export function Tuple(...args: unknown[]): never {
-  const [parsers, mapping] = args.length === 2 ? [args[0], args[1]] : [args[0], Identity]
-  return { type: 'Tuple', parsers, mapping } as never
+/** `[EBNF]` Creates an Array parser */
+export function Array<Parser extends IParser, Mapping extends IMapping = IMapping<ArrayParameter<Parser>>>(parser: Parser, mapping: Mapping): IArray<ReturnType<Mapping>>
+/** `[EBNF]` Creates an Array parser */
+export function Array<Parser extends IParser>(parser: Parser): IArray<ArrayParameter<Parser>>
+/** `[EBNF]` Creates an Array parser */
+export function Array(...args: unknown[]): never {
+  const [parser, mapping] = args.length === 2 ? [args[0], args[1]] : [args[0], Identity]
+  return { type: 'Array', parser, mapping } as never
 }
 
 // ------------------------------------------------------------------
-// Union
-// ------------------------------------------------------------------
-export type UnionParameter<Parsers extends IParser[], Result extends unknown = never> = Parsers extends [infer L extends IParser, ...infer R extends IParser[]] ? UnionParameter<R, Result | StaticParser<L>> : Result
-export interface IUnion<Output extends unknown = unknown> extends IParser<Output> {
-  type: 'Union'
-  parsers: IParser[]
-}
-/** Creates a Union parser */
-export function Union<Parsers extends IParser[], Mapping extends IMapping = IMapping<UnionParameter<Parsers>>>(parsers: [...Parsers], mapping: Mapping): IUnion<ReturnType<Mapping>>
-/** Creates a Union parser */
-export function Union<Parsers extends IParser[]>(parsers: [...Parsers]): IUnion<UnionParameter<Parsers>>
-export function Union(...args: unknown[]): never {
-  const [parsers, mapping] = args.length === 2 ? [args[0], args[1]] : [args[0], Identity]
-  return { type: 'Union', parsers, mapping } as never
-}
-
-// ------------------------------------------------------------------
-// Token
+// Const
 // ------------------------------------------------------------------
 export interface IConst<Output extends unknown = unknown> extends IParser<Output> {
   type: 'Const'
   value: string
 }
-/** Creates a Const parser */
+/** `[TERM]` Creates a Const parser */
 export function Const<Value extends string, Mapping extends IMapping<Value>>(value: Value, mapping: Mapping): IConst<ReturnType<Mapping>>
-/** Creates a Const parser */
+/** `[TERM]` Creates a Const parser */
 export function Const<Value extends string>(value: Value): IConst<Value>
+/** `[TERM]` Creates a Const parser */
 export function Const(...args: unknown[]): never {
   const [value, mapping] = args.length === 2 ? [args[0], args[1]] : [args[0], Identity]
   return { type: 'Const', value, mapping } as never
@@ -113,10 +103,11 @@ export interface IRef<Output extends unknown = unknown> extends IParser<Output> 
   type: 'Ref'
   ref: string
 }
-/** Creates a Ref parser */
+/** `[BNF]` Creates a Ref parser. This Parser can only be used in the context of a Module */
 export function Ref<Type extends unknown, Mapping extends IMapping<Type>>(ref: string, mapping: Mapping): IRef<ReturnType<Mapping>>
-/** Creates a Ref parser */
+/** `[BNF]` Creates a Ref parser. This Parser can only be used in the context of a Module */
 export function Ref<Type extends unknown>(ref: string): IRef<Type>
+/** `[BNF]` Creates a Ref parser. This Parser can only be used in the context of a Module */
 export function Ref(...args: unknown[]): never {
   const [ref, mapping] = args.length === 2 ? [args[0], args[1]] : [args[0], Identity]
   return { type: 'Ref', ref, mapping } as never
@@ -129,10 +120,11 @@ export interface IString<Output extends unknown = unknown> extends IParser<Outpu
   type: 'String'
   options: string[]
 }
-/** Creates a String Parser. Options are an array of permissable quote characters */
+/** `[TERM]` Creates a String Parser. Options are an array of permissable quote characters */
 export function String<Mapping extends IMapping<string>>(options: string[], mapping: Mapping): IString<ReturnType<Mapping>>
-/** Creates a String Parser. Options are an array of permissable quote characters */
+/** `[TERM]` Creates a String Parser. Options are an array of permissable quote characters */
 export function String(options: string[]): IString<string>
+/** `[TERM]` Creates a String Parser. Options are an array of permissable quote characters */
 export function String(...params: unknown[]): never {
   const [options, mapping] = params.length === 2 ? [params[0], params[1]] : [params[0], Identity]
   return { type: 'String', options, mapping } as never
@@ -144,10 +136,11 @@ export function String(...params: unknown[]): never {
 export interface IIdent<Output extends unknown = unknown> extends IParser<Output> {
   type: 'Ident'
 }
-/** Creates an Ident parser */
+/** `[TERM]` Creates an Ident parser where Ident matches any valid JavaScript identifier */
 export function Ident<Mapping extends IMapping<string>>(mapping: Mapping): IIdent<ReturnType<Mapping>>
-/** Creates an Ident parser */
+/** `[TERM]` Creates an Ident parser where Ident matches any valid JavaScript identifier */
 export function Ident(): IIdent<string>
+/** `[TERM]` Creates an Ident parser where Ident matches any valid JavaScript identifier */
 export function Ident(...params: unknown[]): never {
   const mapping = params.length === 1 ? params[0] : Identity
   return { type: 'Ident', mapping } as never
@@ -159,11 +152,79 @@ export function Ident(...params: unknown[]): never {
 export interface INumber<Output extends unknown = unknown> extends IParser<Output> {
   type: 'Number'
 }
-/** Creates a Number parser */
+/** `[TERM]` Creates an Number parser */
 export function Number<Mapping extends IMapping<string>>(mapping: Mapping): INumber<ReturnType<Mapping>>
-/** Creates a Number parser */
+/** `[TERM]` Creates an Number parser */
 export function Number(): INumber<string>
+/** `[TERM]` Creates an Number parser */
 export function Number(...params: unknown[]): never {
   const mapping = params.length === 1 ? params[0] : Identity
   return { type: 'Number', mapping } as never
+}
+
+// ------------------------------------------------------------------
+// Optional
+// ------------------------------------------------------------------
+// prettier-ignore
+export type OptionalParameter<Parser extends IParser, Result extends unknown = [StaticParser<Parser>] | []> = (
+  Result
+)
+export interface IOptional<Output extends unknown = unknown> extends IParser<Output> {
+  type: 'Optional'
+  parser: IParser
+}
+/** `[EBNF]` Creates an Optional parser */
+export function Optional<Parser extends IParser, Mapping extends IMapping = IMapping<OptionalParameter<Parser>>>(parser: Parser, mapping: Mapping): IOptional<ReturnType<Mapping>>
+/** `[EBNF]` Creates an Optional parser */
+export function Optional<Parser extends IParser>(parser: Parser): IOptional<OptionalParameter<Parser>>
+/** `[EBNF]` Creates an Optional parser */
+export function Optional(...args: unknown[]): never {
+  const [parser, mapping] = args.length === 2 ? [args[0], args[1]] : [args[0], Identity]
+  return { type: 'Optional', parser, mapping } as never
+}
+
+// ------------------------------------------------------------------
+// Tuple
+// ------------------------------------------------------------------
+// prettier-ignore
+export type TupleParameter<Parsers extends IParser[], Result extends unknown[] = []> = StaticEnsure<
+  Parsers extends [infer Left extends IParser, ...infer Right extends IParser[]] 
+    ? TupleParameter<Right, [...Result, StaticEnsure<StaticParser<Left>>]> 
+    : Result
+>
+export interface ITuple<Output extends unknown = unknown> extends IParser<Output> {
+  type: 'Tuple'
+  parsers: IParser[]
+}
+/** `[BNF]` Creates a Tuple parser */
+export function Tuple<Parsers extends IParser[], Mapping extends IMapping = IMapping<TupleParameter<Parsers>>>(parsers: [...Parsers], mapping: Mapping): ITuple<ReturnType<Mapping>>
+/** `[BNF]` Creates a Tuple parser */
+export function Tuple<Parsers extends IParser[]>(parsers: [...Parsers]): ITuple<TupleParameter<Parsers>>
+/** `[BNF]` Creates a Tuple parser */
+export function Tuple(...args: unknown[]): never {
+  const [parsers, mapping] = args.length === 2 ? [args[0], args[1]] : [args[0], Identity]
+  return { type: 'Tuple', parsers, mapping } as never
+}
+
+// ------------------------------------------------------------------
+// Union
+// ------------------------------------------------------------------
+// prettier-ignore
+export type UnionParameter<Parsers extends IParser[], Result extends unknown = never> = StaticEnsure<
+  Parsers extends [infer Left extends IParser, ...infer Right extends IParser[]] 
+    ? UnionParameter<Right, Result | StaticParser<Left>> 
+    : Result
+>
+export interface IUnion<Output extends unknown = unknown> extends IParser<Output> {
+  type: 'Union'
+  parsers: IParser[]
+}
+/** `[BNF]` Creates a Union parser */
+export function Union<Parsers extends IParser[], Mapping extends IMapping = IMapping<UnionParameter<Parsers>>>(parsers: [...Parsers], mapping: Mapping): IUnion<ReturnType<Mapping>>
+/** `[BNF]` Creates a Union parser */
+export function Union<Parsers extends IParser[]>(parsers: [...Parsers]): IUnion<UnionParameter<Parsers>>
+/** `[BNF]` Creates a Union parser */
+export function Union(...args: unknown[]): never {
+  const [parsers, mapping] = args.length === 2 ? [args[0], args[1]] : [args[0], Identity]
+  return { type: 'Union', parsers, mapping } as never
 }

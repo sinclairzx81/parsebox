@@ -23,12 +23,12 @@ $ npm install @sinclair/parsebox
 
 ## Example
 
-ParseBox provides symmetric parsing in Static and Runtime environments.
+ParseBox provides combinators for parsing in Runtime and Static environments.
+
+### Runtime
 
 ```typescript
-import { Runtime, Static } from '@sinclair/parsebox'
-
-// Runtime Parser
+import { Runtime } from '@sinclair/parsebox'
 
 const T = Runtime.Tuple([
   Runtime.Const('X'),
@@ -37,8 +37,12 @@ const T = Runtime.Tuple([
 ])
 
 const R = Runtime.Parse(T, 'X Y Z W')               // const R = [['X', 'Y', 'Z'], ' W']
+```
 
-// Static Parser
+### Static
+
+```typescript
+import { Static } from '@sinclair/parsebox'
 
 type T = Static.Tuple<[
   Static.Const<'X'>,
@@ -49,35 +53,38 @@ type T = Static.Tuple<[
 type R = Static.Parse<T, 'X Y Z W'>                 // type R = [['X', 'Y', 'Z'], ' W']
 ```
 
-Which can be used to construct [Expression](https://www.typescriptlang.org/play/?moduleResolution=99&module=199#code/JYWwDg9gTgLgBAbzgZRgQxsAxnAvnAMyghDgHIABAZ2ADssAbNYKAejDSioFMAjCAB5kAUMNas4AWmkzZc+QsVLlKyWIkBRAWnANu6qaqPGTq0TACeYbnABK3KgFcG8ALwp0mLADoACpx4AHi0wKAAacgE4ACo4AAoLOABqOAAvAEoyAD44XNzxOEtrOwdnNzgAbQRhPNq6+obGpuaC3L0CGAAuOAAiAR6AbhrmkdGxuta4CGsoDGhunujB4fHVtYmJXKhgAHMACy7EFfWT8cna9sOei2XTu7HzvOnuWZh53qTb++-Gx63dg4LVJfH6gvKTXBDMHQuAFXARHo9AC6ogMpnRGNMBhCUAcNAgtDg-i4LzRmPJFPkojoMBeBDQWBsADlHCAXtgALJoMBgOg7ODcAS02gAEyoHgw2G8AEkuTy+UdchBHDAwCrujA9sAqBUyHQ1TAyEiBULuKLxQADAAkCDoBBeJScLhNwrFcForN4L1wFrgAH5HWU4N1aNwAG6k3DCIrM1nsnDuVCSnwskBeqCBVPxuW82g7LLmKw2ADyMzQorgic8UoAqrRgATAhUk14ZSKzTAIlntlgkQXRAUAEJ0TgWHN87r2EWORnikAYLB7bgiuAAFRepHLK5xcBpEDgvBHUESgtCeIbhNoEHb0aLcGHtFHU5n3ECABluB0XWa3Y5aABrK8AHdaAiWwAXgQVXXFP9AIgECKj7St4mGcD9kg01zUqO0HVLF45nCXdaHtKA7AgiIcNI+wqAw6C4Fg4DaEQlFagDJBLm6D8OgiZ5XnePC+MI7Z0O6B8n2XF9AjQg4wIcGAcijWpOM-GBhHSYQaTpBkbDE49xzzb8sJbKVZW5XN+WqJUVQNDUtR1PVaANI1DLdCpKLgLjOyIkiyPQlyYIAxjmOOANdIsZ9GXfFSwIggslPdcNIwMAAxBk3igfSdm6OUBWATUHR2YhHGsbcBFCKZSIErcNNoWkoHpRk4FSrB0sy-yJVbUz5QMyypms9V4jgY5NW1XV9RVZyoJ-cVdTiMgKOIh0cQiMhMmNAMd06Ya7LGxyJuNKasLcxbKrLUV1rgKqKy22pQwjKBhnUqMYyatLoGQ4yfDrC8m2GT7vFXYq9Cbf6AGECRowIyDmrIImWjqpXB2hIdW7I+zCP7qx8QGwGBiorpFdHhCRCJmtasy+X7F71ygEBV2YBgPqx7xvsbCpMeTAGgdfZtmaRlHomyUm3sImm6YZoncn+nG8bBiGYCh1ghdelroAiMX6eABhJYR7HuabIm+0LYocU1xmq051naF+qXmZlnm5eRhWyCSZWxbhsqoDNnXpf13nOf553JDdjcPdCb3YY51t7YNyOjdvYoxaZzmY4qMm1bXDdvYiMLMqpu8dwt6O-fduBTYlnOjzHCm837IA) or even [Type Syntax](https://www.typescriptlang.org/play/?moduleResolution=99&module=199#code/JYWwDg9gTgLgBAbzgBQIZQM4FM4F84BmUEIcA5AAIbAB2AxgDarBQD0MAnmFgEYQAerDBxoxU-MgChQkWIjgBlMTGB08hYqUrV6TFuy68BUyXQg0M8AGIQIcALwp02ABQADEBAAmAVwY4bOwRJSTg4Tm44ACEHULCUVQBrAB4AQQAacmAvMgA+OAAyODiwtFhgVAZkgHkQYBg0zLJsvNyQsIicVIdEErhsgC44SyhaAHM+mm8sDCHUgG0AXTjcENw3AEoQswt4GMdAgDoASXBoGBcyKLItyU7onqVUFTpkzogCaPz4n9-WVnChgejmCvzB4IhkPi-1+g2GMFGNDGAG4+lD0Ri4DD8EVQZj8VCYT8pl4ZgB+IZ4gnUv4AiFwkbjVE0lnQungkkzIaHHlLZmsllE+K4JZwAA+cB8NFJBFoWC8-IF1OxQA) parsers at runtime and inside the type system.
 
 ## Overview
 
-ParseBox is a TypeScript parsing library designed to embed domain-specific languages (DSLs) within the TypeScript type system. It provides a core set of declarative combinators for parsing in Static and Runtime environments. The parsing structures created with this library can be replicated across environments to ensure symmetric parsing logic in each environment (Static or Runtime). Declarative parsing structures help to mitigate many problems that arise when replicating explicit logic in different languages, with the declarative combinators leading to more managable code overall.
+ParseBox is a parsing system designed to embed domain-specific languages (DSLs) within the TypeScript type system. It provides a set of type-level and runtime combinators that directly map to BNF notation, which can be used to parse content either at runtime or statically within the type system.
 
-This project is written as a parsing infrastructure for the [TypeBox](https://github.com/sinclairzx81/typebox) and [LinqBox](https://github.com/sinclairzx81/linqbox) projects. It is offered as a standalone package for experimentation, as well as to provide a foundation for advancing string DSL parsing in the TypeScript type system.
+ParseBox is written as a parsing infrastructure for the [TypeBox](https://github.com/sinclairzx81/typebox) and [LinqBox](https://github.com/sinclairzx81/linqbox) projects, enabling these libraries to support advanced runtime parsing for their respective domains.
 
 License MIT
 
 ## Contents
 
-- [Parsers](#Parsers)
+- [Combinators](#Combinators)
   - [Const](#Const)
   - [Tuple](#Tuple)
   - [Union](#Union)
+  - [Array](#Array)
+  - [Optional](#Optional)
 - [Terminals](#Terminals)
   - [Number](#Number)
   - [String](#String)
   - [Ident](#Ident)
+- [Extended](#Extended)
 - [Mapping](#Mapping)
-- [Context](#Context) 
+- [Context](#Context)
 - [Modules](#Modules)
+- [Extended](#Extended)
 - [Advanced](#Advanced)
 - [Contribute](#Contribute)
 
-## Parsers
+## Combinators
 
-ParseBox provides three main combinators `Const`, `Tuple`, and `Union` which are named after the types of values they parse. These combinators are used to express BNF (Backus-Naur Form) grammar within the type system. These combinators service as fundamental building blocks for constructing higher order parsers. 
+ParseBox provides a set of combinators that map to notation expressible in (E)BNF (Backus-Naur Form). These combinators are named Const, Tuple, Union, Array, and Optional, respectively, to describe the types produced by each combinator. These combinators serve as building blocks for constructing parsers.
 
 ### Const
 
@@ -155,6 +162,54 @@ const R2 = Runtime.Parse(P, 'Y E')                  // const R2 = ['Y', ' E']
 const R3 = Runtime.Parse(P, 'Z E')                  // const R3 = ['Z', ' E']
 ```
 
+### Array
+
+The Array combinator will parse for zero or more the interior parser. This combinator will always return a result with an empty array given for no matches.
+
+**EBNF**
+
+```
+<T> ::= { "X" }
+```
+
+**TypeScript**
+
+```typescript
+const T = Runtime.Array(                             // const T = {
+  Runtime.Const('X')                                 //   type: 'Array',
+)                                                    //   parser: { type: 'Const', value: 'X' } 
+                                                     // }
+
+const R1 = Runtime.Parse(T, 'X Y Z')                 // const R1 = [['X'], ' Y Z']
+
+const R2 = Runtime.Parse(T, 'X X X Y Z')             // const R2 = [['X', 'X', 'X'], ' Y Z']
+
+const R3 = Runtime.Parse(T, 'Y Z')                   // const R3 = [[], 'Y Z']
+```
+
+### Optional
+
+The Optional combinator will parse for zero or one of the interior parser. This combinator always succeeds, returning either a tuple with one element, or zero elements for no match.
+
+**EBNF**
+
+```
+<T> ::= [ "X" ]
+```
+
+**TypeScript**
+
+```typescript
+const T = Runtime.Optional(                         // const T = {
+  Runtime.Const('X')                                //   type: 'Optional',
+)                                                   //   parser: { type: 'Const', value: 'X' }
+                                                    // }
+
+const R1 = Runtime.Parse(T, 'X Y Z')                // const R1 = ['X', ' Y Z']
+
+const R2 = Runtime.Parse(T, 'Y Z')                  // const R2 = [[], 'Y Z']
+```
+
 ## Terminals
 
 ParseBox provides combinators that can be used to parse common terminals.
@@ -179,7 +234,7 @@ const E = Runtime.Parse(T, '01')                    // const E = []
 
 ### String
 
-The String combinator will parse for quoted string literals. This combinator accepts an array of permissable quote characters. The result of this parser is the interior wrapped string.
+The String combinator will parse for quoted string literals. Thgit is combinator accepts an array of permissable quote characters. The result of this parser is the interior wrapped string.
 
 ```typescript
 const T = Runtime.String(['"'])

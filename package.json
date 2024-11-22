@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "@sinclair/hammer": "^0.18.0",
-    "@sinclair/typebox": "^0.33.12",
+    "@sinclair/typebox": "^0.34.7",
     "@types/mocha": "^10.0.9",
     "@types/node": "^22.7.4",
     "mocha": "^10.8.2",

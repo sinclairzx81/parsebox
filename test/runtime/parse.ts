@@ -6,36 +6,45 @@ function Assert(left: unknown, right: unknown) {
 }
 // prettier-ignore
 describe('Parse', () => {
+  
+  it('Array', () => {
+    Assert(Runtime.Parse(Runtime.Array(Runtime.Const('A')), ''), [[], ''])
+    Assert(Runtime.Parse(Runtime.Array(Runtime.Const('A')), 'AB'), [['A'], 'B'])
+    Assert(Runtime.Parse(Runtime.Array(Runtime.Const('A')), 'AAB'), [['A', 'A'], 'B'])
+    Assert(Runtime.Parse(Runtime.Array(Runtime.Const('AA')), 'AAB'), [['AA'], 'B'])
+    Assert(Runtime.Parse(Runtime.Array(Runtime.Const('AA')), 'AAAB'), [['AA'], 'AB'])
+    Assert(Runtime.Parse(Runtime.Array(Runtime.Const('AA')), 'B'), [[], 'B'])
+  })
+
   it('Const', () => {
     Assert(Runtime.Parse(Runtime.Const('A'), ''), [])
     Assert(Runtime.Parse(Runtime.Const('A'), 'A'), ['A', ''])
     Assert(Runtime.Parse(Runtime.Const('A'), '  A'), ['A', ''])
     Assert(Runtime.Parse(Runtime.Const('A'), '  A '), ['A', ' '])
   })
-  it('Tuple', () => {
-    const Tuple = Runtime.Tuple([Runtime.Const('A'), Runtime.Const('B'), Runtime.Const('C')])
-    Assert(Runtime.Parse(Tuple, ''), [])
-    Assert(Runtime.Parse(Tuple, 'A'), [])
-    Assert(Runtime.Parse(Tuple, 'A B C'), [['A', 'B', 'C'], ''])
-    Assert(Runtime.Parse(Tuple, 'A B C '), [['A', 'B', 'C'], ' '])
-    Assert(Runtime.Parse(Tuple, 'ABC'), [['A', 'B', 'C'], ''])
-    Assert(Runtime.Parse(Tuple, '  ABC'), [['A', 'B', 'C'], ''])
-    Assert(Runtime.Parse(Tuple, '  ABC '), [['A', 'B', 'C'], ' '])
+
+  it('Ident', () => {
+    Assert(Runtime.Parse(Runtime.Ident(), ''), [])
+    Assert(Runtime.Parse(Runtime.Ident(), '0'), [])
+    Assert(Runtime.Parse(Runtime.Ident(), '#'), [])
+    Assert(Runtime.Parse(Runtime.Ident(), '_'), ['_', ''])
+    Assert(Runtime.Parse(Runtime.Ident(), ' _'), ['_', ''])
+    Assert(Runtime.Parse(Runtime.Ident(), '_ '), ['_', ' '])
+    Assert(Runtime.Parse(Runtime.Ident(), ' _ '), ['_', ' '])
+    Assert(Runtime.Parse(Runtime.Ident(), '$'), ['$', ''])
+    Assert(Runtime.Parse(Runtime.Ident(), ' $'), ['$', ''])
+    Assert(Runtime.Parse(Runtime.Ident(), '$ '), ['$', ' '])
+    Assert(Runtime.Parse(Runtime.Ident(), ' $ '), ['$', ' '])
+    Assert(Runtime.Parse(Runtime.Ident(), 'A'), ['A', ''])
+    Assert(Runtime.Parse(Runtime.Ident(), ' A'), ['A', ''])
+    Assert(Runtime.Parse(Runtime.Ident(), 'A '), ['A', ' '])
+    Assert(Runtime.Parse(Runtime.Ident(), ' A '), ['A', ' '])
+    Assert(Runtime.Parse(Runtime.Ident(), 'A1'), ['A1', ''])
+    Assert(Runtime.Parse(Runtime.Ident(), ' A1'), ['A1', ''])
+    Assert(Runtime.Parse(Runtime.Ident(), 'A1 '), ['A1', ' '])
+    Assert(Runtime.Parse(Runtime.Ident(), ' A1 '), ['A1', ' '])
   })
-  it('Union', () => {
-    const Union = Runtime.Union([Runtime.Const('A'), Runtime.Const('B'), Runtime.Const('C')])
-    Assert(Runtime.Parse(Union, ''), [])
-    Assert(Runtime.Parse(Union, 'A B C'), ['A', ' B C'])
-    Assert(Runtime.Parse(Union, 'A B C '), ['A', ' B C '])
-    Assert(Runtime.Parse(Union, 'ABC'), ['A', 'BC'])
-    Assert(Runtime.Parse(Union, '  ABC'), ['A', 'BC'])
-    Assert(Runtime.Parse(Union, '  ABC '), ['A', 'BC '])
-    Assert(Runtime.Parse(Union, 'B B C'), ['B', ' B C'])
-    Assert(Runtime.Parse(Union, 'B B C '), ['B', ' B C '])
-    Assert(Runtime.Parse(Union, 'BBC'), ['B', 'BC'])
-    Assert(Runtime.Parse(Union, '  BBC'), ['B', 'BC'])
-    Assert(Runtime.Parse(Union, '  BBC '), ['B', 'BC '])
-  })
+
   it('Number', () => {
     Assert(Runtime.Parse(Runtime.Number(), ''), [])
     Assert(Runtime.Parse(Runtime.Number(), '01'), [])
@@ -83,6 +92,14 @@ describe('Parse', () => {
     Assert(Runtime.Parse(Runtime.Number(), ' -0.1'), ['-0.1', ''])
     Assert(Runtime.Parse(Runtime.Number(), ' -0.1 '), ['-0.1', ' '])
   })
+
+  it('Optional', () => {
+    Assert(Runtime.Parse(Runtime.Optional(Runtime.Const('A')), ''), [[], ''])
+    Assert(Runtime.Parse(Runtime.Optional(Runtime.Const('A')), 'A'), [['A'], ''])
+    Assert(Runtime.Parse(Runtime.Optional(Runtime.Const('A')), 'AA'), [['A'], 'A'])
+    Assert(Runtime.Parse(Runtime.Optional(Runtime.Const('A')), 'B'), [[], 'B'])
+  })
+
   it('String', () => {
     Assert(Runtime.Parse(Runtime.String(['"']), ''), [])
     Assert(Runtime.Parse(Runtime.String(['"']), '"A"'), ['A', ''])
@@ -99,32 +116,39 @@ describe('Parse', () => {
     Assert(Runtime.Parse(Runtime.String(['*', '"']), '"A" '), ['A', ' '])
     Assert(Runtime.Parse(Runtime.String(['*', '"']), ' "A" '), ['A', ' '])
   })
-  it('Ident', () => {
-    Assert(Runtime.Parse(Runtime.Ident(), ''), [])
-    Assert(Runtime.Parse(Runtime.Ident(), '0'), [])
-    Assert(Runtime.Parse(Runtime.Ident(), '#'), [])
-    Assert(Runtime.Parse(Runtime.Ident(), '_'), ['_', ''])
-    Assert(Runtime.Parse(Runtime.Ident(), ' _'), ['_', ''])
-    Assert(Runtime.Parse(Runtime.Ident(), '_ '), ['_', ' '])
-    Assert(Runtime.Parse(Runtime.Ident(), ' _ '), ['_', ' '])
-    Assert(Runtime.Parse(Runtime.Ident(), '$'), ['$', ''])
-    Assert(Runtime.Parse(Runtime.Ident(), ' $'), ['$', ''])
-    Assert(Runtime.Parse(Runtime.Ident(), '$ '), ['$', ' '])
-    Assert(Runtime.Parse(Runtime.Ident(), ' $ '), ['$', ' '])
-    Assert(Runtime.Parse(Runtime.Ident(), 'A'), ['A', ''])
-    Assert(Runtime.Parse(Runtime.Ident(), ' A'), ['A', ''])
-    Assert(Runtime.Parse(Runtime.Ident(), 'A '), ['A', ' '])
-    Assert(Runtime.Parse(Runtime.Ident(), ' A '), ['A', ' '])
-    Assert(Runtime.Parse(Runtime.Ident(), 'A1'), ['A1', ''])
-    Assert(Runtime.Parse(Runtime.Ident(), ' A1'), ['A1', ''])
-    Assert(Runtime.Parse(Runtime.Ident(), 'A1 '), ['A1', ' '])
-    Assert(Runtime.Parse(Runtime.Ident(), ' A1 '), ['A1', ' '])
+
+  it('Tuple', () => {
+    const Tuple = Runtime.Tuple([Runtime.Const('A'), Runtime.Const('B'), Runtime.Const('C')])
+    Assert(Runtime.Parse(Tuple, ''), [])
+    Assert(Runtime.Parse(Tuple, 'A'), [])
+    Assert(Runtime.Parse(Tuple, 'A B C'), [['A', 'B', 'C'], ''])
+    Assert(Runtime.Parse(Tuple, 'A B C '), [['A', 'B', 'C'], ' '])
+    Assert(Runtime.Parse(Tuple, 'ABC'), [['A', 'B', 'C'], ''])
+    Assert(Runtime.Parse(Tuple, '  ABC'), [['A', 'B', 'C'], ''])
+    Assert(Runtime.Parse(Tuple, '  ABC '), [['A', 'B', 'C'], ' '])
   })
+
+  it('Union', () => {
+    const Union = Runtime.Union([Runtime.Const('A'), Runtime.Const('B'), Runtime.Const('C')])
+    Assert(Runtime.Parse(Union, ''), [])
+    Assert(Runtime.Parse(Union, 'A B C'), ['A', ' B C'])
+    Assert(Runtime.Parse(Union, 'A B C '), ['A', ' B C '])
+    Assert(Runtime.Parse(Union, 'ABC'), ['A', 'BC'])
+    Assert(Runtime.Parse(Union, '  ABC'), ['A', 'BC'])
+    Assert(Runtime.Parse(Union, '  ABC '), ['A', 'BC '])
+    Assert(Runtime.Parse(Union, 'B B C'), ['B', ' B C'])
+    Assert(Runtime.Parse(Union, 'B B C '), ['B', ' B C '])
+    Assert(Runtime.Parse(Union, 'BBC'), ['B', 'BC'])
+    Assert(Runtime.Parse(Union, '  BBC'), ['B', 'BC'])
+    Assert(Runtime.Parse(Union, '  BBC '), ['B', 'BC '])
+  })
+
   it('Mapping', () => {
     const Mapping = (_0: 'A', _1: 'B', _2: 'C') => [_2, _1, _0] as const
     const Mapped = Runtime.Tuple([Runtime.Const('A'), Runtime.Const('B'), Runtime.Const('C')], values => Mapping(...values))
     Assert(Runtime.Parse(Mapped, '  A B C '), [['C', 'B', 'A'], ' '])
   })
+  
   it('Context', () => {
     const ContextMapping = (input: 'A' | 'B' | 'C', context: Record<string, string>) => {
       return input in context 

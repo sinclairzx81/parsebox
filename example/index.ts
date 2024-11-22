@@ -8,10 +8,10 @@ import { Parse } from './typebox'
 const T = Parse(`{
   x: number,
   y: number,
-  z: number  
+  z: number
 }`)
 
-console.log(T)
+console.dir(T, { depth: 100 })
 
 // ------------------------------------------------------------------
 // Example: Expression Parser
