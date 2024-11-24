@@ -4,7 +4,7 @@
 
 The MIT License (MIT)
 
-Copyright (c) 2024 Haydn Paterson (sinclair) <haydn.developer@gmail.com>
+Copyright (c) 2024 Haydn Paterson (sinclair) (haydn.developer@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,11 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './parse'
-export * from './runtime'
-export * from './static'
+import { Static } from '@sinclair/parsebox'
+import { Module } from './runtime'
+import { Ebnf } from './static'
+
+/** Parses a Ebnf module */
+export function ParseEbnf<S extends string>(value: S): Static.Parse<Ebnf, S>[0] {
+  return Module.Parse('Ebnf', value)[0] as never
+}

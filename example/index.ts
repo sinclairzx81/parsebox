@@ -1,20 +1,61 @@
 import { Static } from '@sinclair/parsebox'
 import { Parse } from './typebox'
+import { ParseJson } from './json'
+import { ParseEbnf } from './ebnf'
 
 // ------------------------------------------------------------------
 // Example: TypeBox
 // ------------------------------------------------------------------
 
-const T = Parse(`{
+const Type = Parse(`{
   x: number,
   y: number,
   z: number
 }`)
 
-console.dir(T, { depth: 100 })
+console.dir(Type, { depth: 100 })
 
 // ------------------------------------------------------------------
-// Example: Expression Parser
+// Example: Ebnf
+// ------------------------------------------------------------------
+
+const Ebnf = ParseEbnf(`
+
+  Operand ::= Ident ;
+
+  Factor ::= "(" Expr ")"
+              | Operand ;
+
+  TermTail ::= ("*" Factor TermTail)
+             | ("/" Factor TermTail)
+             | e ;
+
+  ExprTail ::= ("+" Term ExprTail) 
+             | ("-" Term ExprTail)
+             | e ;
+
+  Term ::= Factor TermTail ;
+
+  Expr ::= Term ExprTail ;
+
+`)
+
+const Result = Ebnf.Parse('Expr', `X * (Y + Z)`)
+
+console.dir(Result, { depth: 100 })
+
+// ------------------------------------------------------------------
+// Example: Json
+// ------------------------------------------------------------------
+
+const Json = ParseJson(`{ 
+  "x": 1, 
+  "y": 2, 
+  "z": 3 
+}`)
+
+// ------------------------------------------------------------------
+// Example: Expression
 // ------------------------------------------------------------------
 
 type Result = Static.Parse<Expr, 'x * (y + z)'> // hover
