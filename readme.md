@@ -56,9 +56,9 @@ type R = Static.Parse<T, 'X Y Z W'>                 // type R = [['X', 'Y', 'Z']
 
 ## Overview
 
-ParseBox is a parsing library designed to embed domain-specific languages (DSLs) within the TypeScript type system. It provides a set of runtime and type-level combinators that enable EBNF notation to be encoded as types within TypeScript's type system. These combinators can then be used to parse content at runtime or interactively in editor via static type inference.
+ParseBox is a parsing library designed to embed domain-specific languages (DSLs) within the TypeScript type system. It provides a set of runtime and type-level combinators that enable EBNF notation to be encoded as TypeScript types. These combinators can then be used to parse content at runtime or interactively in editor via static type inference.
 
-This project was originally developed as a parsing system for the [TypeBox](https://github.com/sinclairzx81/typebox) project, where it facilitates parsing TypeScript syntax into runtime types. It offers a robust, standalone system for type-level parsing within TypeScript's type system.
+This project was developed as a generalized parsing solution for the [TypeBox](https://github.com/sinclairzx81/typebox) project, where it is currently used to parse TypeScript syntax into runtime types. This project seeks to provide a robust foundation for parsing a variety of domain-specific languages, with information encoded in each language able to be reconciled with TypeScript's type system.
 
 License: MIT
 
@@ -70,25 +70,24 @@ License: MIT
   - [Union](#Union)
   - [Array](#Array)
   - [Optional](#Optional)
+  - [Epsilon](#Epsilon)
 - [Terminals](#Terminals)
   - [Number](#Number)
   - [String](#String)
   - [Ident](#Ident)
-- [Extended](#Extended)
 - [Mapping](#Mapping)
 - [Context](#Context)
 - [Modules](#Modules)
-- [Extended](#Extended)
 - [Advanced](#Advanced)
 - [Contribute](#Contribute)
 
 ## Combinators
 
-ParseBox provides a minimal set of combinators that map to structures expressible in BNF (Backus-Naur Form). These combinators serve as building blocks for constructing parsers.
+ParseBox offers combinators for runtime and static environments, with each combinator based on EBNF constructs. These combinators produce schema fragments that define parse operations, which ParseBox interprets during parsing. As schematics, the fragments can also be reflected as EBNF or remapped to other tools. The following section examines the Runtime combinators and their relation to EBNF.
 
 ### Const
 
-The Const combinator parses for the next occurrence of the specified string. Whitespace and newline characters are ignored during parsing, unless the specified string explicitly matches those characters.
+The Const combinator parses the next occurrence of a specified string, ignoring whitespace and newline characters unless explicitly specified as parameters.
 
 **BNF**
 
@@ -109,7 +108,7 @@ const R = Runtime.Parse(T, 'X Y Z')                 // const R = ['X', ' Y Z']
 
 ### Tuple
 
-The Tuple parser matches a sequence of interior parsers. An empty tuple can be used to represent Epsilon (the empty production).
+The Tuple parser matches a sequence of parsers, with an empty tuple representing Epsilon (the empty production).
 
 **BNF**
 
@@ -135,7 +134,7 @@ const R = Runtime.Parse(T, 'X Y Z W')               // const R = [['X', 'Y', 'Z'
 
 ### Union
 
-The Union combinator parses using one of the interior parsers, attempting each in sequence until one matches.
+The Union combinator tries each interior parser in sequence until one matches
 
 **BNF**
 
@@ -164,7 +163,7 @@ const R3 = Runtime.Parse(T, 'Z E')                  // const R3 = ['Z', ' E']
 
 ### Array
 
-The Array combinator will parse for zero or more the interior parser. This combinator will always return a result with an empty array given for no matches.
+The Array combinator parses zero or more occurrences of the interior parser, returning an empty array if there are no matches.
 
 **EBNF**
 
@@ -189,7 +188,7 @@ const R3 = Runtime.Parse(T, 'Y Z')                   // const R3 = [[], 'Y Z']
 
 ### Optional
 
-The Optional combinator will parse for zero or one of the interior parser. This combinator always succeeds, returning either a tuple with one element, or zero elements for no match.
+The Optional combinator parses zero or one occurrence of the interior parser, returning a tuple with one element or an empty tuple if there is no match.
 
 **EBNF**
 
@@ -210,13 +209,38 @@ const R1 = Runtime.Parse(T, 'X Y Z')                // const R1 = [['X'], ' Y Z'
 const R2 = Runtime.Parse(T, 'Y Z')                  // const R2 = [[], 'Y Z']
 ```
 
+### Epsilon
+
+ParseBox does not have a dedicated combinator for Epsilon; instead, it can be represented using an empty Tuple combinator. Epsilon is typically used as a fall-through case in sequence matching.
+
+**EBNF**
+
+```
+<T> ::= "X" "Y" | ε
+```
+
+**TypeScript**
+
+```typescript
+const T = Runtime.Union([
+
+  Runtime.Tuple([Runtime.Const('X'), Runtime.Const('Y')]),
+
+  Runtime.Tuple([])                                 // ε - fall-through case
+
+])
+const R1 = Runtime.Parse(T, 'X Y Z')                // const R1 = [['X', 'Y'], ' Z']
+
+const R2 = Runtime.Parse(T, 'Y Z')                  // const R2 = [[], 'Y Z']
+```
+
 ## Terminals
 
-ParseBox provides combinators that can be used to parse common terminals.
+ParseBox provides combinators for parsing common lexical tokens, such as numbers, identifiers, and strings, enabling static, optimized parsing of typical JavaScript constructs.
 
 ### Number
 
-The Number combinator will parse a numeric literal.  
+Parses numeric literals, including integers, decimals, and floating-point numbers. Invalid formats, like leading zeroes, are not matched.
 
 ```typescript
 const T = Runtime.Number()
@@ -234,7 +258,7 @@ const E = Runtime.Parse(T, '01')                    // const E = []
 
 ### String
 
-The String combinator will parse for quoted string literals. Thgit is combinator accepts an array of permissable quote characters. The result of this parser is the interior wrapped string.
+The String combinator parses quoted string literals, accepting an array of permissible quote characters. The result is the interior string.
 
 ```typescript
 const T = Runtime.String(['"'])
@@ -246,18 +270,20 @@ const R = Runtime.Parse(T, '"hello"')              // const R = ['hello', '']
 
 ### Ident
 
-The Ident combinator will parse for a valid JavaScript identifiers. The following parses a let statement.
+Parses valid JavaScript identifiers, typically used to extract variable or function names. The following example demonstrates parsing a `let` statement.
 
 ```bnf
-<T> ::= "let" <ident> "=" <number>
+<let> ::= "let" <ident> "=" <number>
 ```
 
 ```typescript
+const Expression = Runtime.Number()                 //  const Expression = { type: 'Number' }
+
 const Let = Runtime.Tuple([                         //  const Let = {
   Runtime.Const('let'),                             //    type: 'Tuple',
   Runtime.Ident(),                                  //    parsers: [
   Runtime.Const('='),                               //      { type: 'Const', value: 'let' },
-  Runtime.Number()                                  //      { type: 'Ident' },
+  Expression                                        //      { type: 'Ident' },
 ])                                                  //      { type: 'Const', value: '=' },
                                                     //      { type: 'Number' },
                                                     //    ]
@@ -270,11 +296,11 @@ const R = Runtime.Parse(Let, 'let n = 10')          // const R = [[ 'let', 'n', 
 
 ## Mapping
 
-ParseBox supports semantic actions (i.e., mapping) for both Static and Runtime parsing. These actions allow parsed content to be transformed into complex structures, such as abstract syntax trees (ASTs). Below is an explanation of how mapping works in both Runtime and Static environments.
+ParseBox supports semantic actions (i.e., mappings) for both static and runtime parsing, enabling parsed content to be transformed into complex structures like abstract syntax trees (ASTs). Below is an explanation of how mapping works in both environments.
 
 ### Runtime
 
-In Runtime parsing, combinators can accept an optional callback function as their last argument. This callback receives the parsed elements, which can then be mapped to arbitrary return values. The following example demonstrates how a let statement is parsed and how a mapping function is used to transform the result into a syntax node.
+Runtime combinators can accept an optional callback as their last argument, which receives the parsed elements and maps them to arbitrary return values. The following example shows how a let statement is parsed and mapped into a syntax node.
 
 ```typescript
 const LetMapping = (_0: 'let', _1: string, _2: '=', _3: string) => {
@@ -291,16 +317,16 @@ const Let = Runtime.Tuple([
   Runtime.Number()      // _3
 ], values => LetMapping(...values)) 
 
-const R = Runtime.Parse(Let, 'let value = 10')      // const R = [{
+const R = Runtime.Parse(Let, 'let n = 10')          // const R = [{
                                                     //   type: 'Let',
-                                                    //   ident: 'value',
+                                                    //   ident: 'n',
                                                     //   value: 10
                                                     // }, '' ]
 ```
 
 ### Static
 
-In Static combinators, an optional type of IMapping is provided as the last generic argument. Unlike Runtime callbacks, which receive parsed values directly as parameters, Static actions use the `this['input']` property to access input values, and they store the mapped results in the `output` property. The following example demonstrates how to implement the Let parser using Static actions.
+Static combinators accept an optional higher-kinded type, IMapping, as the last generic argument. Static mapping uses the `this['input']` property to read input values, assigning the mapping to the `output` property. The following example demonstrates implementing the Let parser using static actions.
 
 ```typescript
 type ParseFloat<Value extends string> = (
@@ -321,29 +347,31 @@ type Let = Static.Tuple<[
   Static.Number
 ], LetMapping>
 
-type R = Static.Parse<Let, 'let value = 10'>        // type R = [{
+type R = Static.Parse<Let, 'let n = 10'>            // type R = [{
                                                     //   type: 'Let',
-                                                    //   ident: 'value',
+                                                    //   ident: 'n',
                                                     //   value: 10
                                                     // }, '' ]
 ```
 
 ## Context
 
-ParseBox provides a context mechanism that allows parsed content to interact with the host environment. A context value can be passed as the last argument to the Parse function, and ParseBox will propagate the context to each mapping function, enabling more dynamic parsing behavior.
+ParseBox allows exterior values to be passed into and referenced within semantic actions. A context is passed as the last argument to the Static and Runtime parse types/functions, and is propagated into each action. The following demonstrates its usage.
 
 ### Runtime
 
-In Runtime parsing, the context is passed as the second argument to the mapping functions. This allows the parser to access external data or state during the parsing process.
+The Runtime Parse function accepts a context as the last argument, which is received as the second argument to the OptionMapping function.
 
 ```typescript
 import { Runtime } from '@sinclair/parsebox'
 
-// use matched input as indexer on context
-const OptionMapping = (input: 'A' | 'B' | 'C', context: Record<string, string>) => {
-  return input in context 
-    ? context[input] 
-    : void 0
+// Context Received as Second Argument
+const OptionMapping = (input: 'A' | 'B' | 'C', context: Record<ProeprtyKey, string>) => {
+  return (
+    input in context 
+      ? context[input] 
+      : undefined
+  )
 }
 const Option = Runtime.Union([
   Runtime.Const('A'),
@@ -360,16 +388,18 @@ const R = Runtime.Parse(Option, 'A', {              // const R = ['Matched Foo',
 
 ### Static
 
-In Static combinators, the context is accessible via the `this['context']` property within the mapping action type.
+The Static Parse type accepts a context as the last generic argument, which is received via the `this['context']` property on the OptionMapping type.
 
 ```typescript
 import { Static } from '@sinclair/parsebox'
 
-// use input as indexer on context
+// Context Received on Context Property
 interface OptionMapping extends Static.IMapping {
-  output: this['input'] extends keyof this['context']
-    ? this['context'][this['input']]
-    : never
+  output: (
+    this['input'] extends keyof this['context'] 
+      ? this['context'][this['input']] 
+      : undefined
+  )
 }
 type Option = Static.Union<[
   Static.Const<'A'>,
@@ -386,48 +416,51 @@ type R = Static.Parse<Option, 'A', {                // type R = ['Matched Foo', 
 
 ## Modules
 
-ParseBox modules serve as containers for parsers, enabling recursive and mutually recursive parsing. When designing parsers, one common challenge is the order in which parsers are defined—particularly when parsers need to reference each other but haven’t been defined yet. This creates topological ordering issues. Modules resolve this problem by allowing parsers to reference each other within a contained scope, enabling mutual recursion or recursion within a single parser, even when the parsers are defined in an arbitrary order.
+ParseBox modules act as containers for Runtime parsers, enabling recursion and mutual recursion by allowing parsers to reference each other via string keys. They are only for Runtime parsers, as Static parsers don’t have ordering issues due to TypeScript’s non-order-dependent types.
 
-Modules are only applicable for Runtime parsers only as Static parsers do not encounter topological ordering issues, this is because TypeScript types are non order dependent.
+### List Parsing
 
-### Recursive List Parsing
-
-In the following example, we define a List parser that can recursively parse sequences of Value elements. The List parser is defined as either a tuple of a Value followed by another List (recursive) or an empty tuple (base case, representing an empty list). The Value parser is a simple union of strings, and the recursive nature of List is achieved by referencing the Value and List parsers within the same module.
+In this example, we define a List parser that recursively parses sequences of Item elements. The List parser is either a tuple of a Value followed by another List (recursive) or an empty tuple (base case). Recursion is achieved by referencing both Item and List parsers within the same module.
 
 ```typescript
 import { Runtime } from '@sinclair/parsebox'
 
-const Module = new Runtime.Module({
-  Value: Runtime.Union([
-    Runtime.Const('X'),
-    Runtime.Const('Y'),
-    Runtime.Const('Z'),
-  ]),
+// Item ::= "X" "Y" "Z"
 
-  // List: Will match Value then try to match another via a recursive ref to
-  // List. This will repeat until no Value can be matched. When no Value can
-  // be matched, the fall through [] (or Epsilon) will match. 
-  List: Runtime.Union([
-    Runtime.Tuple([Runtime.Ref('Value'), Runtime.Ref('List')]),
-    Runtime.Tuple([])
-  ], values => values.flat())
+const Item = Runtime.Union([
+  Runtime.Const('X'),
+  Runtime.Const('Y'),
+  Runtime.Const('Z'),
+])
+
+// List ::= Item List | ε
+
+const List = Runtime.Union([
+  Runtime.Tuple([Runtime.Ref('Item'), Runtime.Ref('List')]), // Recursive Self
+  Runtime.Tuple([])                                          // Epsilon
+], values => values.flat())
+
+// Embed inside Module
+
+const Module = new Runtime.Module({ 
+  Item, 
+  List 
 })
+
+// Use Module.Parse 
 
 const R = Module.Parse('List', 'X Y Z Y X E')       // const R = [['X', 'Y', 'Z', 'Y', 'X'], ' E']
 ```
 
 ## Advanced
 
-ParseBox is an LL(1) parser. When building parsers for complex grammars, care must be taken to avoid infinite left recursion, which can occur if a recursive grammar refers back to itself in a way that causes the parser to enter an infinite loop. This is particularly common in expression parsers. 
-
-### Expression Parsing
-
-The following shows a reference expression parser using LL(1) techniques to avoid left recursion. The following parser respects operator precedence and grouping.
+The following example demonstrates using ParseBox to parse a mathematical expression with LL(1) parsing techniques, avoiding left recursion and respecting operator precedence rules.
 
 ```typescript
 import { Static } from '@sinclair/parsebox'
 
-// BinaryMapping: Reduces matched Term and Expr into binary expression node
+// Static Mapping Actions to remap Productions
+
 type BinaryReduce<Left extends unknown, Right extends unknown[]> = (
   Right extends [infer Operator, infer Right, infer Rest extends unknown[]]
     ? { left: Left, operator: Operator, right: BinaryReduce<Right, Rest> }
@@ -438,7 +471,6 @@ interface BinaryMapping extends Static.IMapping {
     ? BinaryReduce<Left, Right>
     : never
 }
-// FactorMapping: Map either grouped Expr or Operand
 interface FactorMapping extends Static.IMapping {
   output: ( 
     this['input'] extends ['(', infer Expr, ')'] ? Expr :
@@ -447,7 +479,7 @@ interface FactorMapping extends Static.IMapping {
   )
 }
 
-// ...
+// Expression Grammar
 
 type Operand = Static.Ident
 
@@ -472,9 +504,9 @@ type Term = Static.Tuple<[Factor, TermTail], BinaryMapping>
 
 type Expr = Static.Tuple<[Term, ExprTail], BinaryMapping>
 
-// ...
+// Parse!
 
-type R = Static.Parse<Expr, 'x * (y + z)'>          // type R = [{
+type Result = Static.Parse<Expr, 'x * (y + z)'>     // type R = [{
                                                     //   left: "x";
                                                     //   operator: "*";
                                                     //   right: {
