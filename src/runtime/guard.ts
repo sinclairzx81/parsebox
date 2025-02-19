@@ -88,5 +88,17 @@ export function IsUnion(value: unknown): value is IUnion {
 }
 /** Returns true if the value is a Parser */
 export function IsParser(value: unknown) {
-  return IsArray(value) || IsConst(value) || IsIdent(value) || IsNumber(value) || IsOptional(value) || IsRef(value) || IsString(value) || IsTuple(value) || IsUnion(value)
+  // prettier-ignore
+  return (
+    IsArray(value) || 
+    IsConst(value) || 
+    IsContext(value) || 
+    IsIdent(value) || 
+    IsNumber(value) || 
+    IsOptional(value) || 
+    IsRef(value) || 
+    IsString(value) || 
+    IsTuple(value) || 
+    IsUnion(value)
+  )
 }
