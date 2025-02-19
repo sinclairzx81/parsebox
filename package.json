@@ -1,12 +1,11 @@
 {
   "name": "@sinclair/parsebox",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "description": "Parser Combinators in the TypeScript Type System",
   "keywords": [
     "typescript",
-    "parsers",
-    "combinators",
-    "type-system"
+    "parser",
+    "combinator"
   ],
   "author": "sinclairzx81",
   "license": "MIT",
@@ -30,7 +29,7 @@
     "@sinclair/typebox": "^0.34.7",
     "@types/mocha": "^10.0.9",
     "@types/node": "^22.7.4",
-    "mocha": "^10.8.2",
+    "mocha": "^11.1.0",
     "prettier": "^3.3.3",
     "typescript": "^4.9.5"
   }
