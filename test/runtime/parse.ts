@@ -6,7 +6,9 @@ function Assert(left: unknown, right: unknown) {
 }
 // prettier-ignore
 describe('Parse', () => {
-  
+  // ----------------------------------------------------------------
+  // Array
+  // ----------------------------------------------------------------
   it('Array', () => {
     Assert(Runtime.Parse(Runtime.Array(Runtime.Const('A')), ''), [[], ''])
     Assert(Runtime.Parse(Runtime.Array(Runtime.Const('A')), 'AB'), [['A'], 'B'])
@@ -15,14 +17,18 @@ describe('Parse', () => {
     Assert(Runtime.Parse(Runtime.Array(Runtime.Const('AA')), 'AAAB'), [['AA'], 'AB'])
     Assert(Runtime.Parse(Runtime.Array(Runtime.Const('AA')), 'B'), [[], 'B'])
   })
-
+  // ----------------------------------------------------------------
+  // Const
+  // ----------------------------------------------------------------
   it('Const', () => {
     Assert(Runtime.Parse(Runtime.Const('A'), ''), [])
     Assert(Runtime.Parse(Runtime.Const('A'), 'A'), ['A', ''])
     Assert(Runtime.Parse(Runtime.Const('A'), '  A'), ['A', ''])
     Assert(Runtime.Parse(Runtime.Const('A'), '  A '), ['A', ' '])
   })
-
+  // ----------------------------------------------------------------
+  // Ident
+  // ----------------------------------------------------------------
   it('Ident', () => {
     Assert(Runtime.Parse(Runtime.Ident(), ''), [])
     Assert(Runtime.Parse(Runtime.Ident(), '0'), [])
@@ -44,7 +50,9 @@ describe('Parse', () => {
     Assert(Runtime.Parse(Runtime.Ident(), 'A1 '), ['A1', ' '])
     Assert(Runtime.Parse(Runtime.Ident(), ' A1 '), ['A1', ' '])
   })
-
+  // ----------------------------------------------------------------
+  // Number
+  // ----------------------------------------------------------------
   it('Number', () => {
     Assert(Runtime.Parse(Runtime.Number(), ''), [])
     Assert(Runtime.Parse(Runtime.Number(), '01'), [])
@@ -92,14 +100,18 @@ describe('Parse', () => {
     Assert(Runtime.Parse(Runtime.Number(), ' -0.1'), ['-0.1', ''])
     Assert(Runtime.Parse(Runtime.Number(), ' -0.1 '), ['-0.1', ' '])
   })
-
+  // ----------------------------------------------------------------
+  // Optional
+  // ----------------------------------------------------------------
   it('Optional', () => {
     Assert(Runtime.Parse(Runtime.Optional(Runtime.Const('A')), ''), [[], ''])
     Assert(Runtime.Parse(Runtime.Optional(Runtime.Const('A')), 'A'), [['A'], ''])
     Assert(Runtime.Parse(Runtime.Optional(Runtime.Const('A')), 'AA'), [['A'], 'A'])
     Assert(Runtime.Parse(Runtime.Optional(Runtime.Const('A')), 'B'), [[], 'B'])
   })
-
+  // ----------------------------------------------------------------
+  // String
+  // ----------------------------------------------------------------
   it('String', () => {
     Assert(Runtime.Parse(Runtime.String(['"']), ''), [])
     Assert(Runtime.Parse(Runtime.String(['"']), '"A"'), ['A', ''])
@@ -116,7 +128,9 @@ describe('Parse', () => {
     Assert(Runtime.Parse(Runtime.String(['*', '"']), '"A" '), ['A', ' '])
     Assert(Runtime.Parse(Runtime.String(['*', '"']), ' "A" '), ['A', ' '])
   })
-
+  // ----------------------------------------------------------------
+  // Tuple
+  // ----------------------------------------------------------------
   it('Tuple', () => {
     const Tuple = Runtime.Tuple([Runtime.Const('A'), Runtime.Const('B'), Runtime.Const('C')])
     Assert(Runtime.Parse(Tuple, ''), [])
@@ -127,7 +141,9 @@ describe('Parse', () => {
     Assert(Runtime.Parse(Tuple, '  ABC'), [['A', 'B', 'C'], ''])
     Assert(Runtime.Parse(Tuple, '  ABC '), [['A', 'B', 'C'], ' '])
   })
-
+  // ----------------------------------------------------------------
+  // Union
+  // ----------------------------------------------------------------
   it('Union', () => {
     const Union = Runtime.Union([Runtime.Const('A'), Runtime.Const('B'), Runtime.Const('C')])
     Assert(Runtime.Parse(Union, ''), [])
@@ -142,14 +158,18 @@ describe('Parse', () => {
     Assert(Runtime.Parse(Union, '  BBC'), ['B', 'BC'])
     Assert(Runtime.Parse(Union, '  BBC '), ['B', 'BC '])
   })
-
+  // ----------------------------------------------------------------
+  // Mapping
+  // ----------------------------------------------------------------
   it('Mapping', () => {
     const Mapping = (_0: 'A', _1: 'B', _2: 'C') => [_2, _1, _0] as const
     const Mapped = Runtime.Tuple([Runtime.Const('A'), Runtime.Const('B'), Runtime.Const('C')], values => Mapping(...values))
     Assert(Runtime.Parse(Mapped, '  A B C '), [['C', 'B', 'A'], ' '])
   })
-  
-  it('Context', () => {
+  // ----------------------------------------------------------------
+  // Context
+  // ----------------------------------------------------------------
+  it('Context: Global', () => {
     const ContextMapping = (input: 'A' | 'B' | 'C', context: Record<string, string>) => {
       return input in context 
         ? context[input] 
@@ -166,5 +186,47 @@ describe('Parse', () => {
       B: 'Matched Bar',
       C: 'Matched Baz',
     }), ['Matched Baz', ''])
+  })
+  it('Context: Right Receive Left Context', () => {
+    const A = Runtime.Const('A')
+    const B = Runtime.Const('B', (value, context) => [context, value])
+    const C = Runtime.Context(A, B)
+    const R = Runtime.Parse(C, 'A B  E')
+    Assert(R, [['A', 'B'], '  E'])
+  })
+  it('Context: Left Appends Global Context', () => {
+    const A = Runtime.Const('A', (value, context) => [...context, value]) // Push ['X'] -> ['X', 'A']
+    const B = Runtime.Const('B', (value, context) => [context, value])
+    const C = Runtime.Context(A, B)
+    const R = Runtime.Parse(C, 'A B  E', ['X']) // ['X'] is Global
+    Assert(R, [ [ [ 'X', 'A' ], 'B' ], '  E' ])
+  })
+  it('Context: Context Is Mappable', () => {
+    const A = Runtime.Const('A')
+    const B = Runtime.Const('B', (value, context) => [context, value])
+    const C = Runtime.Context(A, B, (value) => [value[1], value[0]])
+    const R = Runtime.Parse(C, 'A B  E')
+    Assert(R, [['B', 'A'], '  E'])
+  })
+  it('Context: Left Fail', () => {
+    const A = Runtime.Const('A')
+    const B = Runtime.Const('B')
+    const C = Runtime.Context(A, B)
+    const R = Runtime.Parse(C, 'X B')
+    Assert(R, [])
+  })
+  it('Context: Right Fail', () => {
+    const A = Runtime.Const('A')
+    const B = Runtime.Const('B')
+    const C = Runtime.Context(A, B)
+    const R = Runtime.Parse(C, 'A X')
+    Assert(R, [])
+  })
+  it('Context: Rest', () => {
+    const A = Runtime.Const('A')
+    const B = Runtime.Const('B')
+    const C = Runtime.Context(A, B)
+    const R = Runtime.Parse(C, 'A B C D')
+    Assert(R, ['B', ' C D'])
   })
 })

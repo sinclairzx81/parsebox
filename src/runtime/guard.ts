@@ -26,7 +26,7 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { IArray, IConst, IIdent, INumber, IOptional, IRef, IString, ITuple, IUnion } from './types'
+import { IArray, IConst, IContext, IIdent, INumber, IOptional, IRef, IString, ITuple, IUnion } from './types'
 
 // ------------------------------------------------------------------
 // Value Guard
@@ -53,6 +53,10 @@ export function IsArray(value: unknown): value is IArray {
 /** Returns true if the value is a Const Parser */
 export function IsConst(value: unknown): value is IConst {
   return IsObjectValue(value) && HasPropertyKey(value, 'type') && value.type === 'Const' && HasPropertyKey(value, 'value') && typeof value.value === 'string'
+}
+/** Returns true if the value is a Context Parser */
+export function IsContext(value: unknown): value is IContext {
+  return IsObjectValue(value) && HasPropertyKey(value, 'type') && value.type === 'Context' && HasPropertyKey(value, 'left') && IsParser(value.left) && HasPropertyKey(value, 'right') && IsParser(value.right)
 }
 /** Returns true if the value is a Ident Parser */
 export function IsIdent(value: unknown): value is IIdent {

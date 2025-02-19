@@ -165,21 +165,87 @@ Assert<Static.Parse<Mapped, '  A B C '>, [['C', 'B', 'A'], ' ']>()
 // ------------------------------------------------------------------
 // Context
 // ------------------------------------------------------------------
-interface ContextMapping extends Static.IMapping {
-  output: this['input'] extends keyof this['context'] ? this['context'][this['input']] : never
-}
-// prettier-ignore
-type Context = Static.Union<[Static.Const<'A'>, Static.Const<'B'>, Static.Const<'C'>], ContextMapping>
+// 'Context: Global'
+{
+  interface ContextMapping extends Static.IMapping {
+    output: this['input'] extends keyof this['context'] ? this['context'][this['input']] : never
+  }
+  // prettier-ignore
+  type Context = Static.Union<[Static.Const<'A'>, Static.Const<'B'>, Static.Const<'C'>], ContextMapping>
 
-Assert<
-  Static.Parse<
-    Context,
-    'C',
-    {
-      A: 'Matched Foo'
-      B: 'Matched Bar'
-      C: 'Matched Baz'
-    }
-  >,
-  ['Matched Baz', '']
->()
+  Assert<
+    Static.Parse<
+      Context,
+      'C',
+      {
+        A: 'Matched Foo'
+        B: 'Matched Bar'
+        C: 'Matched Baz'
+      }
+    >,
+    ['Matched Baz', '']
+  >()
+}
+// 'Context: Right Receive Left Context'
+{
+  interface B_Mapping extends Static.IMapping {
+    output: [this['context'], this['input']] extends [infer Context, infer Value] ? [Context, Value] : never
+  }
+  type A = Static.Const<'A'>
+  type B = Static.Const<'B', B_Mapping>
+  type C = Static.Context<A, B>
+  type R = Static.Parse<C, 'A B  E'>
+  Assert<R, [['A', 'B'], '  E']>
+}
+// 'Context: Left Appends Global Context'
+{
+  interface A_Mapping extends Static.IMapping {
+    output: [this['context'], this['input']] extends [infer Context extends unknown[], infer Value] ? [...Context, Value] : never
+  }
+  interface B_Mapping extends Static.IMapping {
+    output: [this['context'], this['input']] extends [infer Context, infer Value] ? [Context, Value] : never
+  }
+  type A = Static.Const<'A', A_Mapping>
+  type B = Static.Const<'B', B_Mapping>
+  type C = Static.Context<A, B>
+  type R = Static.Parse<C, 'A B  E', ['X']>
+  Assert<R, [[['X', 'A'], 'B'], '  E']>
+}
+// 'Context: Context Is Mappable'
+{
+  interface B_Mapping extends Static.IMapping {
+    output: [this['context'], this['input']] extends [infer Context, infer Value] ? [Context, Value] : never
+  }
+  interface C_Mapping extends Static.IMapping {
+    output: this['input'] extends [infer Left, infer Right] ? [Right, Left] : never
+  }
+  type A = Static.Const<'A'>
+  type B = Static.Const<'B', B_Mapping>
+  type C = Static.Context<A, B, C_Mapping>
+  type R = Static.Parse<C, 'A B  E'>
+  Assert<R, [['B', 'A'], '  E']>
+}
+// 'Context: Left Fail'
+{
+  type A = Static.Const<'A'>
+  type B = Static.Const<'B'>
+  type C = Static.Context<A, B>
+  type R = Static.Parse<C, 'X B'>
+  Assert<R, []>
+}
+// 'Context: Right Fail'
+{
+  type A = Static.Const<'A'>
+  type B = Static.Const<'B'>
+  type C = Static.Context<A, B>
+  type R = Static.Parse<C, 'A X'>
+  Assert<R, []>
+}
+// 'Context: Rest'
+{
+  type A = Static.Const<'A'>
+  type B = Static.Const<'B'>
+  type C = Static.Context<A, B>
+  type R = Static.Parse<C, 'A B C D'>
+  Assert<R, ['B', ' C D']>
+}

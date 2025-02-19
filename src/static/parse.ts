@@ -30,6 +30,16 @@ import * as Tokens from './token'
 import * as Types from './types'
 
 // ------------------------------------------------------------------
+// Context
+// ------------------------------------------------------------------
+// prettier-ignore
+type ContextParser<Left extends Types.IParser, Right extends Types.IParser, Code extends string, Context extends unknown> = (
+  Parse<Left, Code, Context> extends [infer Context extends unknown, infer Rest extends string]
+    ? Parse<Right, Rest, Context>
+    : []
+)
+
+// ------------------------------------------------------------------
 // Array
 // ------------------------------------------------------------------
 // prettier-ignore
@@ -118,6 +128,7 @@ type UnionParser<Parsers extends Types.IParser[], Code extends string, Context e
 // ------------------------------------------------------------------
 // prettier-ignore
 type ParseCode<Type extends Types.IParser, Code extends string, Context extends unknown = unknown> = (
+  Type extends Types.Context<infer Left extends Types.IParser, infer Right extends Types.IParser> ? ContextParser<Left, Right, Code, Context> :
   Type extends Types.Array<infer Parser extends Types.IParser> ? ArrayParser<Parser, Code, Context> :
   Type extends Types.Const<infer Value extends string> ? ConstParser<Value, Code, Context> :
   Type extends Types.Ident ? IdentParser<Code, Context> :
