@@ -31,6 +31,14 @@ import * as Token from './token'
 import * as Types from './types'
 
 // ------------------------------------------------------------------
+// Context
+// ------------------------------------------------------------------
+function ParseContext<ModuleProperties extends Types.IModuleProperties, Parser extends Types.IParser>(moduleProperties: ModuleProperties, left: Parser, right: Parser, code: string, context: unknown): unknown[] {
+  const result = ParseParser(moduleProperties, left, code, context)
+  return result.length === 2 ? ParseParser(moduleProperties, right, result[1], result[0]) : []
+}
+
+// ------------------------------------------------------------------
 // Array
 // ------------------------------------------------------------------
 function ParseArray<ModuleProperties extends Types.IModuleProperties, Parser extends Types.IParser>(moduleProperties: ModuleProperties, parser: Parser, code: string, context: unknown): unknown[] {
@@ -125,7 +133,8 @@ function ParseUnion<ModuleProperties extends Types.IModuleProperties, Parsers ex
 // ------------------------------------------------------------------
 // prettier-ignore
 function ParseParser<Parser extends Types.IParser>(moduleProperties: Types.IModuleProperties, parser: Parser, code: string, context: unknown): [] | [Types.StaticParser<Parser>, string] {
-  const production = (
+  const result = (
+    Guard.IsContext(parser) ? ParseContext(moduleProperties, parser.left, parser.right, code, context) :
     Guard.IsArray(parser) ? ParseArray(moduleProperties, parser.parser, code, context) :
     Guard.IsConst(parser) ? ParseConst(parser.value, code, context) :
     Guard.IsIdent(parser) ? ParseIdent(code, context) :
@@ -138,9 +147,9 @@ function ParseParser<Parser extends Types.IParser>(moduleProperties: Types.IModu
     []
   )
   return (
-    production.length === 2
-    ? [parser.mapping(production[0], context), production[1]]
-    : production
+    result.length === 2
+    ? [parser.mapping(result[0], context), result[1]]
+    : result
   ) as never
 }
 

@@ -57,7 +57,27 @@ export interface IParser<Output extends unknown = unknown> {
   type: string
   mapping: IMapping<any, Output>
 }
-
+// ------------------------------------------------------------------
+// Context
+// ------------------------------------------------------------------
+// prettier-ignore
+export type ContextParameter<_Left extends IParser, Right extends IParser> = (
+  StaticParser<Right>
+)
+export interface IContext<Output extends unknown = unknown> extends IParser<Output> {
+  type: 'Context'
+  left: IParser
+  right: IParser
+}
+/** `[Advanced]` Creates a Context parser */
+export function Context<Left extends IParser, Right extends IParser, Mapping extends IMapping = IMapping<ContextParameter<Left, Right>>>(left: Left, right: Right, mapping: Mapping): IContext<ReturnType<Mapping>>
+/** `[Advanced]` Creates a Context parser */
+export function Context<Left extends IParser, Right extends IParser>(left: Left, right: Right): IContext<ContextParameter<Left, Right>>
+/** `[Advanced]` Creates a Context parser */
+export function Context(...args: unknown[]): never {
+  const [left, right, mapping] = args.length === 3 ? [args[0], args[1], args[2]] : [args[0], args[1], Identity]
+  return { type: 'Context', left, right, mapping } as never
+}
 // ------------------------------------------------------------------
 // Array
 // ------------------------------------------------------------------

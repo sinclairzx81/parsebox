@@ -18,6 +18,12 @@ describe('Guard', () => {
     Assert(Runtime.Guard.IsConst(Runtime.Const(undefined)), false)
   })
 
+  it('IsContext', () => {
+    Assert(Runtime.Guard.IsContext(Runtime.Context(Runtime.Const('A'), Runtime.Const('B'))), true)
+    // @ts-ignore  
+    Assert(Runtime.Guard.IsContext(Runtime.Const(undefined)), false)
+  })
+
   it('IsIdent', () => {
     Assert(Runtime.Guard.IsIdent(Runtime.Const('A')), false)
     Assert(Runtime.Guard.IsIdent(Runtime.Ident()), true)
