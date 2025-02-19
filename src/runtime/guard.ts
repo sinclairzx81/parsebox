@@ -54,7 +54,7 @@ export function IsArray(value: unknown): value is IArray {
 export function IsConst(value: unknown): value is IConst {
   return IsObjectValue(value) && HasPropertyKey(value, 'type') && value.type === 'Const' && HasPropertyKey(value, 'value') && typeof value.value === 'string'
 }
-/** Returns true if the value is a Const Parser */
+/** Returns true if the value is a Context Parser */
 export function IsContext(value: unknown): value is IContext {
   return IsObjectValue(value) && HasPropertyKey(value, 'type') && value.type === 'Context' && HasPropertyKey(value, 'left') && IsParser(value.left) && HasPropertyKey(value, 'right') && IsParser(value.right)
 }

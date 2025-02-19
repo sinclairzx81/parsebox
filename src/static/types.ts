@@ -61,6 +61,16 @@ export interface IParser<Mapping extends IMapping = Identity> {
 }
 
 // ------------------------------------------------------------------
+// Context
+// ------------------------------------------------------------------
+/** `[Context]` Creates a Context Parser */
+export interface Context<Left extends IParser = IParser, Right extends IParser = IParser, Mapping extends IMapping = Identity> extends IParser<Mapping> {
+  type: 'Context'
+  left: Left
+  right: Right
+}
+
+// ------------------------------------------------------------------
 // Array
 // ------------------------------------------------------------------
 /** `[EBNF]` Creates an Array Parser */
@@ -130,13 +140,4 @@ export interface Tuple<Parsers extends IParser[] = [], Mapping extends IMapping 
 export interface Union<Parsers extends IParser[] = [], Mapping extends IMapping = Identity> extends IParser<Mapping> {
   type: 'Union'
   parsers: [...Parsers]
-}
-// ------------------------------------------------------------------
-// Context
-// ------------------------------------------------------------------
-/** `[Advanced]` Creates a Context Parser */
-export interface Context<Left extends IParser = IParser, Right extends IParser = IParser, Mapping extends IMapping = Identity> extends IParser<Mapping> {
-  type: 'Context'
-  left: Left
-  right: Right
 }

@@ -69,11 +69,11 @@ export interface IContext<Output extends unknown = unknown> extends IParser<Outp
   left: IParser
   right: IParser
 }
-/** `[Advanced]` Creates a Context parser */
+/** `[Context]` Creates a Context Parser */
 export function Context<Left extends IParser, Right extends IParser, Mapping extends IMapping = IMapping<ContextParameter<Left, Right>>>(left: Left, right: Right, mapping: Mapping): IContext<ReturnType<Mapping>>
-/** `[Advanced]` Creates a Context parser */
+/** `[Context]` Creates a Context Parser */
 export function Context<Left extends IParser, Right extends IParser>(left: Left, right: Right): IContext<ContextParameter<Left, Right>>
-/** `[Advanced]` Creates a Context parser */
+/** `[Context]` Creates a Context Parser */
 export function Context(...args: unknown[]): never {
   const [left, right, mapping] = args.length === 3 ? [args[0], args[1], args[2]] : [args[0], args[1], Identity]
   return { type: 'Context', left, right, mapping } as never
@@ -89,11 +89,11 @@ export interface IArray<Output extends unknown = unknown> extends IParser<Output
   type: 'Array'
   parser: IParser
 }
-/** `[EBNF]` Creates an Array parser */
+/** `[EBNF]` Creates an Array Parser */
 export function Array<Parser extends IParser, Mapping extends IMapping = IMapping<ArrayParameter<Parser>>>(parser: Parser, mapping: Mapping): IArray<ReturnType<Mapping>>
-/** `[EBNF]` Creates an Array parser */
+/** `[EBNF]` Creates an Array Parser */
 export function Array<Parser extends IParser>(parser: Parser): IArray<ArrayParameter<Parser>>
-/** `[EBNF]` Creates an Array parser */
+/** `[EBNF]` Creates an Array Parser */
 export function Array(...args: unknown[]): never {
   const [parser, mapping] = args.length === 2 ? [args[0], args[1]] : [args[0], Identity]
   return { type: 'Array', parser, mapping } as never
@@ -106,11 +106,11 @@ export interface IConst<Output extends unknown = unknown> extends IParser<Output
   type: 'Const'
   value: string
 }
-/** `[TERM]` Creates a Const parser */
+/** `[TERM]` Creates a Const Parser */
 export function Const<Value extends string, Mapping extends IMapping<Value>>(value: Value, mapping: Mapping): IConst<ReturnType<Mapping>>
-/** `[TERM]` Creates a Const parser */
+/** `[TERM]` Creates a Const Parser */
 export function Const<Value extends string>(value: Value): IConst<Value>
-/** `[TERM]` Creates a Const parser */
+/** `[TERM]` Creates a Const Parser */
 export function Const(...args: unknown[]): never {
   const [value, mapping] = args.length === 2 ? [args[0], args[1]] : [args[0], Identity]
   return { type: 'Const', value, mapping } as never
@@ -123,11 +123,11 @@ export interface IRef<Output extends unknown = unknown> extends IParser<Output> 
   type: 'Ref'
   ref: string
 }
-/** `[BNF]` Creates a Ref parser. This Parser can only be used in the context of a Module */
+/** `[BNF]` Creates a Ref Parser. This Parser can only be used in the context of a Module */
 export function Ref<Type extends unknown, Mapping extends IMapping<Type>>(ref: string, mapping: Mapping): IRef<ReturnType<Mapping>>
-/** `[BNF]` Creates a Ref parser. This Parser can only be used in the context of a Module */
+/** `[BNF]` Creates a Ref Parser. This Parser can only be used in the context of a Module */
 export function Ref<Type extends unknown>(ref: string): IRef<Type>
-/** `[BNF]` Creates a Ref parser. This Parser can only be used in the context of a Module */
+/** `[BNF]` Creates a Ref Parser. This Parser can only be used in the context of a Module */
 export function Ref(...args: unknown[]): never {
   const [ref, mapping] = args.length === 2 ? [args[0], args[1]] : [args[0], Identity]
   return { type: 'Ref', ref, mapping } as never
@@ -156,11 +156,11 @@ export function String(...params: unknown[]): never {
 export interface IIdent<Output extends unknown = unknown> extends IParser<Output> {
   type: 'Ident'
 }
-/** `[TERM]` Creates an Ident parser where Ident matches any valid JavaScript identifier */
+/** `[TERM]` Creates an Ident Parser where Ident matches any valid JavaScript identifier */
 export function Ident<Mapping extends IMapping<string>>(mapping: Mapping): IIdent<ReturnType<Mapping>>
-/** `[TERM]` Creates an Ident parser where Ident matches any valid JavaScript identifier */
+/** `[TERM]` Creates an Ident Parser where Ident matches any valid JavaScript identifier */
 export function Ident(): IIdent<string>
-/** `[TERM]` Creates an Ident parser where Ident matches any valid JavaScript identifier */
+/** `[TERM]` Creates an Ident Parser where Ident matches any valid JavaScript identifier */
 export function Ident(...params: unknown[]): never {
   const mapping = params.length === 1 ? params[0] : Identity
   return { type: 'Ident', mapping } as never
@@ -172,11 +172,11 @@ export function Ident(...params: unknown[]): never {
 export interface INumber<Output extends unknown = unknown> extends IParser<Output> {
   type: 'Number'
 }
-/** `[TERM]` Creates an Number parser */
+/** `[TERM]` Creates an Number Parser */
 export function Number<Mapping extends IMapping<string>>(mapping: Mapping): INumber<ReturnType<Mapping>>
-/** `[TERM]` Creates an Number parser */
+/** `[TERM]` Creates an Number Parser */
 export function Number(): INumber<string>
-/** `[TERM]` Creates an Number parser */
+/** `[TERM]` Creates an Number Parser */
 export function Number(...params: unknown[]): never {
   const mapping = params.length === 1 ? params[0] : Identity
   return { type: 'Number', mapping } as never
@@ -193,11 +193,11 @@ export interface IOptional<Output extends unknown = unknown> extends IParser<Out
   type: 'Optional'
   parser: IParser
 }
-/** `[EBNF]` Creates an Optional parser */
+/** `[EBNF]` Creates an Optional Parser */
 export function Optional<Parser extends IParser, Mapping extends IMapping = IMapping<OptionalParameter<Parser>>>(parser: Parser, mapping: Mapping): IOptional<ReturnType<Mapping>>
-/** `[EBNF]` Creates an Optional parser */
+/** `[EBNF]` Creates an Optional Parser */
 export function Optional<Parser extends IParser>(parser: Parser): IOptional<OptionalParameter<Parser>>
-/** `[EBNF]` Creates an Optional parser */
+/** `[EBNF]` Creates an Optional Parser */
 export function Optional(...args: unknown[]): never {
   const [parser, mapping] = args.length === 2 ? [args[0], args[1]] : [args[0], Identity]
   return { type: 'Optional', parser, mapping } as never
@@ -216,11 +216,11 @@ export interface ITuple<Output extends unknown = unknown> extends IParser<Output
   type: 'Tuple'
   parsers: IParser[]
 }
-/** `[BNF]` Creates a Tuple parser */
+/** `[BNF]` Creates a Tuple Parser */
 export function Tuple<Parsers extends IParser[], Mapping extends IMapping = IMapping<TupleParameter<Parsers>>>(parsers: [...Parsers], mapping: Mapping): ITuple<ReturnType<Mapping>>
-/** `[BNF]` Creates a Tuple parser */
+/** `[BNF]` Creates a Tuple Parser */
 export function Tuple<Parsers extends IParser[]>(parsers: [...Parsers]): ITuple<TupleParameter<Parsers>>
-/** `[BNF]` Creates a Tuple parser */
+/** `[BNF]` Creates a Tuple Parser */
 export function Tuple(...args: unknown[]): never {
   const [parsers, mapping] = args.length === 2 ? [args[0], args[1]] : [args[0], Identity]
   return { type: 'Tuple', parsers, mapping } as never
