@@ -414,29 +414,6 @@ type R = Static.Parse<Option, 'A', {                // type R = ['Matched Foo', 
 }>
 ```
 
-### Computed
-
-ParseBox supports dynamic context parsing with the Context combinator. This combinator is similar to a Tuple-2, but where the First parser is used to produce a Context for the Second parser. The following shows high level usage.
-
-```typescript
-// Parse Constant
-const A = Runtime.Const('A')
-
-// Parse Constant + Context into Result
-const B = Runtime.Const('B', (value, context) => ({ value, context }))
-//                              |       |
-//                             'B'     '?'
-
-
-// Send A Parse Result to B Context
-const C = Runtime.Context(A, B)
-
-const R = Runtime.Parse(C, 'A B')                 // const R = [{ 
-                                                  //   value: 'B', 
-                                                  //   context: 'A' 
-                                                  // }, '' ]
-```
-
 ## Modules
 
 ParseBox modules act as containers for Runtime parsers, enabling recursion and mutual recursion by allowing parsers to reference each other via string keys. They are only for Runtime parsers, as Static parsers don’t have ordering issues due to TypeScript’s non-order-dependent types.
