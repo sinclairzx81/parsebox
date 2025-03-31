@@ -27,10 +27,10 @@ THE SOFTWARE.
 ---------------------------------------------------------------------------*/
 
 import { Static } from '@sinclair/parsebox'
-import { Module } from './runtime'
+import { JsonModule } from './runtime'
 import { Json } from './static'
 
 /** Parses a Json string */
 export function ParseJson<S extends string>(value: S): Static.Parse<Json, S>[0] {
-  return Module.Parse('Json', value)[0]
+  return JsonModule.Parse('Json', value)[0]
 }

@@ -26,4 +26,8 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * as Runtime from './runtime'
+export * as Token from './token'
+export * from './guard'
+export * from './types'
+export * from './module'
+export * from './parse'

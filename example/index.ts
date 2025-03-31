@@ -1,13 +1,18 @@
-import { Static } from '@sinclair/parsebox'
-import { Parse } from './typebox'
+import { Static, Runtime, Compile } from '@sinclair/parsebox'
+import { Syntax } from './typebox/compiled'
 import { ParseJson } from './json'
 import { ParseEbnf } from './ebnf'
 
 // ------------------------------------------------------------------
-// Example: TypeBox
+//
+// Example: TypeBox | Compiled
+//
+// ParseBox is the working project for developing the TypeBox syntax
+// parsers. You can test TypeBox inference here. Check the TypeBox
+// directory for Compiled and Interpreted variants.
+//
 // ------------------------------------------------------------------
-
-const Type = Parse(`{
+const Type = Syntax(`{
   x: number,
   y: number,
   z: number
@@ -16,9 +21,10 @@ const Type = Parse(`{
 console.dir(Type, { depth: 100 })
 
 // ------------------------------------------------------------------
-// Example: Ebnf
+//
+// Example: Ebnf | Interpreted
+//
 // ------------------------------------------------------------------
-
 const Ebnf = ParseEbnf(`
 
   Operand ::= Ident ;
@@ -45,9 +51,10 @@ const Result = Ebnf.Parse('Expr', `X * (Y + Z)`)
 console.dir(Result, { depth: 100 })
 
 // ------------------------------------------------------------------
-// Example: Json
+//
+// Example: Json | Interpreted
+//
 // ------------------------------------------------------------------
-
 const Json = ParseJson(`{ 
   "x": 1, 
   "y": 2, 
@@ -55,58 +62,82 @@ const Json = ParseJson(`{
 }`)
 
 // ------------------------------------------------------------------
-// Example: Expression
+//
+// Example: Expression | Interpreted
+//
 // ------------------------------------------------------------------
-
-type Result = Static.Parse<Expr, 'x * (y + z)'> // hover
-
 // prettier-ignore
-type BinaryReduce<Left extends unknown, Right extends unknown[]> = (
-  Right extends [infer Operator, infer Right, infer Rest extends unknown[]] 
-    ? { left: Left; operator: Operator; right: BinaryReduce<Right, Rest> } 
-    : Left
-)
+{
+  type Result = Static.Parse<Expr, 'x * (y + z)'> // hover
 
-// prettier-ignore
-interface BinaryMapping extends Static.IMapping {
-  output: this['input'] extends [infer Left, infer Right extends unknown[]] 
-    ? BinaryReduce<Left, Right> 
-    : never
-}
-
-// prettier-ignore
-interface FactorMapping extends Static.IMapping {
-  output: (
-    this['input'] extends ['(', infer Expr, ')'] ? Expr : 
-    this['input'] extends [infer Operand] ? Operand : 
-    never
+  type BinaryReduce<Left extends unknown, Right extends unknown[]> = (
+    Right extends [infer Operator, infer Right, infer Rest extends unknown[]] 
+      ? { left: Left; operator: Operator; right: BinaryReduce<Right, Rest> } 
+      : Left
   )
+  interface BinaryMapping extends Static.IMapping {
+    output: this['input'] extends [infer Left, infer Right extends unknown[]] 
+      ? BinaryReduce<Left, Right> 
+      : never
+  }
+  interface FactorMapping extends Static.IMapping {
+    output: (
+      this['input'] extends ['(', infer Expr, ')'] ? Expr : 
+      this['input'] extends [infer Operand] ? Operand : 
+      never
+    )
+  }
+  type Operand = Static.Ident
+  type Factor = Static.Union<[
+    Static.Tuple<[Static.Const<'('>, Expr, Static.Const<')'>]>, 
+    Static.Tuple<[Operand]>
+  ], FactorMapping>
+
+  type TermTail = Static.Union<[
+    Static.Tuple<[Static.Const<'*'>, Factor, TermTail]>, 
+    Static.Tuple<[Static.Const<'/'>, Factor, TermTail]>, 
+    Static.Tuple<[]>
+  ]>
+  type ExprTail = Static.Union<[
+    Static.Tuple<[Static.Const<'+'>, Term, ExprTail]>, 
+    Static.Tuple<[Static.Const<'-'>, Term, ExprTail]>, 
+    Static.Tuple<[]>
+  ]>
+  type Term = Static.Tuple<[Factor, TermTail], BinaryMapping>
+  type Expr = Static.Tuple<[Term, ExprTail], BinaryMapping>
 }
-
-type Operand = Static.Ident
-
+// ------------------------------------------------------------------
+//
+// Example: Compiled Parser
+//
+// ParseBox supports module compilation, generating optimized parsers
+// for JavaScript and TypeScript. The compilation process produces
+// two files:
+//
+// 1. A parser file derived from the grammar.
+// 2. A semantic mapping file.
+//
+// While compilation ensures valid code and a functional parser,
+// semantic actions must be implemented manually.
+//
+// ------------------------------------------------------------------
 // prettier-ignore
-type Factor = Static.Union<[
-  Static.Tuple<[Static.Const<'('>, Expr, Static.Const<')'>]>, 
-  Static.Tuple<[Operand]>
-], FactorMapping>
-
-// prettier-ignore
-type TermTail = Static.Union<[
-  Static.Tuple<[Static.Const<'*'>, Factor, TermTail]>, 
-  Static.Tuple<[Static.Const<'/'>, Factor, TermTail]>, 
-  Static.Tuple<[]>
-]>
-
-// prettier-ignore
-type ExprTail = Static.Union<[
-  Static.Tuple<[Static.Const<'+'>, Term, ExprTail]>, 
-  Static.Tuple<[Static.Const<'-'>, Term, ExprTail]>, 
-  Static.Tuple<[]>
-]>
-
-// prettier-ignore
-type Term = Static.Tuple<[Factor, TermTail], BinaryMapping>
-
-// prettier-ignore
-type Expr = Static.Tuple<[Term, ExprTail], BinaryMapping>
+{
+  const ListModule = new Runtime.Module({
+    List: Runtime.Union([
+      Runtime.Tuple([Runtime.Ident(), Runtime.Const(','), Runtime.Ref('List')]),
+      Runtime.Tuple([Runtime.Ident(), Runtime.Const(',')]),
+      Runtime.Tuple([Runtime.Ident()]),
+      Runtime.Tuple([]),
+    ])
+  })
+  const project = Compile.Project(ListModule, {
+    contextDefault: '{}',
+    contextType: 'unknown',
+    mappingPath: './mapping',
+    mappingImports: [],
+    parserImports: []
+  })
+  console.log(project.parser)   // parser file content
+  console.log(project.mapping)  // semantic mapping file content
+}

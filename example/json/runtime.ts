@@ -76,18 +76,18 @@ const Null = Runtime.Const('null', NullMapping)
 // -----------------------------------------------------------------------
 const Key = Runtime.Union([Runtime.String(['"'])])
 
-function PropertyMapping(values: unknown[]) {
-  return { [values[0] as string]: values[2] }
+function PropertyMapping(input: unknown[]) {
+  return { [input[0] as string]: input[2] }
 }
 const Property = Runtime.Tuple([Runtime.Ref('Key'), Runtime.Const(':'), Runtime.Ref('Json')], PropertyMapping)
 
 // -----------------------------------------------------------------------
 // Properties
 // -----------------------------------------------------------------------
-function PropertiesMapping(values: unknown[]) {
+function PropertiesMapping(input: unknown[]) {
   return (
-    values.length === 3 ? [values[0], ...values[2] as unknown[]] :
-    values.length === 1 ? [values[0]] :
+    input.length === 3 ? [input[0], ...input[2] as unknown[]] :
+    input.length === 1 ? [input[0]] :
     []
   )
 }
@@ -104,8 +104,8 @@ function ObjectReduce(propertiesList: Record<PropertyKey, unknown>[]) {
     return {...result, ...properties }
   }, {})
 }
-function ObjectMapping(values: unknown[]) {
-  return ObjectReduce(values[1] as Record<PropertyKey, unknown>[])
+function ObjectMapping(input: unknown[]) {
+  return ObjectReduce(input[1] as Record<PropertyKey, unknown>[])
 }
 const _Object = Runtime.Tuple([
   Runtime.Const('{'),
@@ -115,10 +115,10 @@ const _Object = Runtime.Tuple([
 // -----------------------------------------------------------------------
 // Elemments
 // -----------------------------------------------------------------------
-function ElementsMapping(values: unknown[]) {
+function ElementsMapping(input: unknown[]) {
   return (
-    values.length === 3 ? [values[0], ...values[2] as unknown[]] :
-    values.length === 1 ? [values[0]] :
+    input.length === 3 ? [input[0], ...input[2] as unknown[]] :
+    input.length === 1 ? [input[0]] :
     []
   )
 }
@@ -133,9 +133,9 @@ const Elements = Runtime.Union([
 function ArrayMapping(values: unknown[]) {
   return values[1]
 }
-const Array = Runtime.Tuple([Runtime.Const('['), Elements, Runtime.Const(']')], ArrayMapping)
+const Array = Runtime.Tuple([Runtime.Const('['), Runtime.Ref('Elements'), Runtime.Const(']')], ArrayMapping)
 
-export const Module = new Runtime.Module({
+export const JsonModule = new Runtime.Module({
   Number,
   Boolean,
   String,
