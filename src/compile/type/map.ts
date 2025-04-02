@@ -26,4 +26,11 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * as Runtime from './runtime'
+import { Runtime } from '../../runtime/index'
+import { Infer } from '../common/index'
+import { Name } from './name'
+import { Options } from '../options'
+
+export function CompileTypeMap(options: Options, name: string, parser: Runtime.IParser): string {
+  return [`export type ${Name(name)}Mapping<Input extends ${Infer(parser)}, Context extends ${options.contextType}>`, `  = Input`].join('\n')
+}

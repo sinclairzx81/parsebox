@@ -4,7 +4,7 @@
 
 The MIT License (MIT)
 
-Copyright (c) 2024 Haydn Paterson (sinclair) <haydn.developer@gmail.com>
+Copyright (c) 2024-2025 Haydn Paterson (sinclair) <haydn.developer@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -38,7 +38,6 @@ type ContextParser<Left extends Types.IParser, Right extends Types.IParser, Code
     ? Parse<Right, Rest, Context>
     : []
 )
-
 // ------------------------------------------------------------------
 // Array
 // ------------------------------------------------------------------
@@ -48,7 +47,6 @@ type ArrayParser<Parser extends Types.IParser, Code extends string, Context exte
     ? ArrayParser<Parser, Rest, Context, [...Result, Value1]>
     : [Result, Code]
 )
-
 // ------------------------------------------------------------------
 // Const
 // ------------------------------------------------------------------
@@ -58,7 +56,6 @@ type ConstParser<Value extends string, Code extends string, _Context extends unk
     ? [Match, Rest]
     : []
 )
-
 // ------------------------------------------------------------------
 // Ident
 // ------------------------------------------------------------------
@@ -68,7 +65,6 @@ type IdentParser<Code extends string, _Context extends unknown> = (
     ? [Match, Rest]
     : []
 )
-
 // ------------------------------------------------------------------
 // Number
 // ------------------------------------------------------------------
@@ -78,7 +74,6 @@ type NumberParser<Code extends string, _Context extends unknown> = (
     ? [Match, Rest]
     : []
 )
-
 // ------------------------------------------------------------------
 // Optional
 // ------------------------------------------------------------------
@@ -88,7 +83,6 @@ type OptionalParser<Parser extends Types.IParser, Code extends string, Context e
     ? [[Value], Rest]
     : [[], Code]
 )
-
 // ------------------------------------------------------------------
 // String
 // ------------------------------------------------------------------
@@ -98,7 +92,6 @@ type StringParser<Options extends string[], Code extends string, _Context extend
     ? [Match, Rest]
     : []
 )
-
 // ------------------------------------------------------------------
 // Tuple
 // ------------------------------------------------------------------
@@ -110,7 +103,6 @@ type TupleParser<Parsers extends Types.IParser[], Code extends string, Context e
       : []
     : [Result, Code]
 )
-
 // ------------------------------------------------------------------
 // Union
 // ------------------------------------------------------------------
@@ -122,7 +114,6 @@ type UnionParser<Parsers extends Types.IParser[], Code extends string, Context e
       : UnionParser<Right, Code, Context>
     : []
 )
-
 // ------------------------------------------------------------------
 // Parse
 // ------------------------------------------------------------------
@@ -143,7 +134,6 @@ type ParseCode<Type extends Types.IParser, Code extends string, Context extends 
 type ParseMapping<Parser extends Types.IParser, Result extends unknown, Context extends unknown = unknown> = (
   (Parser['mapping'] & { input: Result, context: Context })['output']
 )
-
 /** Parses code with the given parser */
 // prettier-ignore
 export type Parse<Type extends Types.IParser, Code extends string, Context extends unknown = unknown> = (

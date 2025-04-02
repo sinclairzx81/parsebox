@@ -26,4 +26,39 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * as Runtime from './runtime'
+import { Runtime } from '../../runtime/index'
+
+function InferUnion(parsers: Runtime.IParser[]): string {
+  return [...new Set(parsers.map((parser) => Infer(parser)))].join(' | ')
+}
+function InferTuple(parsers: Runtime.IParser[]): string {
+  return `[${parsers.map(() => 'unknown').join(', ')}]`
+}
+function InferArray(parser: Runtime.IParser): string {
+  return `(${Infer(parser)})[]`
+}
+function InferContext(left: Runtime.IParser, right: Runtime.IParser) {
+  return Infer(right)
+}
+function InferOptional(parser: Runtime.IParser) {
+  return `([${Infer(parser)}] | [])`
+}
+function InferConst(parser: Runtime.IConst) {
+  return `'${parser.value}'`
+}
+// prettier-ignore
+export function Infer(parser: Runtime.IParser): string {
+  return (
+    Runtime.IsContext(parser) ? InferContext(parser.right, parser.right) :
+    Runtime.IsTuple(parser) ? InferTuple(parser.parsers) :
+    Runtime.IsUnion(parser) ? InferUnion(parser.parsers) :
+    Runtime.IsArray(parser) ? InferArray(parser.parser) :
+    Runtime.IsOptional(parser) ? InferOptional(parser.parser) :
+    Runtime.IsRef(parser) ? `unknown` :
+    Runtime.IsConst(parser) ? InferConst(parser) :
+    Runtime.IsString(parser) ? `string` :
+    Runtime.IsIdent(parser) ? `string` :
+    Runtime.IsNumber(parser) ? `string` :
+    '<unreachable>'
+  )
+}

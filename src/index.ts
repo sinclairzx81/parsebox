@@ -4,7 +4,7 @@
 
 The MIT License (MIT)
 
-Copyright (c) 2024 Haydn Paterson (sinclair) <haydn.developer@gmail.com>
+Copyright (c) 2024-2025 Haydn Paterson (sinclair) <haydn.developer@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -26,5 +26,6 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * as Runtime from './runtime/index'
-export * as Static from './static/index'
+export * from './compile/index'
+export * from './runtime/index'
+export * from './static/index'

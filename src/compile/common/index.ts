@@ -26,4 +26,6 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * as Runtime from './runtime'
+export * from './comment'
+export * from './escape'
+export * from './infer'

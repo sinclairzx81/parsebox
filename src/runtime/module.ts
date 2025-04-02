@@ -4,7 +4,7 @@
 
 The MIT License (MIT)
 
-Copyright (c) 2024 Haydn Paterson (sinclair) <haydn.developer@gmail.com>
+Copyright (c) 2024-2025 Haydn Paterson (sinclair) <haydn.developer@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -33,8 +33,7 @@ import { Parse } from './parse'
 // Module
 // ------------------------------------------------------------------
 export class Module<Properties extends Types.IModuleProperties = Types.IModuleProperties> {
-  constructor(private readonly properties: Properties) {}
-
+  constructor(public readonly parsers: Properties) {}
   /** Parses using one of the parsers defined on this instance */
   public Parse<Key extends keyof Properties>(key: Key, content: string, context: unknown): [] | [Types.StaticParser<Properties[Key]>, string]
   /** Parses using one of the parsers defined on this instance */
@@ -47,6 +46,6 @@ export class Module<Properties extends Types.IModuleProperties = Types.IModulePr
       args.length === 2 ? [args[0], args[1], undefined] : 
       (() => { throw Error('Invalid parse arguments') })()
     )
-    return Parse(this.properties, this.properties[key], content, context) as never
+    return Parse(this.parsers, this.parsers[key], content, context) as never
   }
 }

@@ -26,4 +26,5 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * as Runtime from './runtime'
+export * as Compile from './compile'
+export * from './options'

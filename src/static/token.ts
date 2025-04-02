@@ -4,7 +4,7 @@
 
 The MIT License (MIT)
 
-Copyright (c) 2024 Haydn Paterson (sinclair) <haydn.developer@gmail.com>
+Copyright (c) 2024-2025 Haydn Paterson (sinclair) <haydn.developer@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -91,7 +91,6 @@ namespace Trim {
     Code
   )
 }
-
 // ------------------------------------------------------------------
 // Union
 // ------------------------------------------------------------------
@@ -104,7 +103,6 @@ type NextUnion<Variants extends string[], Code extends string> = (
       : NextUnion<Rest1, Code>
     : []
 )
-
 // ------------------------------------------------------------------
 // Const
 // ------------------------------------------------------------------
@@ -164,7 +162,6 @@ export type NextNumber<Code extends string> = (
 )
 /** Scans for the next literal number */
 export type Number<Code extends string> = NextNumber<Trim.TrimAll<Code>>
-
 // ------------------------------------------------------------------
 // String
 // ------------------------------------------------------------------
@@ -187,13 +184,11 @@ type NextString<Options extends string[], Code extends string> = (
 )
 /** Scans for the next literal string */
 export type String<Options extends string[], Code extends string> = NextString<Options, Trim.TrimAll<Code>>
-
 // ------------------------------------------------------------------
 // Ident
 // ------------------------------------------------------------------
 type IdentLeft = [...Chars.Alpha, '_', '$'] // permissable first characters
 type IdentRight = [...Chars.Digit, ...IdentLeft] // permissible subsequent characters
-
 // prettier-ignore
 type NextIdentScan<Code extends string, Result extends string = Chars.Empty> = (
   NextUnion<IdentRight, Code> extends [infer Char extends string, infer Rest extends string]
@@ -208,6 +203,5 @@ type NextIdent<Code extends string> = (
       : []
     : []
 )
-
 /** Scans for the next Ident */
 export type Ident<Code extends string> = NextIdent<Trim.TrimAll<Code>>

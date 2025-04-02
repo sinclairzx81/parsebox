@@ -26,4 +26,10 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * as Runtime from './runtime'
+// prettier-ignore
+export function Escape(input: string): string {
+  return input.replace(/\n/g, "\\n")
+  .replace(/\r/g, "\\r")
+  .replace(/"/g, '\\"')
+  .replace(/'/g, "\\'");
+}
