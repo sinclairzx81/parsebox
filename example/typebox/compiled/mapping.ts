@@ -32,10 +32,10 @@ import * as T from '@sinclair/typebox'
 //
 // Dereference
 //
-// Referential types pull from the Context or defer dereferencing 
-// for later execution. This overlaps with module dereferencing, 
-// where named identifiers in the syntax are deferred until 
-// instantiation. This code should be revised as part of a 
+// Referential types pull from the Context or defer dereferencing
+// for later execution. This overlaps with module dereferencing,
+// where named identifiers in the syntax are deferred until
+// instantiation. This code should be revised as part of a
 // general-purpose Instantiate module (next revision)
 //
 // ------------------------------------------------------------------
@@ -55,8 +55,8 @@ const Dereference = (context: T.TProperties, key: string): T.TSchema => {
 // Delimited sequences use an accumulated buffer to parse sequence
 // tokens. This approach is more scalable than using a Union + Tuple
 // + Epsilon pattern, as TypeScript can instantiate deeper when
-// tail-call recursive accumulators are employed. However, this 
-// comes with a latent processing cost due to the need to decode 
+// tail-call recursive accumulators are employed. However, this
+// comes with a latent processing cost due to the need to decode
 // the accumulated buffer.
 //
 // - Encoding: [[<Ident>, ','][], [<Ident>] | []]
@@ -182,7 +182,7 @@ export type TKeywordBooleanMapping<Input extends 'boolean', Context extends T.TP
   = T.TBoolean
 // prettier-ignore
 export function KeywordBooleanMapping(input: 'boolean', context: unknown) {
-  return Boolean()
+  return T.Boolean()
 }
 // -------------------------------------------------------------------
 // KeywordUndefined: 'undefined'
@@ -288,8 +288,8 @@ export function KeywordMapping(input: unknown, context: unknown) {
 // LiteralString: <String>
 // -------------------------------------------------------------------
 // prettier-ignore
-export type TLiteralStringMapping<Input extends string, Context extends T.TProperties>
-  = T.TLiteral<Input>
+export type TLiteralStringMapping<Input extends string, Context extends T.TProperties> = 
+  Input extends T.TLiteralValue ? T.TLiteral<Input> : never
 // prettier-ignore
 export function LiteralStringMapping(input: string, context: unknown) {
   return T.Literal(input)
@@ -308,8 +308,8 @@ export function LiteralNumberMapping(input: string, context: unknown) {
 // LiteralBoolean: 'true' | 'false'
 // -------------------------------------------------------------------
 // prettier-ignore
-export type TLiteralBooleanMapping<Input extends 'true' | 'false', Context extends T.TProperties>
-  = T.TLiteral<Input extends 'true' ? true : false>
+export type TLiteralBooleanMapping<Input extends 'true' | 'false', Context extends T.TProperties> 
+  = Input extends 'true' ? T.TLiteral<true> : T.TLiteral<false>
 // prettier-ignore
 export function LiteralBooleanMapping(input: 'true' | 'false', context: unknown) {
   return T.Literal(input === 'true')
@@ -440,10 +440,10 @@ export function FactorMapping(input: [unknown, unknown, unknown, unknown], conte
 //
 // ExprBinaryMapping
 //
-// TypeBox Union and Intersection types are flattened to prevent 
-// excessive nesting of `anyOf` and `allOf`, ensuring a more 
-// readable and presentable type for the user. This function 
-// recursively reduces Union and Intersection types based on 
+// TypeBox Union and Intersection types are flattened to prevent
+// excessive nesting of `anyOf` and `allOf`, ensuring a more
+// readable and presentable type for the user. This function
+// recursively reduces Union and Intersection types based on
 // binary expressions parsed from input.
 //
 // ------------------------------------------------------------------
@@ -791,7 +791,7 @@ export function ArrayMapping(input: [unknown, unknown, unknown, unknown], contex
 // prettier-ignore
 export type TRecordMapping<Input extends [unknown, unknown, unknown, unknown, unknown, unknown], Context extends T.TProperties>
   = Input extends ['Record', '<', infer Key extends T.TSchema, ',', infer Type extends T.TSchema, '>']
-  ? T.TRecord<Key, Type>
+  ? T.TRecordOrObject<Key, Type>
   : never
 // prettier-ignore
 export function RecordMapping(input: [unknown, unknown, unknown, unknown, unknown, unknown], context: unknown) {
@@ -1022,7 +1022,7 @@ export type TReferenceMapping<Input extends string, Context extends T.TPropertie
       ? Input extends string
         ? TDereference<Context, Input>
         : never
-      : never  
+      : never
 // prettier-ignore
 export function ReferenceMapping(input: string, context: unknown) {
   const target = Dereference(context as T.TProperties, input)
