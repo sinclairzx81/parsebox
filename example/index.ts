@@ -1,7 +1,9 @@
+// deno-fmt-ignore-file
+
 import { Static, Runtime, Compile } from '@sinclair/parsebox'
-import { Syntax } from './typebox/compiled'
-import { ParseJson } from './json'
-import { ParseEbnf } from './ebnf'
+import { Syntax } from './typebox/compiled/index.ts'
+import { ParseJson } from './json/index.ts'
+import { ParseEbnf } from './ebnf/index.ts'
 
 // ------------------------------------------------------------------
 //
@@ -61,12 +63,13 @@ const Json = ParseJson(`{
   "z": 3 
 }`)
 
+console.log(Json)
+
 // ------------------------------------------------------------------
 //
 // Example: Expression | Interpreted
 //
 // ------------------------------------------------------------------
-// prettier-ignore
 {
   type Result = Static.Parse<Expr, 'x * (y + z)'> // hover
 
@@ -121,7 +124,6 @@ const Json = ParseJson(`{
 // semantic actions must be implemented manually.
 //
 // ------------------------------------------------------------------
-// prettier-ignore
 {
   const ListModule = new Runtime.Module({
     List: Runtime.Union([

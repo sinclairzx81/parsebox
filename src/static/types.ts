@@ -26,6 +26,8 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
+// deno-fmt-ignore-file
+
 // ------------------------------------------------------------------
 // Mapping
 // ------------------------------------------------------------------
@@ -41,12 +43,10 @@ export interface IMapping {
   input: unknown
   output: unknown
 }
-
 /** `[ACTION]` Default inference mapping. */
 export interface Identity extends IMapping {
   output: this['input']
 }
-
 /** `[ACTION]` Maps the given argument `T` as the mapping output */
 export interface As<T> extends IMapping {
   output: T
@@ -59,7 +59,6 @@ export interface IParser<Mapping extends IMapping = Identity> {
   type: string
   mapping: Mapping
 }
-
 // ------------------------------------------------------------------
 // Context
 // ------------------------------------------------------------------
@@ -69,7 +68,6 @@ export interface Context<Left extends IParser = IParser, Right extends IParser =
   left: Left
   right: Right
 }
-
 // ------------------------------------------------------------------
 // Array
 // ------------------------------------------------------------------
@@ -78,7 +76,6 @@ export interface Array<Parser extends IParser = IParser, Mapping extends IMappin
   type: 'Array'
   parser: Parser
 }
-
 // ------------------------------------------------------------------
 // Const
 // ------------------------------------------------------------------
@@ -87,21 +84,17 @@ export interface Const<Value extends string = string, Mapping extends IMapping =
   type: 'Const'
   value: Value
 }
-
 // ------------------------------------------------------------------
 // Ident
 // ------------------------------------------------------------------
 /** `[TERM]` Creates an Ident Parser. */
-// prettier-ignore
 export interface Ident<Mapping extends IMapping = Identity> extends IParser<Mapping> {
   type: 'Ident'
 }
-
 // ------------------------------------------------------------------
 // Number
 // ------------------------------------------------------------------
 /** `[TERM]` Creates a Number Parser. */
-// prettier-ignore
 export interface Number<Mapping extends IMapping = Identity> extends IParser<Mapping> {
   type: 'Number'
 }
@@ -114,7 +107,6 @@ export interface Optional<Parser extends IParser = IParser, Mapping extends IMap
   type: 'Optional'
   parser: Parser
 }
-
 // ------------------------------------------------------------------
 // String
 // ------------------------------------------------------------------
@@ -123,7 +115,6 @@ export interface String<Options extends string[], Mapping extends IMapping = Ide
   type: 'String'
   quote: Options
 }
-
 // ------------------------------------------------------------------
 // Tuple
 // ------------------------------------------------------------------
@@ -132,7 +123,6 @@ export interface Tuple<Parsers extends IParser[] = [], Mapping extends IMapping 
   type: 'Tuple'
   parsers: [...Parsers]
 }
-
 // ------------------------------------------------------------------
 // Union
 // ------------------------------------------------------------------

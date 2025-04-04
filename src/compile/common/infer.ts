@@ -26,7 +26,10 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { Runtime } from '../../runtime/index'
+// deno-fmt-ignore-file
+// deno-lint-ignore-file no-unused-vars
+
+import { Runtime } from '../../runtime/index.ts'
 
 function InferUnion(parsers: Runtime.IParser[]): string {
   return [...new Set(parsers.map((parser) => Infer(parser)))].join(' | ')
@@ -46,7 +49,6 @@ function InferOptional(parser: Runtime.IParser) {
 function InferConst(parser: Runtime.IConst) {
   return `'${parser.value}'`
 }
-// prettier-ignore
 export function Infer(parser: Runtime.IParser): string {
   return (
     Runtime.IsContext(parser) ? InferContext(parser.right, parser.right) :

@@ -26,4 +26,4 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * as Static from './static'
+export * as Static from "./static.ts"

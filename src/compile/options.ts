@@ -42,9 +42,9 @@ export interface Options {
 /** Default Compiler Options */
 export function DefaultOptions(): Options {
   return {
-    mappingPath: './mapping',
-    contextType: 'unknown',
-    contextDefault: '{}',
+    mappingPath: "./mapping",
+    contextType: "unknown",
+    contextDefault: "{}",
     mappingImports: [],
     parserImports: [],
   }

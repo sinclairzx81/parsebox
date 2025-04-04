@@ -26,8 +26,10 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Types from './types'
-import { Parse } from './parse'
+// deno-fmt-ignore-file
+
+import * as Types from './types.ts'
+import { Parse } from './parse.ts'
 
 // ------------------------------------------------------------------
 // Module
@@ -39,8 +41,7 @@ export class Module<Properties extends Types.IModuleProperties = Types.IModulePr
   /** Parses using one of the parsers defined on this instance */
   public Parse<Key extends keyof Properties>(key: Key, content: string): [] | [Types.StaticParser<Properties[Key]>, string]
   /** Parses using one of the parsers defined on this instance */
-  public Parse(...args: any[]): never {
-    // prettier-ignore
+  public Parse(...args: never[]): never {
     const [key, content, context] = (
       args.length === 3 ? [args[0], args[1], args[2]] : 
       args.length === 2 ? [args[0], args[1], undefined] : 

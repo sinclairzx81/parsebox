@@ -26,6 +26,9 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
+// deno-fmt-ignore-file
+// deno-lint-ignore-file no-explicit-any
+
 export type IModuleProperties = Record<PropertyKey, IParser>
 
 // ------------------------------------------------------------------
@@ -47,8 +50,9 @@ export type IMapping<Input extends unknown = any, Output extends unknown = unkno
 export const Identity = (value: unknown) => value
 
 /** Maps the output as the given parameter T */
-// prettier-ignore
-export const As = <T>(mapping: T): ((value: unknown) => T) => (_: unknown) => mapping
+export function As<T>(mapping: T): ((value: unknown) => T) {
+  return (_: unknown) => mapping
+}
 
 // ------------------------------------------------------------------
 // Parser
@@ -60,7 +64,6 @@ export interface IParser<Output extends unknown = unknown> {
 // ------------------------------------------------------------------
 // Context
 // ------------------------------------------------------------------
-// prettier-ignore
 export type ContextParameter<_Left extends IParser, Right extends IParser> = (
   StaticParser<Right>
 )
@@ -81,7 +84,6 @@ export function Context(...args: unknown[]): never {
 // ------------------------------------------------------------------
 // Array
 // ------------------------------------------------------------------
-// prettier-ignore
 export type ArrayParameter<Parser extends IParser> = StaticEnsure<
   StaticParser<Parser>[]
 >
@@ -185,7 +187,6 @@ export function Number(...params: unknown[]): never {
 // ------------------------------------------------------------------
 // Optional
 // ------------------------------------------------------------------
-// prettier-ignore
 export type OptionalParameter<Parser extends IParser, Result extends unknown = [StaticParser<Parser>] | []> = (
   Result
 )
@@ -206,7 +207,6 @@ export function Optional(...args: unknown[]): never {
 // ------------------------------------------------------------------
 // Tuple
 // ------------------------------------------------------------------
-// prettier-ignore
 export type TupleParameter<Parsers extends IParser[], Result extends unknown[] = []> = StaticEnsure<
   Parsers extends [infer Left extends IParser, ...infer Right extends IParser[]] 
     ? TupleParameter<Right, [...Result, StaticEnsure<StaticParser<Left>>]> 
@@ -229,7 +229,7 @@ export function Tuple(...args: unknown[]): never {
 // ------------------------------------------------------------------
 // Union
 // ------------------------------------------------------------------
-// prettier-ignore
+
 export type UnionParameter<Parsers extends IParser[], Result extends unknown = never> = StaticEnsure<
   Parsers extends [infer Left extends IParser, ...infer Right extends IParser[]] 
     ? UnionParameter<Right, Result | StaticParser<Left>> 

@@ -1,6 +1,8 @@
+// deno-lint-ignore-file
+
 import { Runtime, Static } from '@sinclair/parsebox'
-import * as T from '@sinclair/typebox'
-import * as S from './mapping'
+import * as T from 'npm:@sinclair/typebox'
+import * as S from './mapping.ts'
 
 export type TGenericReferenceParameterList_0<Input extends string, Context extends T.TProperties, Result extends unknown[] = []> = (TType<Input, Context> extends [infer _0, infer Input extends string] ? (Static.Token.Const<',', Input> extends [infer _1, infer Input extends string] ? [[_0, _1], Input] : []) : []) extends [infer _0, infer Input extends string] ? TGenericReferenceParameterList_0<Input, Context, [...Result, _0]> : [Result, Input]
 export type TGenericReferenceParameterList<Input extends string, Context extends T.TProperties = {}> = (TGenericReferenceParameterList_0<Input, Context> extends [infer _0, infer Input extends string] ? (((TType<Input, Context> extends [infer _0, infer Input extends string] ? [[_0], Input] : []) extends [infer _0, infer Input extends string] ? [_0, Input] : [[], Input] extends [infer _0, infer Input extends string] ? [_0, Input] : []) extends [infer _1, infer Input extends string] ? [[_0, _1], Input] : []) : []) extends [infer _0 extends [unknown, unknown], infer Input extends string] ? [S.TGenericReferenceParameterListMapping<_0, Context>, Input] : []

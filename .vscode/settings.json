@@ -3,5 +3,6 @@
   "files.exclude": {
     "node_modules": true,
     "package-lock.json": true
-  }
+  },
+  "deno.enable": true
 }
