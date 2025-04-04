@@ -26,9 +26,11 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { Runtime } from '../../runtime/index'
-import { Infer } from '../common/index'
-import { Options } from '../options'
+// deno-fmt-ignore-file
+
+import { Runtime } from '../../runtime/index.ts'
+import { Infer } from '../common/index.ts'
+import { Options } from '../options.ts'
 
 export function CompileFuncMap(options: Options, name: string, parser: Runtime.IParser): string {
   return [`export function ${name}Mapping(input: ${Infer(parser)}, context: ${options.contextType}): unknown {`, `  return input`, `}`].join('\n')

@@ -26,5 +26,5 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * as Compile from './compile'
-export * from './options'
+export * as Compile from "./compile.ts"
+export * from "./options.ts"

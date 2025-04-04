@@ -1,6 +1,8 @@
+// deno-fmt-ignore-file
+
 import { Static } from '@sinclair/parsebox'
 
-declare function Assert<Left, _Right extends Left>(): void
+function Assert<Left, _Right extends Left>(): void {}
 
 // ------------------------------------------------------------------
 // Array
@@ -15,7 +17,6 @@ Assert<Static.Parse<Static.Array<Static.Const<'AA'>>, 'B'>, [[], 'B']>()
 // ------------------------------------------------------------------
 // Const
 // ------------------------------------------------------------------
-// prettier-ignore
 Assert<Static.Parse<Static.Const<'A'>, ''>, []>()
 Assert<Static.Parse<Static.Const<'A'>, 'A'>, ['A', '']>()
 Assert<Static.Parse<Static.Const<'A'>, '  A'>, ['A', '']>()
@@ -122,7 +123,6 @@ Assert<Static.Parse<Static.String<['*', '"']>, ' "A" '>, ['A', ' ']>()
 // ------------------------------------------------------------------
 // Tuple
 // ------------------------------------------------------------------
-// prettier-ignore
 type Tuple = Static.Tuple<[Static.Const<'A'>, Static.Const<'B'>, Static.Const<'C'>]>
 
 Assert<Static.Parse<Tuple, ''>, []>()
@@ -136,7 +136,6 @@ Assert<Static.Parse<Tuple, '  ABC '>, [['A', 'B', 'C'], ' ']>()
 // ------------------------------------------------------------------
 // Union
 // ------------------------------------------------------------------
-// prettier-ignore
 type Union = Static.Union<[Static.Const<'A'>, Static.Const<'B'>, Static.Const<'C'>]>
 
 Assert<Static.Parse<Union, ''>, []>()
@@ -157,7 +156,7 @@ Assert<Static.Parse<Union, '  BBC '>, ['B', 'BC ']>()
 interface Mapping extends Static.IMapping {
   output: this['input'] extends [infer A, infer B, infer C] ? [C, B, A] : never
 }
-// prettier-ignore
+
 type Mapped = Static.Tuple<[Static.Const<'A'>, Static.Const<'B'>, Static.Const<'C'>], Mapping>
 
 Assert<Static.Parse<Mapped, '  A B C '>, [['C', 'B', 'A'], ' ']>()
@@ -170,7 +169,7 @@ Assert<Static.Parse<Mapped, '  A B C '>, [['C', 'B', 'A'], ' ']>()
   interface ContextMapping extends Static.IMapping {
     output: this['input'] extends keyof this['context'] ? this['context'][this['input']] : never
   }
-  // prettier-ignore
+  
   type Context = Static.Union<[Static.Const<'A'>, Static.Const<'B'>, Static.Const<'C'>], ContextMapping>
 
   Assert<

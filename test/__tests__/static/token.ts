@@ -1,6 +1,6 @@
 import { Static } from '@sinclair/parsebox'
 
-declare function Assert<Left, _Right extends Left>(): void
+function Assert<Left, _Right extends Left>(): void {}
 
 // ------------------------------------------------------------------
 // Empty

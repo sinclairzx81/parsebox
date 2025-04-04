@@ -26,11 +26,13 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { Runtime } from '../runtime/index'
-import { CompileType, CompileTypeMap } from './type/index'
-import { CompileFunc, CompileFuncMap } from './func/index'
-import { CompileComment } from './common/index'
-import { DefaultOptions, Options } from './options'
+// deno-fmt-ignore-file
+
+import { Runtime } from '../runtime/index.ts'
+import { CompileType, CompileTypeMap } from './type/index.ts'
+import { CompileFunc, CompileFuncMap } from './func/index.ts'
+import { CompileComment } from './common/index.ts'
+import { DefaultOptions, Options } from './options.ts'
 
 // ------------------------------------------------------------------
 // Header

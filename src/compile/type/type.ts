@@ -26,10 +26,13 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { Runtime } from '../../runtime/index'
-import { Infer, Escape } from '../common/index'
-import { Options } from '../options'
-import { Name } from './name'
+// deno-fmt-ignore-file
+// deno-lint-ignore-file no-unused-vars
+
+import { Runtime } from '../../runtime/index.ts'
+import { Infer, Escape } from '../common/index.ts'
+import { Options } from '../options.ts'
+import { Name } from './name.ts'
 
 // ------------------------------------------------------------------
 // State
@@ -109,7 +112,6 @@ function FromRef(options: Options, name: string, ref: string): string {
 // ------------------------------------------------------------------
 // Parser
 // ------------------------------------------------------------------
-// prettier-ignore
 function FromParser(options: Options, name: string, parser: Runtime.IParser): string {
   return (
     Runtime.IsContext(parser) ? FromContext(options, name, parser.left, parser.right) :

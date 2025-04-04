@@ -26,6 +26,6 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './comment'
-export * from './escape'
-export * from './infer'
+export * from "./comment.ts"
+export * from "./escape.ts"
+export * from "./infer.ts"

@@ -26,20 +26,19 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { IArray, IConst, IContext, IIdent, INumber, IOptional, IRef, IString, ITuple, IUnion } from './types'
+// deno-fmt-ignore-file
+
+import { IArray, IConst, IContext, IIdent, INumber, IOptional, IRef, IString, ITuple, IUnion } from './types.ts'
 
 // ------------------------------------------------------------------
 // Value Guard
 // ------------------------------------------------------------------
-// prettier-ignore
 function HasPropertyKey<Key extends PropertyKey>(value: Record<PropertyKey, unknown>, key: Key): value is Record<PropertyKey, unknown> & { [_ in Key]: unknown } {
   return key in value
 }
-// prettier-ignore
 function IsObjectValue(value: unknown): value is Record<PropertyKey, unknown> {
   return typeof value === 'object' && value !== null
 }
-// prettier-ignore
 function IsArrayValue(value: unknown): value is unknown[] {
   return globalThis.Array.isArray(value)
 }
@@ -88,7 +87,6 @@ export function IsUnion(value: unknown): value is IUnion {
 }
 /** Returns true if the value is a Parser */
 export function IsParser(value: unknown) {
-  // prettier-ignore
   return (
     IsArray(value) 
     || IsConst(value) 

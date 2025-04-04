@@ -26,10 +26,12 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
+// deno-fmt-ignore-file
+// deno-lint-ignore-file no-namespace
+
 // ------------------------------------------------------------------
 // Chars
 // ------------------------------------------------------------------
-// prettier-ignore
 namespace Chars {
   export type Empty = ''
   export type Space = ' '
@@ -48,11 +50,9 @@ namespace Chars {
     'Y', 'Z'
   ]
 }
-
 // ------------------------------------------------------------------
 // Trim
 // ------------------------------------------------------------------
-// prettier-ignore
 namespace Trim {
   // ------------------------------------------------------------------
   // Whitespace Filters
@@ -95,7 +95,7 @@ namespace Trim {
 // Union
 // ------------------------------------------------------------------
 /** Scans for the next match union */
-// prettier-ignore
+
 type NextUnion<Variants extends string[], Code extends string> = (
   Variants extends [infer Variant extends string, ...infer Rest1 extends string[]]
     ? NextConst<Variant, Code> extends [infer Match extends string, infer Rest2 extends string]
@@ -106,14 +106,14 @@ type NextUnion<Variants extends string[], Code extends string> = (
 // ------------------------------------------------------------------
 // Const
 // ------------------------------------------------------------------
-// prettier-ignore
+
 type NextConst<Value extends string, Code extends string> = (
   Code extends `${Value}${infer Rest extends string}` 
     ? [Value, Rest] 
     : []
 )
 /** Scans for the next constant value */
-// prettier-ignore
+
 export type Const<Value extends string, Code extends string> = (
   Value extends '' ? ['', Code] :
   Value extends `${infer First extends string}${string}`
@@ -126,19 +126,19 @@ export type Const<Value extends string, Code extends string> = (
 // ------------------------------------------------------------------
 // Number
 // ------------------------------------------------------------------
-// prettier-ignore
+
 type NextNumberNegate<Code extends string> = (
   Code extends `${Chars.Hyphen}${infer Rest extends string}` 
     ? [Chars.Hyphen, Rest]
     : [Chars.Empty, Code]
 )
-// prettier-ignore
+
 type NextNumberZeroCheck<Code extends string> = (
   Code extends `0${infer Rest}`
     ? NextUnion<Chars.Digit, Rest> extends [string, string] ? false : true
     : true
 )
-// prettier-ignore
+
 type NextNumberScan<Code extends string, HasDecimal extends boolean = false, Result extends string = Chars.Empty> = (
   NextUnion<[...Chars.Digit, Chars.Dot], Code> extends [infer Char extends string, infer Rest extends string]
     ? Char extends Chars.Dot
@@ -148,7 +148,7 @@ type NextNumberScan<Code extends string, HasDecimal extends boolean = false, Res
       : NextNumberScan<Rest, HasDecimal, `${Result}${Char}`>
     : [Result, Code]
 )
-// prettier-ignore
+
 export type NextNumber<Code extends string> = (
   NextNumberNegate<Code> extends [infer Negate extends string, infer Rest extends string]
     ? NextNumberZeroCheck<Rest> extends true 
@@ -166,7 +166,7 @@ export type Number<Code extends string> = NextNumber<Trim.TrimAll<Code>>
 // String
 // ------------------------------------------------------------------
 type NextStringQuote<Options extends string[], Code extends string> = NextUnion<Options, Code>
-// prettier-ignore
+
 type NextStringBody<Code extends string, Quote extends string, Result extends string = Chars.Empty> = (
   Code extends `${infer Char extends string}${infer Rest extends string}`
     ? Char extends Quote
@@ -174,7 +174,7 @@ type NextStringBody<Code extends string, Quote extends string, Result extends st
       : NextStringBody<Rest, Quote, `${Result}${Char}`>
     : []
 )
-// prettier-ignore
+
 type NextString<Options extends string[], Code extends string> = (
   NextStringQuote<Options, Code> extends [infer Quote extends string, infer Rest extends string]
     ? NextStringBody<Rest, Quote> extends [infer String extends string, infer Rest extends string]
@@ -189,13 +189,13 @@ export type String<Options extends string[], Code extends string> = NextString<O
 // ------------------------------------------------------------------
 type IdentLeft = [...Chars.Alpha, '_', '$'] // permissable first characters
 type IdentRight = [...Chars.Digit, ...IdentLeft] // permissible subsequent characters
-// prettier-ignore
+
 type NextIdentScan<Code extends string, Result extends string = Chars.Empty> = (
   NextUnion<IdentRight, Code> extends [infer Char extends string, infer Rest extends string]
     ? NextIdentScan<Rest, `${Result}${Char}`>
     : [Result, Code]
 )
-// prettier-ignore
+
 type NextIdent<Code extends string> = (
   NextUnion<IdentLeft, Code> extends [infer Left extends string, infer Rest1 extends string]
     ? NextIdentScan<Rest1> extends [infer Right extends string, infer Rest2 extends string]

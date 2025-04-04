@@ -26,7 +26,8 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-// prettier-ignore
+// deno-fmt-ignore-file
+
 export function Escape(input: string): string {
   return input.replace(/\n/g, "\\n")
   .replace(/\r/g, "\\r")

@@ -26,10 +26,12 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
+// deno-fmt-ignore-file
+// deno-lint-ignore-file no-namespace
+
 // ------------------------------------------------------------------
 // Chars
 // ------------------------------------------------------------------
-// prettier-ignore
 namespace Chars {
   /** Returns true if the char code is a whitespace */
   export function IsWhitespace(value: number): boolean {
@@ -77,7 +79,6 @@ namespace Chars {
 // ------------------------------------------------------------------
 // Trim
 // ------------------------------------------------------------------
-// prettier-ignore
 namespace Trim {
   /** Trims Whitespace and retains Newline, Tabspaces, etc. */
   export function TrimWhitespaceOnly(code: string): string {
@@ -96,7 +97,6 @@ namespace Trim {
 // Const
 // ------------------------------------------------------------------
 /** Checks the value matches the next string  */
-// prettier-ignore
 function NextTokenCheck(value: string, code: string): boolean {
   if (value.length > code.length) return false
   for (let i = 0; i < value.length; i++) {
@@ -105,14 +105,12 @@ function NextTokenCheck(value: string, code: string): boolean {
   return true
 }
 /** Gets the next constant string value or empty if no match */
-// prettier-ignore
 function NextConst(value: string, code: string, ): [] | [string, string] {
   return NextTokenCheck(value, code)
     ? [code.slice(0, value.length), code.slice(value.length)]
     : []
 }
 /** Takes the next constant string value skipping any whitespace */
-// prettier-ignore
 export function Const(value: string, code: string): [] | [string, string] {
   if(value.length === 0) return ['', code]
   const char_0 = value.charCodeAt(0)
@@ -125,7 +123,6 @@ export function Const(value: string, code: string): [] | [string, string] {
 // ------------------------------------------------------------------
 // Ident
 // ------------------------------------------------------------------
-// prettier-ignore
 function IdentIsFirst(char: number) {
   return (
     Chars.IsAlpha(char) ||
@@ -133,7 +130,6 @@ function IdentIsFirst(char: number) {
     Chars.IsUnderscore(char)
   )
 }
-// prettier-ignore
 function IdentIsRest(char: number) {
   return (
     Chars.IsAlpha(char) ||
@@ -142,7 +138,6 @@ function IdentIsRest(char: number) {
     Chars.IsUnderscore(char)
   )
 }
-// prettier-ignore
 function NextIdent(code: string): [] | [string, string] {
   if (!IdentIsFirst(code.charCodeAt(0))) return []
   for (let i = 1; i < code.length; i++) {
@@ -155,7 +150,6 @@ function NextIdent(code: string): [] | [string, string] {
   return [code, '']
 }
 /** Scans for the next Ident token */
-// prettier-ignore
 export function Ident(code: string): [] | [string, string] {
   return NextIdent(Trim.TrimAll(code))
 }
@@ -163,7 +157,6 @@ export function Ident(code: string): [] | [string, string] {
 // Number
 // ------------------------------------------------------------------
 /** Checks that the next number is not a leading zero */
-// prettier-ignore
 function NumberLeadingZeroCheck(code: string, index: number) {
   const char_0 = code.charCodeAt(index + 0)
   const char_1 = code.charCodeAt(index + 1)
@@ -187,7 +180,6 @@ function NumberLeadingZeroCheck(code: string, index: number) {
   )
 }
 /** Gets the next number token */
-// prettier-ignore
 function NextNumber(code: string): [] | [string, string] {
   const negated = code.charAt(0) === '-'
   const index = negated ? 1 : 0
@@ -217,14 +209,12 @@ function NextNumber(code: string): [] | [string, string] {
   return [code, '']
 }
 /** Scans for the next number token */
-// prettier-ignore
 export function Number(code: string) {
   return NextNumber(Trim.TrimAll(code))
 }
 // ------------------------------------------------------------------
 // String
 // ------------------------------------------------------------------
-// prettier-ignore
 function NextString(options: string[], code: string): [] | [string, string] {
   const first = code.charAt(0)
   if(!options.includes(first)) return []
@@ -240,7 +230,6 @@ function NextString(options: string[], code: string): [] | [string, string] {
   return []
 }
 /** Scans the next Literal String value */
-// prettier-ignore
 export function String(options: string[], code: string) {
   return NextString(options, Trim.TrimAll(code))
 }

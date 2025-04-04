@@ -26,10 +26,12 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { Runtime } from '../../runtime/index'
-import { Infer } from '../common/index'
-import { Name } from './name'
-import { Options } from '../options'
+import { Runtime } from "../../runtime/index.ts"
+import { Infer } from "../common/index.ts"
+import { Name } from "./name.ts"
+import { Options } from "../options.ts"
+
+// deno-fmt-ignore-file
 
 export function CompileTypeMap(options: Options, name: string, parser: Runtime.IParser): string {
   return [`export type ${Name(name)}Mapping<Input extends ${Infer(parser)}, Context extends ${options.contextType}>`, `  = Input`].join('\n')

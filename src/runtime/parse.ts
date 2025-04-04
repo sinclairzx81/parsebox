@@ -26,9 +26,12 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Guard from './guard'
-import * as Token from './token'
-import * as Types from './types'
+// deno-fmt-ignore-file
+// deno-lint-ignore-file no-unused-vars no-explicit-any
+
+import * as Guard from './guard.ts'
+import * as Token from './token.ts'
+import * as Types from './types.ts'
 
 // ------------------------------------------------------------------
 // Context
@@ -68,7 +71,6 @@ function ParseIdent(code: string, _context: unknown): [] | [string, string] {
 // ------------------------------------------------------------------
 // Number
 // ------------------------------------------------------------------
-// prettier-ignore
 function ParseNumber(code: string, _context: unknown): [] | [string, string] {
   return Token.Number(code)
 }
@@ -122,7 +124,6 @@ function ParseUnion<ModuleProperties extends Types.IModuleProperties, Parsers ex
 // Parser
 // ------------------------------------------------------------------
 function ParseParser<Parser extends Types.IParser>(moduleProperties: Types.IModuleProperties, parser: Parser, code: string, context: unknown): [] | [Types.StaticParser<Parser>, string] {
-  // prettier-ignore
   const result = (
     Guard.IsContext(parser) ? ParseContext(moduleProperties, parser.left, parser.right, code, context) :
     Guard.IsArray(parser) ? ParseArray(moduleProperties, parser.parser, code, context) :
@@ -153,7 +154,6 @@ export function Parse<Parser extends Types.IParser>(parser: Parser, content: str
 /** Parses content using the given parser */
 export function Parse(...args: any[]): never {
   const withModuleProperties = typeof args[1] === 'string' ? false : true
-  // prettier-ignore
   const [moduleProperties, parser, content, context] = withModuleProperties 
     ? [args[0], args[1], args[2], args[3]]
     : [{}, args[0], args[1], args[2]]

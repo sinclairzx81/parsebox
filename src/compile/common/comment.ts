@@ -26,8 +26,11 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { Runtime } from '../../runtime/index'
-import { Escape } from './escape'
+// deno-fmt-ignore-file
+// deno-lint-ignore-file no-unused-vars
+
+import { Runtime } from '../../runtime/index.ts'
+import { Escape } from './escape.ts'
 
 function FromContext(parser: Runtime.IContext): string {
   return `${FromParser(parser.left)} -> ${FromParser(parser.right)}`
@@ -60,9 +63,20 @@ function FromNumber(parser: Runtime.INumber): string {
   return `<Number>`
 }
 function FromParser(parser: Runtime.IParser): string {
-  return Runtime.IsContext(parser) ? FromContext(parser) : Runtime.IsTuple(parser) ? FromTuple(parser) : Runtime.IsUnion(parser) ? FromUnion(parser) : Runtime.IsArray(parser) ? FromArray(parser) : Runtime.IsOptional(parser) ? FromOptional(parser) : Runtime.IsString(parser) ? FromString(parser) : Runtime.IsConst(parser) ? FromConst(parser) : Runtime.IsRef(parser) ? FromRef(parser) : Runtime.IsIdent(parser) ? FromIdent(parser) : Runtime.IsNumber(parser) ? FromNumber(parser) : '<unreachable>'
+  return (
+    Runtime.IsContext(parser) ? FromContext(parser) : 
+    Runtime.IsTuple(parser) ? FromTuple(parser) : 
+    Runtime.IsUnion(parser) ? FromUnion(parser) : 
+    Runtime.IsArray(parser) ? FromArray(parser) : 
+    Runtime.IsOptional(parser) ? FromOptional(parser) : 
+    Runtime.IsString(parser) ? FromString(parser) : 
+    Runtime.IsConst(parser) ? FromConst(parser) : 
+    Runtime.IsRef(parser) ? FromRef(parser) : 
+    Runtime.IsIdent(parser) ? FromIdent(parser) : 
+    Runtime.IsNumber(parser) ? FromNumber(parser) : 
+    '<unreachable>'
+  )
 }
-
 export function CompileComment(name: string, parser: Runtime.IParser): string {
   const line = `// ${'-'.repeat(67)}`
   const type = `// ${name}: ${FromParser(parser)}`

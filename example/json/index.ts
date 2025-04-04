@@ -26,6 +26,6 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './parse'
-export * from './runtime'
-export * from './static'
+export * from './parse.ts'
+export * from './runtime.ts'
+export * from './static.ts'
