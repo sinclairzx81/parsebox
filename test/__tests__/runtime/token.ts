@@ -1,9 +1,6 @@
 import { Runtime } from '@sinclair/parsebox'
-import { deepStrictEqual } from 'node:assert'
+import { Assert } from './assert.ts'
 
-function Assert(left: unknown, right: unknown) {
-  deepStrictEqual(left, right)
-}
 Deno.test('Empty', () => {
   Assert(Runtime.Token.Const('', ''), ['', ''])
   Assert(Runtime.Token.Const('', 'A'), ['', 'A'])
