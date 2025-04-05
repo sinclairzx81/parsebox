@@ -1,11 +1,7 @@
 // deno-lint-ignore-file
 
 import { Runtime } from '@sinclair/parsebox'
-import { deepStrictEqual } from 'node:assert'
-
-function Assert(left: unknown, right: unknown) {
-  deepStrictEqual(left, right)
-}
+import { Assert } from './assert.ts'
 
 Deno.test('IsArray', () => {
   // @ts-ignore
