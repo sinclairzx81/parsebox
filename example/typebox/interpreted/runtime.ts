@@ -134,12 +134,59 @@ function ReferenceMapping(result: string, context: T.TProperties) {
 }
 const Reference = Runtime.Ident((result, context) => ReferenceMapping(result, context))
 // ------------------------------------------------------------------
+// TemplateText
+// ------------------------------------------------------------------
+function TemplateTextMapping(input: string) {
+  return T.Literal(input)
+}
+const TemplateText = Runtime.Union([
+  Runtime.Until('${'),
+  Runtime.Until('`'),
+], TemplateTextMapping)
+// ------------------------------------------------------------------
+// TemplateInterpolate
+// ------------------------------------------------------------------
+function TemplateInterpolateMapping(input: [unknown, unknown, unknown]) {
+  return input[1]
+}
+const TemplateInterpolate = Runtime.Tuple([
+  Runtime.Const('${'),
+  Runtime.Ref('Type'),
+  Runtime.Const('}')
+], TemplateInterpolateMapping)
+// ------------------------------------------------------------------
+// TemplateBody
+// ------------------------------------------------------------------
+function TemplateBodyMapping(input: [unknown] | [unknown, unknown, unknown]) {
+  return (
+    input.length === 3
+      ? [input[0], input[1], ...input[2] as unknown[]]
+      : [input[0]]
+  )
+}
+const TemplateBody = Runtime.Union([
+  Runtime.Tuple([Runtime.Ref('TemplateText'), Runtime.Ref('TemplateInterpolate'), Runtime.Ref('TemplateBody')]),
+  Runtime.Tuple([Runtime.Ref('TemplateText')]),
+], TemplateBodyMapping)
+// ------------------------------------------------------------------
+// TemplateLiteral
+// ------------------------------------------------------------------
+function TemplateLiteralMapping(input: [unknown, unknown, unknown]) {
+  return T.TemplateLiteral(input[1] as T.TTemplateLiteralKind[])
+}
+const TemplateLiteral = Runtime.Tuple([
+  Runtime.Const('`'),
+  Runtime.Ref('TemplateBody'),
+  Runtime.Const('`'),
+], TemplateLiteralMapping)
+
+// ------------------------------------------------------------------
 // Literal
 // ------------------------------------------------------------------
 const Literal = Runtime.Union([
   Runtime.Union([Runtime.Const('true'), Runtime.Const('false')], value => T.Literal(value === 'true')),
   Runtime.Number(value => T.Literal(parseFloat(value))),
-  Runtime.String([SingleQuote, DoubleQuote, Tilde], value => T.Literal(value))
+  Runtime.String([SingleQuote, DoubleQuote], value => T.Literal(value))
 ])
 // ------------------------------------------------------------------
 // Keyword
@@ -208,6 +255,7 @@ const Base = Runtime.Union([
   Runtime.Ref('Object'),
   Runtime.Ref('Tuple'),
   Runtime.Ref('Literal'),
+  Runtime.Ref('TemplateLiteral'),
   Runtime.Ref('Constructor'),
   Runtime.Ref('Function'),
   Runtime.Ref('Mapped'),
@@ -630,12 +678,17 @@ const Date = Runtime.Const('Date', Runtime.As(T.Date()))
 // Uint8Array
 // ------------------------------------------------------------------
 const Uint8Array = Runtime.Const('Uint8Array', Runtime.As(T.Uint8Array()))
+
 // ------------------------------------------------------------------
 // Module
 // ------------------------------------------------------------------
 export const Module = new Runtime.Module({
   GenericArgumentsList,
   GenericArguments,
+  TemplateInterpolate,
+  TemplateBody,
+  TemplateText,
+  TemplateLiteral,
   Literal,
   Keyword,
   KeyOf,

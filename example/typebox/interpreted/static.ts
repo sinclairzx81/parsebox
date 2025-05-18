@@ -91,6 +91,56 @@ type Dereference<Context extends T.TProperties, Ref extends string> = (
   Ref extends keyof Context ? Context[Ref] : T.TRef<Ref>
 )
 // ------------------------------------------------------------------
+// TemplateText
+// ------------------------------------------------------------------
+interface TemplateTextMapping extends Static.IMapping {
+  output: this['input'] extends string ? T.TLiteral<this['input']> : never
+}
+type TemplateText = Static.Union<[
+  Static.Until<'${'>,
+  Static.Until<'`'>,
+], TemplateTextMapping>
+// ------------------------------------------------------------------
+// TemplateInterpolate
+// ------------------------------------------------------------------
+interface TemplateInterpolateMapping extends Static.IMapping {
+  output: this['input'] extends ['${', infer Type extends T.TSchema, '}']
+    ? Type
+    : never
+}
+type TemplateInterpolate = Static.Tuple<[
+  Static.Const<'${'>,
+  Type,
+  Static.Const<'}'>
+], TemplateInterpolateMapping>
+// ------------------------------------------------------------------
+// TemplateBody
+// ------------------------------------------------------------------
+interface TemplateBodyMapping extends Static.IMapping {
+  output: (
+    this['input'] extends [infer Text extends T.TSchema, infer Type extends T.TSchema, infer Rest extends T.TSchema[]] ? [Text, Type, ...Rest] :
+    this['input'] extends [infer Text extends T.TSchema] ? [Text] :
+    []
+  )
+}
+type TemplateBody = Static.Union<[
+  Static.Tuple<[TemplateText, TemplateInterpolate, TemplateBody]>,
+  Static.Tuple<[TemplateText]>,
+], TemplateBodyMapping>
+// ------------------------------------------------------------------
+// TemplateLiteral
+// ------------------------------------------------------------------
+interface TemplateLiteralMapping extends Static.IMapping {
+  output: this['input'] extends ['`', infer Types extends T.TTemplateLiteralKind[], '`']
+    ? T.TTemplateLiteral<Types>
+    : never
+}
+type TemplateLiteral = Static.Tuple<[
+  Static.Const<'`'>,
+  TemplateBody,
+  Static.Const<'`'>,
+], TemplateLiteralMapping>
+// ------------------------------------------------------------------
 // GenericArguments
 // ------------------------------------------------------------------
 type GenericArgumentsContext<Args extends string[], Context extends T.TProperties, Result extends T.TProperties = {}> = (
@@ -154,7 +204,7 @@ interface LiteralStringMapping extends Static.IMapping {
 type Literal = Static.Union<[
   Static.Union<[Static.Const<'true'>, Static.Const<'false'>], LiteralBooleanMapping>,
   Static.Number<LiteralNumberMapping>,
-  Static.String<[DoubleQuote, SingleQuote, Tilde], LiteralStringMapping>,
+  Static.String<[DoubleQuote, SingleQuote], LiteralStringMapping>,
 ]>
 // ------------------------------------------------------------------
 // Keyword
@@ -230,6 +280,7 @@ type Base = Static.Union<[
   Object, 
   Tuple,
   Literal,
+  TemplateLiteral,
   Function,
   Constructor,
   Mapped,

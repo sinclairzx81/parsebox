@@ -1,4 +1,4 @@
-import { Task } from 'https://raw.githubusercontent.com/sinclairzx81/tasksmith/0.8.0/src/index.ts'
+import { Task } from 'https://raw.githubusercontent.com/sinclairzx81/tasksmith/0.8.2/src/index.ts'
 
 // ------------------------------------------------------------------
 // Clean
@@ -34,7 +34,7 @@ Task.run('build', () => Task.build('src', {
   packageJson: {
     name: '@sinclair/parsebox',
     description: 'Parser Combinators in the TypeScript Type System',
-    version: '0.9.2',
+    version: '0.9.3',
     keywords: ['typescript', 'parser', 'combinator'],
     license: 'MIT',
     author: 'sinclairzx81',

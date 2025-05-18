@@ -29,9 +29,14 @@ THE SOFTWARE.
 // deno-fmt-ignore-file
 // deno-lint-ignore-file no-unused-vars no-explicit-any
 
-import * as Guard from './guard.ts'
+import { Type } from "../../example/typebox/compiled/parser.ts"
+import { Guard } from '../guard/index.ts'
 import * as Token from './token.ts'
 import * as Types from './types.ts'
+
+export function Throw(message: string): never {
+  throw new Error(message)
+}
 
 // ------------------------------------------------------------------
 // Context
@@ -63,6 +68,12 @@ function ParseConst<Value extends string>(value: Value, code: string, context: u
   return Token.Const(value, code) as never
 }
 // ------------------------------------------------------------------
+// Until
+// ------------------------------------------------------------------
+function ParseUntil<Value extends string>(value: Value, code: string, context: unknown): [] | [Value, string] {
+  return Token.Until(value, code) as never
+}
+// ------------------------------------------------------------------
 // Ident
 // ------------------------------------------------------------------
 function ParseIdent(code: string, _context: unknown): [] | [string, string] {
@@ -85,8 +96,7 @@ function ParseOptional<ModuleProperties extends Types.IModuleProperties, Parser 
 // Ref
 // ------------------------------------------------------------------
 function ParseRef<ModuleProperties extends Types.IModuleProperties, Ref extends string>(moduleProperties: ModuleProperties, ref: Ref, code: string, context: unknown): [] | [string, string] {
-  const parser = moduleProperties[ref]
-  if (!Guard.IsParser(parser)) throw Error(`Cannot dereference Parser '${ref}'`)
+  const parser =  ref in moduleProperties ? moduleProperties[ref] : Throw(`Cannot dereference Parser '${ref}'`)
   return ParseParser(moduleProperties, parser, code, context) as never
 }
 // ------------------------------------------------------------------
@@ -125,16 +135,17 @@ function ParseUnion<ModuleProperties extends Types.IModuleProperties, Parsers ex
 // ------------------------------------------------------------------
 function ParseParser<Parser extends Types.IParser>(moduleProperties: Types.IModuleProperties, parser: Parser, code: string, context: unknown): [] | [Types.StaticParser<Parser>, string] {
   const result = (
-    Guard.IsContext(parser) ? ParseContext(moduleProperties, parser.left, parser.right, code, context) :
-    Guard.IsArray(parser) ? ParseArray(moduleProperties, parser.parser, code, context) :
-    Guard.IsConst(parser) ? ParseConst(parser.value, code, context) :
-    Guard.IsIdent(parser) ? ParseIdent(code, context) :
-    Guard.IsNumber(parser) ? ParseNumber(code, context) :
-    Guard.IsOptional(parser) ? ParseOptional(moduleProperties, parser.parser, code, context) :
-    Guard.IsRef(parser) ? ParseRef(moduleProperties, parser.ref, code, context) :
-    Guard.IsString(parser) ? ParseString(parser.options, code, context) :
-    Guard.IsTuple(parser) ? ParseTuple(moduleProperties, parser.parsers, code, context) :
-    Guard.IsUnion(parser) ? ParseUnion(moduleProperties, parser.parsers, code, context) :
+    Types.IsContext(parser) ? ParseContext(moduleProperties, parser.left, parser.right, code, context) :
+    Types.IsArray(parser) ? ParseArray(moduleProperties, parser.parser, code, context) :
+    Types.IsConst(parser) ? ParseConst(parser.value, code, context) :
+    Types.IsIdent(parser) ? ParseIdent(code, context) :
+    Types.IsNumber(parser) ? ParseNumber(code, context) :
+    Types.IsOptional(parser) ? ParseOptional(moduleProperties, parser.parser, code, context) :
+    Types.IsRef(parser) ? ParseRef(moduleProperties, parser.ref, code, context) :
+    Types.IsString(parser) ? ParseString(parser.options, code, context) :
+    Types.IsTuple(parser) ? ParseTuple(moduleProperties, parser.parsers, code, context) :
+    Types.IsUnion(parser) ? ParseUnion(moduleProperties, parser.parsers, code, context) :
+    Types.IsUntil(parser) ?  ParseUntil(parser.value, code, context) :
     []
   )
   return (result.length === 2 ? [parser.mapping(result[0], context), result[1]] : result) as never
