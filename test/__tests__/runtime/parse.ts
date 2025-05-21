@@ -22,6 +22,15 @@ Deno.test('Const', () => {
   Assert(Runtime.Parse(Runtime.Const('A'), '  A '), ['A', ' '])
 })
 // ----------------------------------------------------------------
+// Until
+// ----------------------------------------------------------------
+Deno.test('Until', () => {
+  Assert(Runtime.Parse(Runtime.Until('A'), ''), [])
+  Assert(Runtime.Parse(Runtime.Until('A'), 'A'), ['', 'A'])
+  Assert(Runtime.Parse(Runtime.Until('A'), '  A'), ['  ', 'A'])
+  Assert(Runtime.Parse(Runtime.Until('A'), '  A '), ['  ', 'A '])
+})
+// ----------------------------------------------------------------
 // Ident
 // ----------------------------------------------------------------
 Deno.test('Ident', () => {

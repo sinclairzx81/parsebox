@@ -53,6 +53,9 @@ function FromRef(parser: Runtime.IRef): string {
 function FromConst(parser: Runtime.IConst): string {
   return `'${Escape(parser.value)}'`
 }
+function FromUntil(parser: Runtime.IUntil): string {
+  return `string`
+}
 function FromIdent(parser: Runtime.IIdent): string {
   return `<Ident>`
 }
@@ -71,6 +74,7 @@ function FromParser(parser: Runtime.IParser): string {
     Runtime.IsOptional(parser) ? FromOptional(parser) : 
     Runtime.IsString(parser) ? FromString(parser) : 
     Runtime.IsConst(parser) ? FromConst(parser) : 
+    Runtime.IsUntil(parser) ? FromUntil(parser) : 
     Runtime.IsRef(parser) ? FromRef(parser) : 
     Runtime.IsIdent(parser) ? FromIdent(parser) : 
     Runtime.IsNumber(parser) ? FromNumber(parser) : 

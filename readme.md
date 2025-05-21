@@ -69,6 +69,7 @@ License: MIT
   - [Tuple](#Tuple)
   - [Union](#Union)
   - [Array](#Array)
+  - [Until](#Until)
   - [Optional](#Optional)
   - [Epsilon](#Epsilon)
 - [Terminals](#Terminals)
@@ -184,6 +185,27 @@ const R1 = Runtime.Parse(T, 'X Y Z')                 // const R1 = [['X'], ' Y Z
 const R2 = Runtime.Parse(T, 'X X X Y Z')             // const R2 = [['X', 'X', 'X'], ' Y Z']
 
 const R3 = Runtime.Parse(T, 'Y Z')                   // const R3 = [[], 'Y Z']
+```
+
+### Until
+
+The Until combinator parses all characters up to (but not including) the specified string. The specified string remains unconsumed in the input. If the string is not found, parsing fails.
+
+**BNF**
+
+```bnf
+<T> ::= ? any character until 'Z' ?
+```
+
+**TypeScript**
+
+```typescript
+const T = Runtime.Until('Z')                        // const T = {
+                                                    //   type: 'Until',
+                                                    //   value: 'Z'
+                                                    // }
+
+const R = Runtime.Parse(T, 'X Y Z')                 // const R = ['X Y ', 'Z']
 ```
 
 ### Optional
