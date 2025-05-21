@@ -113,7 +113,6 @@ type NextConst<Value extends string, Code extends string> = (
     : []
 )
 /** Scans for the next constant value */
-
 export type Const<Value extends string, Code extends string> = (
   Value extends '' ? ['', Code] :
   Value extends `${infer First extends string}${string}`
@@ -126,19 +125,16 @@ export type Const<Value extends string, Code extends string> = (
 // ------------------------------------------------------------------
 // Number
 // ------------------------------------------------------------------
-
 type NextNumberNegate<Code extends string> = (
   Code extends `${Chars.Hyphen}${infer Rest extends string}` 
     ? [Chars.Hyphen, Rest]
     : [Chars.Empty, Code]
 )
-
 type NextNumberZeroCheck<Code extends string> = (
   Code extends `0${infer Rest}`
     ? NextUnion<Chars.Digit, Rest> extends [string, string] ? false : true
     : true
 )
-
 type NextNumberScan<Code extends string, HasDecimal extends boolean = false, Result extends string = Chars.Empty> = (
   NextUnion<[...Chars.Digit, Chars.Dot], Code> extends [infer Char extends string, infer Rest extends string]
     ? Char extends Chars.Dot
@@ -148,7 +144,6 @@ type NextNumberScan<Code extends string, HasDecimal extends boolean = false, Res
       : NextNumberScan<Rest, HasDecimal, `${Result}${Char}`>
     : [Result, Code]
 )
-
 export type NextNumber<Code extends string> = (
   NextNumberNegate<Code> extends [infer Negate extends string, infer Rest extends string]
     ? NextNumberZeroCheck<Rest> extends true 
@@ -205,3 +200,18 @@ type NextIdent<Code extends string> = (
 )
 /** Scans for the next Ident */
 export type Ident<Code extends string> = NextIdent<Trim.TrimAll<Code>>
+
+// ------------------------------------------------------------------
+// Until
+// ------------------------------------------------------------------
+type UntilStartsWith<Value extends string, Input extends string> = (
+  Input extends `${Value}${string}` ? true : false
+)
+export type Until<Value extends string, Input extends string, Result extends string = ''> = (
+  Input extends `` ? [] :
+  UntilStartsWith<Value, Input> extends true
+    ? [Result, Input]
+    : Input extends `${infer Left extends string}${infer Right extends string}`
+      ? Until<Value, Right, `${Result}${Left}`>
+      : never
+)

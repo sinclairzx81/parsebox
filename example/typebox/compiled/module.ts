@@ -99,11 +99,40 @@ const GenericReference = Runtime.Tuple([
 // Reference
 // ------------------------------------------------------------------
 const Reference = Runtime.Ident()
-
+// ------------------------------------------------------------------
+// TemplateText
+// ------------------------------------------------------------------
+const TemplateText = Runtime.Union([
+  Runtime.Until('${'),
+  Runtime.Until('`'),
+])
+// ------------------------------------------------------------------
+// TemplateInterpolate
+// ------------------------------------------------------------------
+const TemplateInterpolate = Runtime.Tuple([
+  Runtime.Const('${'),
+  Runtime.Ref('Type'),
+  Runtime.Const('}')
+])
+// ------------------------------------------------------------------
+// TemplateBody
+// ------------------------------------------------------------------
+const TemplateBody = Runtime.Union([
+  Runtime.Tuple([Runtime.Ref('TemplateText'), Runtime.Ref('TemplateInterpolate'), Runtime.Ref('TemplateBody')]),
+  Runtime.Tuple([Runtime.Ref('TemplateText')]),
+])
+// ------------------------------------------------------------------
+// TemplateLiteral
+// ------------------------------------------------------------------
+const TemplateLiteral = Runtime.Tuple([
+  Runtime.Const('`'),
+  Runtime.Ref('TemplateBody'),
+  Runtime.Const('`'),
+])
 // ------------------------------------------------------------------
 // Literal
 // ------------------------------------------------------------------
-const LiteralString = Runtime.String([SingleQuote, DoubleQuote, Tilde])
+const LiteralString = Runtime.String([SingleQuote, DoubleQuote])
 const LiteralNumber = Runtime.Number()
 const LiteralBoolean = Runtime.Union([Runtime.Const('true'), Runtime.Const('false')])
 const Literal = Runtime.Union([
@@ -177,6 +206,7 @@ const Base = Runtime.Union([
   Runtime.Ref('Object'),
   Runtime.Ref('Tuple'),
   Runtime.Ref('Literal'),
+  Runtime.Ref('TemplateLiteral'),
   Runtime.Ref('Constructor'),
   Runtime.Ref('Function'),
   Runtime.Ref('Mapped'),
@@ -589,6 +619,10 @@ export const SyntaxModule = new Runtime.Module({
   KeywordSymbol,
   KeywordVoid,
   Keyword,
+  TemplateInterpolate,
+  TemplateBody,
+  TemplateText,
+  TemplateLiteral,
   LiteralString,
   LiteralNumber,
   LiteralBoolean,

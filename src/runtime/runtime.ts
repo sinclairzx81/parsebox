@@ -27,7 +27,6 @@ THE SOFTWARE.
 ---------------------------------------------------------------------------*/
 
 export * as Token from "./token.ts"
-export * from "./guard.ts"
 export * from "./types.ts"
 export * from "./module.ts"
 export * from "./parse.ts"

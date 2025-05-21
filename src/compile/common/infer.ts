@@ -49,6 +49,9 @@ function InferOptional(parser: Runtime.IParser) {
 function InferConst(parser: Runtime.IConst) {
   return `'${parser.value}'`
 }
+function InferUntil(parser: Runtime.IUntil) {
+  return `string`
+}
 export function Infer(parser: Runtime.IParser): string {
   return (
     Runtime.IsContext(parser) ? InferContext(parser.right, parser.right) :
@@ -58,6 +61,7 @@ export function Infer(parser: Runtime.IParser): string {
     Runtime.IsOptional(parser) ? InferOptional(parser.parser) :
     Runtime.IsRef(parser) ? `unknown` :
     Runtime.IsConst(parser) ? InferConst(parser) :
+    Runtime.IsUntil(parser) ? InferUntil(parser) :
     Runtime.IsString(parser) ? `string` :
     Runtime.IsIdent(parser) ? `string` :
     Runtime.IsNumber(parser) ? `string` :

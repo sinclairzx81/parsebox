@@ -26,20 +26,4 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-// deno-fmt-ignore-file
-
-export function IsEqual(left: unknown, right: unknown): boolean {
-  return left === right
-}
-export function HasPropertyKey<Key extends PropertyKey>(value: Record<PropertyKey, unknown>, key: Key): value is Record<PropertyKey, unknown> & { [_ in Key]: unknown } {
-  return key in value
-}
-export function IsObject(value: unknown): value is Record<PropertyKey, unknown> {
-  return typeof value === 'object' && value !== null
-}
-export function IsArray(value: unknown): value is unknown[] {
-  return globalThis.Array.isArray(value)
-}
-export function IsString(value: unknown): value is string {
-  return typeof value === 'string'
-}
+export * as Guard from './guard.ts'

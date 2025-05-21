@@ -27,209 +27,224 @@ THE SOFTWARE.
 ---------------------------------------------------------------------------*/
 
 // deno-fmt-ignore-file
-// deno-lint-ignore-file no-namespace
+// deno-lint-ignore-file
 
 // ------------------------------------------------------------------
 // Chars
 // ------------------------------------------------------------------
-namespace Chars {
-  /** Returns true if the char code is a whitespace */
-  export function IsWhitespace(value: number): boolean {
-    return value === 32
-  }
-  /** Returns true if the char code is a newline */
-  export function IsNewline(value: number): boolean {
-    return value === 10
-  }
-  /** Returns true if the char code is a alpha  */
-  export function IsAlpha(value: number): boolean {
-    return (
-      (value >= 65 && value <= 90) || // A-Z 
-      (value >= 97 && value <= 122)   // a-z
-    )
-  }
-  /** Returns true if the char code is zero */
-  export function IsZero(value: number): boolean {
-    return value === 48
-  }
-  /** Returns true if the char code is non-zero */
-  export function IsNonZero(value: number): boolean {
-    return value >= 49 && value <= 57
-  }
-  /** Returns true if the char code is a digit */
-  export function IsDigit(value: number): boolean {
-    return (
-      IsNonZero(value) ||
-      IsZero(value)
-    )
-  }
-  /** Returns true if the char code is a dot */
-  export function IsDot(value: number): boolean {
-    return value === 46
-  }
-  /** Returns true if this char code is a underscore */
-  export function IsUnderscore(value: unknown): boolean {
-    return value === 95
-  }
-  /** Returns true if this char code is a dollar sign */
-  export function IsDollarSign(value: unknown): boolean {
-    return value === 36
-  }
+/** Returns true if the char code is a whitespace */
+export function IsWhitespace(charCode: number): boolean {
+  return charCode === 32
 }
+/** Returns true if the char code is a newline */
+export function IsNewline(charCode: number): boolean {
+  return charCode === 10
+}
+/** Returns true if the char code is a alpha  */
+export function IsAlpha(charCode: number): boolean {
+  return (
+    (charCode >= 65 && charCode <= 90) || // A-Z 
+    (charCode >= 97 && charCode <= 122)   // a-z
+  )
+}
+/** Returns true if the char code is zero */
+export function IsZero(charCode: number): boolean {
+  return charCode === 48
+}
+/** Returns true if the char code is non-zero */
+export function IsNonZero(charCode: number): boolean {
+  return charCode >= 49 && charCode <= 57
+}
+/** Returns true if the char code is a digit */
+export function IsDigit(charCode: number): boolean {
+  return (
+    IsNonZero(charCode) ||
+    IsZero(charCode)
+  )
+}
+/** Returns true if the char code is a dot */
+export function IsDot(charCode: number): boolean {
+  return charCode === 46
+}
+/** Returns true if this char code is a underscore */
+export function IsUnderscore(charCode: number): boolean {
+  return charCode === 95
+}
+/** Returns true if this char code is a dollar sign */
+export function IsDollarSign(charCode: number): boolean {
+  return charCode === 36
+}
+
 // ------------------------------------------------------------------
 // Trim
 // ------------------------------------------------------------------
-namespace Trim {
-  /** Trims Whitespace and retains Newline, Tabspaces, etc. */
-  export function TrimWhitespaceOnly(code: string): string {
-    for (let i = 0; i < code.length; i++) {
-      if (Chars.IsWhitespace(code.charCodeAt(i))) continue
-      return code.slice(i)
-    }
-    return code
+/** Trims Whitespace and retains Newline, Tabspaces, etc. */
+export function TrimWhitespaceOnly(input: string): string {
+  for (let i = 0; i < input.length; i++) {
+    if (IsWhitespace(input.charCodeAt(i))) continue
+    return input.slice(i)
   }
-  /** Trims Whitespace including Newline, Tabspaces, etc. */
-  export function TrimAll(code: string): string {
-    return code.trimStart()
-  }
+  return input
+}
+/** Trims Whitespace including Newline, Tabspaces, etc. */
+export function TrimAll(input: string): string {
+  return input.trimStart()
 }
 // ------------------------------------------------------------------
 // Const
 // ------------------------------------------------------------------
 /** Checks the value matches the next string  */
-function NextTokenCheck(value: string, code: string): boolean {
-  if (value.length > code.length) return false
+function NextTokenCheck(value: string, input: string): boolean {
+  if (value.length > input.length) return false
   for (let i = 0; i < value.length; i++) {
-    if (value.charCodeAt(i) !== code.charCodeAt(i)) return false
+    if (value.charCodeAt(i) !== input.charCodeAt(i)) return false
   }
   return true
 }
 /** Gets the next constant string value or empty if no match */
-function NextConst(value: string, code: string, ): [] | [string, string] {
-  return NextTokenCheck(value, code)
-    ? [code.slice(0, value.length), code.slice(value.length)]
+function NextConst(value: string, input: string, ): [] | [string, string] {
+  return NextTokenCheck(value, input)
+    ? [input.slice(0, value.length), input.slice(value.length)]
     : []
 }
 /** Takes the next constant string value skipping any whitespace */
-export function Const(value: string, code: string): [] | [string, string] {
-  if(value.length === 0) return ['', code]
+export function Const(value: string, input: string): [] | [string, string] {
+  if(value.length === 0) return ['', input]
   const char_0 = value.charCodeAt(0)
   return (
-    Chars.IsNewline(char_0) ? NextConst(value, Trim.TrimWhitespaceOnly(code)) :
-    Chars.IsWhitespace(char_0) ? NextConst(value, code) :
-    NextConst(value, Trim.TrimAll(code))
+    IsNewline(char_0) ? NextConst(value, TrimWhitespaceOnly(input)) :
+    IsWhitespace(char_0) ? NextConst(value, input) :
+    NextConst(value, TrimAll(input))
   )
 }
 // ------------------------------------------------------------------
 // Ident
 // ------------------------------------------------------------------
-function IdentIsFirst(char: number) {
+function IdentIsFirst(charCode: number) {
   return (
-    Chars.IsAlpha(char) ||
-    Chars.IsDollarSign(char) ||
-    Chars.IsUnderscore(char)
+    IsAlpha(charCode) ||
+    IsDollarSign(charCode) ||
+    IsUnderscore(charCode)
   )
 }
-function IdentIsRest(char: number) {
+function IdentIsRest(charCode: number) {
   return (
-    Chars.IsAlpha(char) ||
-    Chars.IsDigit(char) ||
-    Chars.IsDollarSign(char) ||
-    Chars.IsUnderscore(char)
+    IsAlpha(charCode) ||
+    IsDigit(charCode) ||
+    IsDollarSign(charCode) ||
+    IsUnderscore(charCode)
   )
 }
-function NextIdent(code: string): [] | [string, string] {
-  if (!IdentIsFirst(code.charCodeAt(0))) return []
-  for (let i = 1; i < code.length; i++) {
-    const char = code.charCodeAt(i)
+function NextIdent(input: string): [] | [string, string] {
+  if (!IdentIsFirst(input.charCodeAt(0))) return []
+  for (let i = 1; i < input.length; i++) {
+    const char = input.charCodeAt(i)
     if (IdentIsRest(char)) continue
-    const slice = code.slice(0, i)
-    const rest = code.slice(i)
+    const slice = input.slice(0, i)
+    const rest = input.slice(i)
     return [slice, rest]
   }
-  return [code, '']
+  return [input, '']
 }
 /** Scans for the next Ident token */
-export function Ident(code: string): [] | [string, string] {
-  return NextIdent(Trim.TrimAll(code))
+export function Ident(input: string): [] | [string, string] {
+  return NextIdent(TrimAll(input))
 }
 // ------------------------------------------------------------------
 // Number
 // ------------------------------------------------------------------
 /** Checks that the next number is not a leading zero */
-function NumberLeadingZeroCheck(code: string, index: number) {
-  const char_0 = code.charCodeAt(index + 0)
-  const char_1 = code.charCodeAt(index + 1)
+function NumberLeadingZeroCheck(input: string, index: number) {
+  const char_0 = input.charCodeAt(index + 0)
+  const char_1 = input.charCodeAt(index + 1)
   return (
     ( 
       // 1-9
-      Chars.IsNonZero(char_0)
+      IsNonZero(char_0)
     ) || ( 
       // 0
-      Chars.IsZero(char_0) &&
-      !Chars.IsDigit(char_1)
+      IsZero(char_0) &&
+      !IsDigit(char_1)
     )  || ( 
       // 0.
-      Chars.IsZero(char_0) &&
-      Chars.IsDot(char_1)
+      IsZero(char_0) &&
+      IsDot(char_1)
     ) || ( 
       // .0
-      Chars.IsDot(char_0) &&
-      Chars.IsDigit(char_1)
+      IsDot(char_0) &&
+      IsDigit(char_1)
     )
   )
 }
 /** Gets the next number token */
-function NextNumber(code: string): [] | [string, string] {
-  const negated = code.charAt(0) === '-'
+function NextNumber(input: string): [] | [string, string] {
+  const negated = input.charAt(0) === '-'
   const index = negated ? 1 : 0
-  if (!NumberLeadingZeroCheck(code, index)) {
+  if (!NumberLeadingZeroCheck(input, index)) {
     return []
   }
   const dash = negated ? '-' : ''
   let hasDot = false
-  for (let i = index; i < code.length; i++) {
-    const char_i = code.charCodeAt(i)
-    if (Chars.IsDigit(char_i)) {
+  for (let i = index; i < input.length; i++) {
+    const char_i = input.charCodeAt(i)
+    if (IsDigit(char_i)) {
       continue
     }
-    if (Chars.IsDot(char_i)) {
+    if (IsDot(char_i)) {
       if (hasDot) {
-        const slice = code.slice(index, i)
-        const rest = code.slice(i)
+        const slice = input.slice(index, i)
+        const rest = input.slice(i)
         return [`${dash}${slice}`, rest]
       }
       hasDot = true
       continue
     }
-    const slice = code.slice(index, i)
-    const rest = code.slice(i)
+    const slice = input.slice(index, i)
+    const rest = input.slice(i)
     return [`${dash}${slice}`, rest]
   }
-  return [code, '']
+  return [input, '']
 }
 /** Scans for the next number token */
 export function Number(code: string) {
-  return NextNumber(Trim.TrimAll(code))
+  return NextNumber(TrimAll(code))
 }
 // ------------------------------------------------------------------
 // String
 // ------------------------------------------------------------------
-function NextString(options: string[], code: string): [] | [string, string] {
-  const first = code.charAt(0)
+function NextString(options: string[], input: string): [] | [string, string] {
+  const first = input.charAt(0)
   if(!options.includes(first)) return []
   const quote = first
-  for(let i = 1; i < code.length; i++) {
-    const char = code.charAt(i)
+  for(let i = 1; i < input.length; i++) {
+    const char = input.charAt(i)
     if(char === quote) {
-      const slice = code.slice(1, i)
-      const rest = code.slice(i + 1)
+      const slice = input.slice(1, i)
+      const rest = input.slice(i + 1)
       return [slice, rest]
     }
   }
   return []
 }
 /** Scans the next Literal String value */
-export function String(options: string[], code: string) {
-  return NextString(options, Trim.TrimAll(code))
+export function String(options: string[], input: string) {
+  return NextString(options, TrimAll(input))
+}
+// ------------------------------------------------------------------
+// Until
+// ------------------------------------------------------------------
+function UntilStartsWith(value: string, input: string) {
+  return input.startsWith(value)
+}
+export function Until(value: string, input: string, result: string = ''): [] | [string, string] {
+  return (
+    input === '' ? [] : (() => {
+      return UntilStartsWith(value, input)
+        ? [result, input]
+        : (() => {
+          const [left, right] = [input.slice(0, 1), input.slice(1)]
+          return Until(value, right, `${result}${left}`)
+        })()
+    })()
+  )
 }
