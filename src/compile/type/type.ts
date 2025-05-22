@@ -89,7 +89,7 @@ function FromConst(options: Options, name: string, value: string): string {
 // ------------------------------------------------------------------
 function FromUntil(options: Options, name: string, values: string[]): string {
   const escaped = values.map(value => `'${Escape(value)}'`)
-  return `Static.Token.Until<${escaped.join(', ')}, Input>`
+  return `Static.Token.Until<[${escaped.join(', ')}], Input>`
 }
 // ------------------------------------------------------------------
 // Ident
