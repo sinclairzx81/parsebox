@@ -139,10 +139,7 @@ const Reference = Runtime.Ident((result, context) => ReferenceMapping(result, co
 function TemplateTextMapping(input: string) {
   return T.Literal(input)
 }
-const TemplateText = Runtime.Union([
-  Runtime.Until('${'),
-  Runtime.Until('`'),
-], TemplateTextMapping)
+const TemplateText = Runtime.Until(['`', '${'], TemplateTextMapping)
 // ------------------------------------------------------------------
 // TemplateInterpolate
 // ------------------------------------------------------------------

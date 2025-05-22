@@ -87,8 +87,9 @@ function FromConst(options: Options, name: string, value: string): string {
 // ------------------------------------------------------------------
 // Until
 // ------------------------------------------------------------------
-function FromUntil(options: Options, name: string, value: string): string {
-  return `Static.Token.Until<'${Escape(value)}', Input>`
+function FromUntil(options: Options, name: string, values: string[]): string {
+  const escaped = values.map(value => `'${Escape(value)}'`)
+  return `Static.Token.Until<${escaped.join(', ')}, Input>`
 }
 // ------------------------------------------------------------------
 // Ident
@@ -127,7 +128,7 @@ function FromParser(options: Options, name: string, parser: Runtime.IParser): st
     Runtime.IsOptional(parser) ? FromOptional(options, name, parser) :
     Runtime.IsString(parser) ? FromString(options, name, parser.options) :
     Runtime.IsConst(parser) ? FromConst(options, name, parser.value) :
-    Runtime.IsUntil(parser) ? FromUntil(options, name, parser.value) :
+    Runtime.IsUntil(parser) ? FromUntil(options, name, parser.values) :
     Runtime.IsRef(parser) ? FromRef(options, name, parser.ref) :
     Runtime.IsIdent(parser) ? FromIdent(options, name) :
     Runtime.IsNumber(parser) ? FromNumber(options, name) :

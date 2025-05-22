@@ -324,22 +324,22 @@ export function IsUnion(value: unknown): value is IUnion {
 // ------------------------------------------------------------------
 export interface IUntil<Output extends unknown = unknown> extends IParser<Output> {
   type: 'Until'
-  value: string
+  values: string[]
 }
 /** `[TERM]` Creates a Until Parser */
-export function Until<Mapping extends IMapping<string>>(value: string, mapping: Mapping): IUntil<string>
+export function Until<Mapping extends IMapping<string>>(values: string[], mapping: Mapping): IUntil<string>
 /** `[TERM]` Creates a Until Parser */
-export function Until(value: string): IUntil<string>
+export function Until(values: string[]): IUntil<string>
 /** `[TERM]` Creates a Until Parser */
 export function Until(...args: unknown[]): never {
-  const [value, mapping] = args.length === 2 ? [args[0], args[1]] : [args[0], Identity]
-  return { type: 'Until', value, mapping } as never
+  const [values, mapping] = args.length === 2 ? [args[0], args[1]] : [args[0], Identity]
+  return { type: 'Until', values, mapping } as never
 }
 /** Returns true if the value is a Until Parser */
 export function IsUntil(value: unknown): value is IUntil {
   return Guard.IsObject(value)
     && Guard.HasPropertyKey(value, 'type')
-    && Guard.HasPropertyKey(value, 'value')
+    && Guard.HasPropertyKey(value, 'values')
     && Guard.IsEqual(value.type, 'Until')
-    && Guard.IsString(value.value)
+    && Guard.IsArray(value.values)
 }

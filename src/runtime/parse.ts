@@ -66,12 +66,6 @@ function ParseConst<Value extends string>(value: Value, code: string, context: u
   return Token.Const(value, code) as never
 }
 // ------------------------------------------------------------------
-// Until
-// ------------------------------------------------------------------
-function ParseUntil<Value extends string>(value: Value, code: string, context: unknown): [] | [Value, string] {
-  return Token.Until(value, code) as never
-}
-// ------------------------------------------------------------------
 // Ident
 // ------------------------------------------------------------------
 function ParseIdent(code: string, _context: unknown): [] | [string, string] {
@@ -129,6 +123,12 @@ function ParseUnion<ModuleProperties extends Types.IModuleProperties, Parsers ex
   return []
 }
 // ------------------------------------------------------------------
+// Until
+// ------------------------------------------------------------------
+function ParseUntil<Values extends string[]>(values: [...Values], code: string, context: unknown): [] | [string, string] {
+  return Token.Until(values, code) as never
+}
+// ------------------------------------------------------------------
 // Parser
 // ------------------------------------------------------------------
 function ParseParser<Parser extends Types.IParser>(moduleProperties: Types.IModuleProperties, parser: Parser, code: string, context: unknown): [] | [Types.StaticParser<Parser>, string] {
@@ -143,7 +143,7 @@ function ParseParser<Parser extends Types.IParser>(moduleProperties: Types.IModu
     Types.IsString(parser) ? ParseString(parser.options, code, context) :
     Types.IsTuple(parser) ? ParseTuple(moduleProperties, parser.parsers, code, context) :
     Types.IsUnion(parser) ? ParseUnion(moduleProperties, parser.parsers, code, context) :
-    Types.IsUntil(parser) ?  ParseUntil(parser.value, code, context) :
+    Types.IsUntil(parser) ?  ParseUntil(parser.values, code, context) :
     []
   )
   return (result.length === 2 ? [parser.mapping(result[0], context), result[1]] : result) as never

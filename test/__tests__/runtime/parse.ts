@@ -25,11 +25,17 @@ Deno.test('Const', () => {
 // Until
 // ----------------------------------------------------------------
 Deno.test('Until', () => {
-  Assert(Runtime.Parse(Runtime.Until('A'), ''), [])
-  Assert(Runtime.Parse(Runtime.Until('A'), 'A'), ['', 'A'])
-  Assert(Runtime.Parse(Runtime.Until('A'), '  A'), ['  ', 'A'])
-  Assert(Runtime.Parse(Runtime.Until('A'), '  A '), ['  ', 'A '])
+  Assert(Runtime.Parse(Runtime.Until(['A']), ''), [])
+  Assert(Runtime.Parse(Runtime.Until(['A']), 'A'), ['', 'A'])
+  Assert(Runtime.Parse(Runtime.Until(['A']), '  A'), ['  ', 'A'])
+  Assert(Runtime.Parse(Runtime.Until(['A']), '  A '), ['  ', 'A '])
+
+  Assert(Runtime.Parse(Runtime.Until(['A', 'B']), ''), [])
+  Assert(Runtime.Parse(Runtime.Until(['A', 'B']), 'BA'), ['', 'BA'])
+  Assert(Runtime.Parse(Runtime.Until(['A', 'B']), '  BA'), ['  ', 'BA'])
+  Assert(Runtime.Parse(Runtime.Until(['A', 'B']), '  BA '), ['  ', 'BA '])
 })
+
 // ----------------------------------------------------------------
 // Ident
 // ----------------------------------------------------------------

@@ -233,18 +233,22 @@ export function String(options: string[], input: string) {
 // ------------------------------------------------------------------
 // Until
 // ------------------------------------------------------------------
-function UntilStartsWith(value: string, input: string) {
-  return input.startsWith(value)
+function UntilStartsWith(value: string[], input: string): boolean {
+  const [left, ...right] = value
+  return (typeof left === 'string')
+    ? input.startsWith(left)
+      ? true
+      : UntilStartsWith(right, input)
+    : false
 }
-export function Until(value: string, input: string, result: string = ''): [] | [string, string] {
+export function Until(value: string[], input: string, result: string = ''): [] | [string, string] {
   return (
-    input === '' ? [] : (() => {
-      return UntilStartsWith(value, input)
-        ? [result, input]
-        : (() => {
-          const [left, right] = [input.slice(0, 1), input.slice(1)]
-          return Until(value, right, `${result}${left}`)
-        })()
+    input === '' ? [] : 
+    UntilStartsWith(value, input)
+      ? [result, input]
+      : (() => {
+        const [left, right] = [input.slice(0, 1), input.slice(1)]
+        return Until(value, right, `${result}${left}`)
     })()
   )
 }
