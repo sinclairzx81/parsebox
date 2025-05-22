@@ -30,6 +30,7 @@ THE SOFTWARE.
 // deno-lint-ignore-file no-unused-vars
 
 import { Runtime } from '../../runtime/index.ts'
+import { Unreachable } from './unreachable.ts'
 
 function InferUnion(parsers: Runtime.IParser[]): string {
   return [...new Set(parsers.map((parser) => Infer(parser)))].join(' | ')
@@ -65,6 +66,6 @@ export function Infer(parser: Runtime.IParser): string {
     Runtime.IsString(parser) ? `string` :
     Runtime.IsIdent(parser) ? `string` :
     Runtime.IsNumber(parser) ? `string` :
-    '<unreachable>'
+    Unreachable(parser)
   )
 }

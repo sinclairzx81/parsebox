@@ -30,7 +30,7 @@ THE SOFTWARE.
 // deno-lint-ignore-file no-unused-vars
 
 import { Runtime } from '../../runtime/index.ts'
-import { Infer, Escape } from '../common/index.ts'
+import { Infer, Escape, Unreachable } from '../common/index.ts'
 import { Options } from '../options.ts'
 import { Name } from './name.ts'
 
@@ -132,7 +132,7 @@ function FromParser(options: Options, name: string, parser: Runtime.IParser): st
     Runtime.IsRef(parser) ? FromRef(options, name, parser.ref) :
     Runtime.IsIdent(parser) ? FromIdent(options, name) :
     Runtime.IsNumber(parser) ? FromNumber(options, name) :
-    '<unreachable>'
+    Unreachable(parser)
   )
 }
 // ------------------------------------------------------------------

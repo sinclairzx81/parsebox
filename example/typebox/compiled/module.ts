@@ -1,10 +1,10 @@
 /*--------------------------------------------------------------------------
 
-@sinclair/typebox/syntax
+TypeBox
 
 The MIT License (MIT)
 
-Copyright (c) 2017-2025 Haydn Paterson (sinclair) <haydn.developer@gmail.com>
+Copyright (c) 2017-2025 Haydn Paterson (sinclair) 
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -26,8 +26,6 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-// deno-lint-ignore-file
-
 import { Runtime } from '@sinclair/parsebox'
 
 // ------------------------------------------------------------------
@@ -43,6 +41,8 @@ const RBrace = '}'
 const LAngle = '<'
 const RAngle = '>'
 const Question = '?'
+const Hyphen = '-'
+const Plus = '+'
 const Colon = ':'
 const Comma = ','
 const SemiColon = ';'
@@ -56,18 +56,55 @@ const Equals = '='
 // ------------------------------------------------------------------
 const DelimitHead = <Element extends Runtime.IParser, Delimiter extends Runtime.IParser>(element: Element, delimiter: Delimiter) => 
   Runtime.Array(Runtime.Tuple([element, delimiter]))
-
 const DelimitTail = <Element extends Runtime.IParser>(element: Element) => 
   Runtime.Union([Runtime.Tuple([element]), Runtime.Tuple([])])
-
 const Delimit = <Element extends Runtime.IParser, Delimiter extends Runtime.IParser>(element: Element, delimiter: Delimiter) => 
   Runtime.Tuple([DelimitHead(element, delimiter), DelimitTail(element)])
 
 // ------------------------------------------------------------------
-// GenericArgumentsList
+// GenericArgumentExtendsEquals
 // ------------------------------------------------------------------
-const GenericArgumentsList = Delimit(
-  Runtime.Ident(), 
+const GenericArgumentExtendsEquals = Runtime.Tuple([
+  Runtime.Ident(),
+  Runtime.Const('extends'),
+  Runtime.Ref('Type'),
+  Runtime.Const(Equals),
+  Runtime.Ref('Type')
+])
+// ------------------------------------------------------------------
+// GenericArgumentExtends
+// ------------------------------------------------------------------
+const GenericArgumentExtends = Runtime.Tuple([
+  Runtime.Ident(),
+  Runtime.Const('extends'),
+  Runtime.Ref('Type')
+])
+// ------------------------------------------------------------------
+// GenericArgumentEquals
+// ------------------------------------------------------------------
+const GenericArgumentEquals = Runtime.Tuple([
+  Runtime.Ident(),
+  Runtime.Const(Equals),
+  Runtime.Ref('Type')
+])
+// ------------------------------------------------------------------
+// GenericArgumentType
+// ------------------------------------------------------------------
+const GenericArgumentType = Runtime.Ident()
+// ------------------------------------------------------------------
+// GenericArgument
+// ------------------------------------------------------------------
+const GenericArgument = Runtime.Union([
+  Runtime.Ref('GenericArgumentExtendsEquals'),
+  Runtime.Ref('GenericArgumentExtends'),
+  Runtime.Ref('GenericArgumentEquals'),
+  Runtime.Ref('GenericArgumentType')
+])
+// ------------------------------------------------------------------
+// GenericArgumentList
+// ------------------------------------------------------------------
+const GenericArgumentList = Delimit(
+  Runtime.Ref('GenericArgument'), 
   Runtime.Const(Comma)
 )
 // ------------------------------------------------------------------
@@ -75,8 +112,9 @@ const GenericArgumentsList = Delimit(
 // ------------------------------------------------------------------
 const GenericArguments = Runtime.Tuple([
   Runtime.Const(LAngle),
-  Runtime.Ref('GenericArgumentsList'),
+  Runtime.Ref('GenericArgumentList'),
   Runtime.Const(RAngle),
+  Runtime.Const(Equals)
 ])
 // ------------------------------------------------------------------
 // GenericReferenceParameterList
@@ -94,18 +132,14 @@ const GenericReference = Runtime.Tuple([
   Runtime.Ref('GenericReferenceParameterList'),
   Runtime.Const(RAngle)
 ])
-
 // ------------------------------------------------------------------
 // Reference
 // ------------------------------------------------------------------
 const Reference = Runtime.Ident()
 // ------------------------------------------------------------------
-// TemplateText
+// TemplateSpan
 // ------------------------------------------------------------------
-const TemplateText = Runtime.Union([
-  Runtime.Until('${'),
-  Runtime.Until('`'),
-])
+const TemplateSpan = Runtime.Until(['`', '${'])
 // ------------------------------------------------------------------
 // TemplateInterpolate
 // ------------------------------------------------------------------
@@ -118,8 +152,8 @@ const TemplateInterpolate = Runtime.Tuple([
 // TemplateBody
 // ------------------------------------------------------------------
 const TemplateBody = Runtime.Union([
-  Runtime.Tuple([Runtime.Ref('TemplateText'), Runtime.Ref('TemplateInterpolate'), Runtime.Ref('TemplateBody')]),
-  Runtime.Tuple([Runtime.Ref('TemplateText')]),
+  Runtime.Tuple([Runtime.Ref('TemplateSpan'), Runtime.Ref('TemplateInterpolate'), Runtime.Ref('TemplateBody')]),
+  Runtime.Tuple([Runtime.Ref('TemplateSpan')]),
 ])
 // ------------------------------------------------------------------
 // TemplateLiteral
@@ -152,9 +186,11 @@ const KeywordInteger = Runtime.Const('integer')
 const KeywordBigInt = Runtime.Const('bigint')
 const KeywordUnknown = Runtime.Const('unknown')
 const KeywordAny = Runtime.Const('any')
+const KeywordObject = Runtime.Const('object')
 const KeywordNever = Runtime.Const('never')
 const KeywordSymbol = Runtime.Const('symbol')
 const KeywordVoid = Runtime.Const('void')
+const KeywordThis = Runtime.Const('this')
 const Keyword = Runtime.Union([
   Runtime.Ref('KeywordString'),
   Runtime.Ref('KeywordNumber'),
@@ -165,9 +201,11 @@ const Keyword = Runtime.Union([
   Runtime.Ref('KeywordBigInt'),
   Runtime.Ref('KeywordUnknown'),
   Runtime.Ref('KeywordAny'),
+  Runtime.Ref('KeywordObject'),
   Runtime.Ref('KeywordNever'),
   Runtime.Ref('KeywordSymbol'),
-  Runtime.Ref('KeywordVoid')
+  Runtime.Ref('KeywordVoid'),
+  Runtime.Ref('KeywordThis')
 ])
 // ------------------------------------------------------------------
 // KeyOf
@@ -205,34 +243,12 @@ const Base = Runtime.Union([
   Runtime.Ref('Keyword'),
   Runtime.Ref('Object'),
   Runtime.Ref('Tuple'),
-  Runtime.Ref('Literal'),
   Runtime.Ref('TemplateLiteral'),
+  Runtime.Ref('Literal'),
   Runtime.Ref('Constructor'),
   Runtime.Ref('Function'),
   Runtime.Ref('Mapped'),
-  Runtime.Ref('AsyncIterator'),
-  Runtime.Ref('Iterator'),
-  Runtime.Ref('ConstructorParameters'),
-  Runtime.Ref('FunctionParameters'),
-  Runtime.Ref('InstanceType'),
-  Runtime.Ref('ReturnType'),
-  Runtime.Ref('Argument'),
-  Runtime.Ref('Awaited'),
-  Runtime.Ref('Array'),
-  Runtime.Ref('Record'),
-  Runtime.Ref('Promise'),
-  Runtime.Ref('Partial'),
-  Runtime.Ref('Required'),
-  Runtime.Ref('Pick'),
-  Runtime.Ref('Omit'),
-  Runtime.Ref('Exclude'),
-  Runtime.Ref('Extract'),
-  Runtime.Ref('Uppercase'),
-  Runtime.Ref('Lowercase'),
-  Runtime.Ref('Capitalize'),
-  Runtime.Ref('Uncapitalize'),
-  Runtime.Ref('Date'),
-  Runtime.Ref('Uint8Array'),
+  Runtime.Ref('Options'),
   Runtime.Ref('GenericReference'),
   Runtime.Ref('Reference')
 ])
@@ -245,7 +261,6 @@ const Factor = Runtime.Tuple([
   Runtime.Ref('IndexArray'),
   Runtime.Ref('Extends')
 ])
-
 // ------------------------------------------------------------------
 // Expr
 // ------------------------------------------------------------------
@@ -265,17 +280,48 @@ const Expr = Runtime.Tuple([
   Runtime.Ref('ExprTerm'), 
   Runtime.Ref('ExprTail')
 ])
+
+// ------------------------------------------------------------------
+// InferType
+// ------------------------------------------------------------------
+const InferType = Runtime.Union([
+  Runtime.Tuple([Runtime.Const('infer'), Runtime.Ident(), Runtime.Const('extends'), Runtime.Ref('Expr')]),
+  Runtime.Tuple([Runtime.Const('infer'), Runtime.Ident()]),
+])   
 // ------------------------------------------------------------------
 // Type
 // ------------------------------------------------------------------
 const Type = Runtime.Union([
-  Runtime.Context(Runtime.Ref('GenericArguments'), Runtime.Ref('Expr')), 
+  Runtime.Ref('InferType'),
   Runtime.Ref('Expr')
 ])
 // ------------------------------------------------------------------
+// GenericType
+// ------------------------------------------------------------------
+const GenericType = Runtime.Tuple([
+  Runtime.Ref('GenericArguments'), 
+  Runtime.Ref('Type')
+])
+// ------------------------------------------------------------------
+// PropertyKeyNumber
+// ------------------------------------------------------------------
+const PropertyKeyNumber = Runtime.Number()
+// ------------------------------------------------------------------
+// PropertyKeyIdent
+// ------------------------------------------------------------------
+const PropertyKeyIdent = Runtime.Ident()
+// ------------------------------------------------------------------
+// PropertyKeyQuoted
+// ------------------------------------------------------------------
+const PropertyKeyQuoted = Runtime.String([SingleQuote, DoubleQuote])
+// ------------------------------------------------------------------
 // PropertyKey
 // ------------------------------------------------------------------
-const PropertyKey = Runtime.Union([Runtime.Ident(), Runtime.String([SingleQuote, DoubleQuote])])
+const PropertyKey = Runtime.Union([
+  Runtime.Ref('PropertyKeyNumber'),
+  Runtime.Ref('PropertyKeyIdent'),
+  Runtime.Ref('PropertyKeyQuoted'),
+])
 // ------------------------------------------------------------------
 // Readonly
 // ------------------------------------------------------------------
@@ -320,10 +366,56 @@ const _Object = Runtime.Tuple([
   Runtime.Const(RBrace)
 ])
 // ------------------------------------------------------------------
+// ElementNamed
+// ------------------------------------------------------------------
+const ElementNamed = Runtime.Union([
+  Runtime.Tuple([Runtime.Ident(), Runtime.Const(Question), Runtime.Const(Colon), Runtime.Ref('Type')]),
+  Runtime.Tuple([Runtime.Ident(), Runtime.Const(Colon), Runtime.Ref('Type')]),
+])
+// ------------------------------------------------------------------
+// ElementReadonlyOptional
+// ------------------------------------------------------------------
+const ElementReadonlyOptional = Runtime.Tuple([
+  Runtime.Const('readonly'),
+  Runtime.Ref('Type'),
+  Runtime.Const(Question)
+])
+// ------------------------------------------------------------------
+// ElementReadonly
+// ------------------------------------------------------------------
+const ElementReadonly = Runtime.Tuple([
+  Runtime.Const('readonly'),
+  Runtime.Ref('Type')
+])
+// ------------------------------------------------------------------
+// ElementOptional
+// ------------------------------------------------------------------
+const ElementOptional = Runtime.Tuple([
+  Runtime.Ref('Type'),
+  Runtime.Const(Question)
+])
+// ------------------------------------------------------------------
+// ElementBase
+// ------------------------------------------------------------------
+const ElementBase = Runtime.Union([
+  Runtime.Ref('ElementNamed'),
+  Runtime.Ref('ElementReadonlyOptional'),
+  Runtime.Ref('ElementReadonly'),
+  Runtime.Ref('ElementOptional'),
+  Runtime.Ref('Type')
+])
+// ------------------------------------------------------------------
+// Element
+// ------------------------------------------------------------------
+const Element = Runtime.Union([
+  Runtime.Tuple([Runtime.Const('...'), Runtime.Ref('ElementBase')]),
+  Runtime.Tuple([Runtime.Ref('ElementBase')])
+])
+// ------------------------------------------------------------------
 // ElementList
 // ------------------------------------------------------------------
 const ElementList = Delimit(
-  Runtime.Ref('Type'), 
+  Runtime.Ref('Element'), 
   Runtime.Const(Comma)
 )
 // ------------------------------------------------------------------
@@ -335,12 +427,56 @@ const Tuple = Runtime.Tuple([
   Runtime.Const(RBracket)
 ])
 // ------------------------------------------------------------------
-// Parameters
+// ParameterReadonlyOptional
 // ------------------------------------------------------------------
-const Parameter = Runtime.Tuple([
-  Runtime.Ident(), 
-  Runtime.Const(Colon), 
+const ParameterReadonlyOptional = Runtime.Tuple([
+  Runtime.Ident(),
+  Runtime.Const(Question),
+  Runtime.Const(Colon),
+  Runtime.Const('readonly'),
   Runtime.Ref('Type')
+])
+// ------------------------------------------------------------------
+// ParameterReadonly
+// ------------------------------------------------------------------
+const ParameterReadonly = Runtime.Tuple([
+  Runtime.Ident(),
+  Runtime.Const(Colon),
+  Runtime.Const('readonly'),
+  Runtime.Ref('Type')
+])
+// ------------------------------------------------------------------
+// ParameterOptional
+// ------------------------------------------------------------------
+const ParameterOptional = Runtime.Tuple([
+  Runtime.Ident(),
+  Runtime.Const(Question),
+  Runtime.Const(Colon),
+  Runtime.Ref('Type')
+])
+// ------------------------------------------------------------------
+// ParameterType
+// ------------------------------------------------------------------
+const ParameterType = Runtime.Tuple([
+  Runtime.Ident(),
+  Runtime.Const(Colon),
+  Runtime.Ref('Type')
+])
+// ------------------------------------------------------------------
+// ParameterType
+// ------------------------------------------------------------------
+const ParameterBase = Runtime.Union([
+  Runtime.Ref('ParameterReadonlyOptional'),
+  Runtime.Ref('ParameterReadonly'),
+  Runtime.Ref('ParameterOptional'),
+  Runtime.Ref('ParameterType'),
+])
+// ------------------------------------------------------------------
+// Parameter
+// ------------------------------------------------------------------
+const Parameter = Runtime.Union([
+  Runtime.Tuple([Runtime.Const('...'), Runtime.Ref('ParameterBase')]),
+  Runtime.Tuple([Runtime.Ref('ParameterBase')]),
 ])
 // ------------------------------------------------------------------
 // ParameterList
@@ -370,241 +506,146 @@ const Function = Runtime.Tuple([
   Runtime.Const('=>'), 
   Runtime.Ref('Type')
 ])
-
 // ------------------------------------------------------------------
-// Mapped (requires deferred types)
+// MappedReadonly
+// ------------------------------------------------------------------
+const MappedReadonly = Runtime.Union([
+  Runtime.Tuple([Runtime.Const(Plus), Runtime.Const('readonly')]),
+  Runtime.Tuple([Runtime.Const(Hyphen), Runtime.Const('readonly')]),
+  Runtime.Tuple([Runtime.Const('readonly')]),
+  Runtime.Tuple([]),
+])
+// ------------------------------------------------------------------
+// MappedOptional
+// ------------------------------------------------------------------
+const MappedOptional = Runtime.Union([
+  Runtime.Tuple([Runtime.Const(Plus), Runtime.Const(Question)]),
+  Runtime.Tuple([Runtime.Const(Hyphen), Runtime.Const(Question)]),
+  Runtime.Tuple([Runtime.Const(Question)]),
+  Runtime.Tuple([]),
+])
+// ------------------------------------------------------------------
+// MappedAs
+// ------------------------------------------------------------------
+const MappedAs = Runtime.Union([
+  Runtime.Tuple([Runtime.Const('as'), Runtime.Ref('Type')]),
+  Runtime.Tuple([]),
+])
+// ------------------------------------------------------------------
+// Mapped
 // ------------------------------------------------------------------
 const Mapped = Runtime.Tuple([
-  Runtime.Const(LBrace), 
+  Runtime.Const(LBrace),
+  Runtime.Ref('MappedReadonly'),
   Runtime.Const(LBracket), 
-  Runtime.Ident(), 
+  Runtime.Ident(),
   Runtime.Const('in'), 
-  Runtime.Ref('Type'), 
-  Runtime.Const(RBracket), 
+  Runtime.Ref('Type'),
+  Runtime.Ref('MappedAs'),
+  Runtime.Const(RBracket),
+  Runtime.Ref('MappedOptional'),
   Runtime.Const(Colon), 
   Runtime.Ref('Type'), 
   Runtime.Const(RBrace)
 ])
-
 // ------------------------------------------------------------------
-// AsyncIterator
+// Options
 // ------------------------------------------------------------------
-const AsyncIterator = Runtime.Tuple([
-  Runtime.Const('AsyncIterator'), 
-  Runtime.Const(LAngle), 
-  Runtime.Ref('Type'), 
-  Runtime.Const(RAngle),
-])
-
-// ------------------------------------------------------------------
-// Iterator
-// ------------------------------------------------------------------
-const Iterator = Runtime.Tuple([
-  Runtime.Const('Iterator'), 
-  Runtime.Const(LAngle), 
-  Runtime.Ref('Type'), 
-  Runtime.Const(RAngle),
-])
-
-// ------------------------------------------------------------------
-// ConstructorParameters
-// ------------------------------------------------------------------
-const ConstructorParameters = Runtime.Tuple([
-  Runtime.Const('ConstructorParameters'), 
-  Runtime.Const(LAngle), 
-  Runtime.Ref('Type'), 
-  Runtime.Const(RAngle),
-])
-// ------------------------------------------------------------------
-// Parameters
-// ------------------------------------------------------------------
-const FunctionParameters = Runtime.Tuple([
-  Runtime.Const('Parameters'), 
-  Runtime.Const(LAngle), 
-  Runtime.Ref('Type'), 
-  Runtime.Const(RAngle),
-])
-// ------------------------------------------------------------------
-// InstanceType
-// ------------------------------------------------------------------
-const InstanceType = Runtime.Tuple([
-  Runtime.Const('InstanceType'), 
-  Runtime.Const(LAngle), 
-  Runtime.Ref('Type'), 
-  Runtime.Const(RAngle),
-])
-// ------------------------------------------------------------------
-// ReturnType
-// ------------------------------------------------------------------
-const ReturnType = Runtime.Tuple([
-  Runtime.Const('ReturnType'), 
-  Runtime.Const(LAngle), 
-  Runtime.Ref('Type'), 
-  Runtime.Const(RAngle),
-])
-// ------------------------------------------------------------------
-// Argument
-// ------------------------------------------------------------------
-const Argument = Runtime.Tuple([
-  Runtime.Const('Argument'), 
-  Runtime.Const(LAngle), 
-  Runtime.Ref('Type'), 
-  Runtime.Const(RAngle),
-])
-// ------------------------------------------------------------------
-// Awaited
-// ------------------------------------------------------------------
-const Awaited = Runtime.Tuple([
-  Runtime.Const('Awaited'), 
-  Runtime.Const(LAngle), 
-  Runtime.Ref('Type'), 
-  Runtime.Const(RAngle),
-])
-// ------------------------------------------------------------------
-// Array
-// ------------------------------------------------------------------
-const Array = Runtime.Tuple([
-  Runtime.Const('Array'), 
-  Runtime.Const(LAngle), 
-  Runtime.Ref('Type'), 
-  Runtime.Const(RAngle),
-])
-// ------------------------------------------------------------------
-// Record
-// ------------------------------------------------------------------
-const Record = Runtime.Tuple([
-  Runtime.Const('Record'), 
-  Runtime.Const(LAngle), 
+const Options = Runtime.Tuple([
+  Runtime.Const('Options'),
+  Runtime.Const(LAngle),
   Runtime.Ref('Type'),
-  Runtime.Const(Comma), 
-  Runtime.Ref('Type'),
-  Runtime.Const(RAngle),  
-])
-
-// ------------------------------------------------------------------
-// Promise
-// ------------------------------------------------------------------
-const Promise = Runtime.Tuple([
-  Runtime.Const('Promise'), 
-  Runtime.Const(LAngle), 
-  Runtime.Ref('Type'), 
-  Runtime.Const(RAngle),  
+  Runtime.Const(Comma),
+  Runtime.Ref('JsonObject'),
+  Runtime.Const(RAngle),
 ])
 // ------------------------------------------------------------------
-// Partial
+// JsonNumber
 // ------------------------------------------------------------------
-const Partial = Runtime.Tuple([
-  Runtime.Const('Partial'), 
-  Runtime.Const(LAngle), 
-  Runtime.Ref('Type'), 
-  Runtime.Const(RAngle),  
+const JsonNumber = Runtime.Number()
+// ------------------------------------------------------------------
+// JsonString
+// ------------------------------------------------------------------
+const JsonString = Runtime.String(['"', "'"])
+// ------------------------------------------------------------------
+// JsonBoolean
+// ------------------------------------------------------------------
+const JsonBoolean = Runtime.Union([
+  Runtime.Const('true'),
+  Runtime.Const('false'),
 ])
 // ------------------------------------------------------------------
-// Required
+// JsonNull
 // ------------------------------------------------------------------
-const Required = Runtime.Tuple([
-  Runtime.Const('Required'), 
-  Runtime.Const(LAngle), 
-  Runtime.Ref('Type'), 
-  Runtime.Const(RAngle),  
-])
-
+const JsonNull = Runtime.Const('null')
 // ------------------------------------------------------------------
-// Pick
+// JsonProperty
 // ------------------------------------------------------------------
-const Pick = Runtime.Tuple([
-  Runtime.Const('Pick'), 
-  Runtime.Const(LAngle), 
-  Runtime.Ref('Type'), 
-  Runtime.Const(Comma), 
-  Runtime.Ref('Type'), 
-  Runtime.Const(RAngle),  
+const JsonProperty = Runtime.Tuple([
+  Runtime.Ref('PropertyKey'), 
+  Runtime.Const(':'), 
+  Runtime.Ref('Json')
 ])
 // ------------------------------------------------------------------
-// Omit
+// JsonPropertyList
 // ------------------------------------------------------------------
-const Omit = Runtime.Tuple([
-  Runtime.Const('Omit'), 
-  Runtime.Const(LAngle), 
-  Runtime.Ref('Type'), 
-  Runtime.Const(Comma), 
-  Runtime.Ref('Type'), 
-  Runtime.Const(RAngle),  
-])
-
+const JsonPropertyList = Delimit(
+  Runtime.Ref('JsonProperty'), 
+  Runtime.Ref('PropertyDelimiter')
+)
 // ------------------------------------------------------------------
-// Exclude
+// JsonObject
 // ------------------------------------------------------------------
-const Exclude = Runtime.Tuple([
-  Runtime.Const('Exclude'), 
-  Runtime.Const(LAngle), 
-  Runtime.Ref('Type'), 
-  Runtime.Const(Comma), 
-  Runtime.Ref('Type'), 
-  Runtime.Const(RAngle),  
+const JsonObject = Runtime.Tuple([
+  Runtime.Const(LBrace),
+  Runtime.Ref('JsonPropertyList'),
+  Runtime.Const(RBrace)
 ])
 // ------------------------------------------------------------------
-// Extract
+// JsonElementList
 // ------------------------------------------------------------------
-const Extract = Runtime.Tuple([
-  Runtime.Const('Extract'), 
-  Runtime.Const(LAngle), 
-  Runtime.Ref('Type'), 
-  Runtime.Const(Comma), 
-  Runtime.Ref('Type'), 
-  Runtime.Const(RAngle),  
+const JsonElementList = Delimit(
+  Runtime.Ref('Json'), 
+  Runtime.Const(Comma)
+)
+// ------------------------------------------------------------------
+// JsonArray
+// ------------------------------------------------------------------
+const JsonArray = Runtime.Tuple([
+  Runtime.Const(LBracket), 
+  Runtime.Ref('JsonElementList'), 
+  Runtime.Const(RBracket)
 ])
 // ------------------------------------------------------------------
-// Uppercase
+// Json
 // ------------------------------------------------------------------
-const Uppercase = Runtime.Tuple([
-  Runtime.Const('Uppercase'), 
-  Runtime.Const(LAngle), 
-  Runtime.Ref('Type'), 
-  Runtime.Const(RAngle),  
+const Json = Runtime.Union([
+  Runtime.Ref('JsonNumber'),
+  Runtime.Ref('JsonBoolean'),
+  Runtime.Ref('JsonString'),
+  Runtime.Ref('JsonNull'),
+  Runtime.Ref('JsonObject'),
+  Runtime.Ref('JsonArray')
 ])
 // ------------------------------------------------------------------
-// Lowercase
+// Script
 // ------------------------------------------------------------------
-const Lowercase = Runtime.Tuple([
-  Runtime.Const('Lowercase'), 
-  Runtime.Const(LAngle), 
-  Runtime.Ref('Type'), 
-  Runtime.Const(RAngle),  
+const Script = Runtime.Union([
+  Runtime.Ref('GenericType'),
+  Runtime.Ref('Type')
 ])
 // ------------------------------------------------------------------
-// Capitalize
+// Grammar
 // ------------------------------------------------------------------
-const Capitalize = Runtime.Tuple([
-  Runtime.Const('Capitalize'), 
-  Runtime.Const(LAngle), 
-  Runtime.Ref('Type'), 
-  Runtime.Const(RAngle),  
-])
-// ------------------------------------------------------------------
-// Uncapitalize
-// ------------------------------------------------------------------
-const Uncapitalize = Runtime.Tuple([
-  Runtime.Const('Uncapitalize'), 
-  Runtime.Const(LAngle), 
-  Runtime.Ref('Type'), 
-  Runtime.Const(RAngle),  
-])
-// ------------------------------------------------------------------
-// Date
-// ------------------------------------------------------------------
-const Date = Runtime.Const('Date')
-// ------------------------------------------------------------------
-// Uint8Array
-// ------------------------------------------------------------------
-const Uint8Array = Runtime.Const('Uint8Array')
-// ------------------------------------------------------------------
-// SyntaxModule
-// ------------------------------------------------------------------
-export const SyntaxModule = new Runtime.Module({
+export const Grammar = new Runtime.Module({
   GenericReferenceParameterList,
   GenericReference,
-  GenericArgumentsList,
+  GenericArgumentExtendsEquals,
+  GenericArgumentExtends,
+  GenericArgumentEquals,
+  GenericArgumentType,
+  GenericArgument,
+  GenericArgumentList,
   GenericArguments,
   KeywordString,
   KeywordNumber,
@@ -615,13 +656,15 @@ export const SyntaxModule = new Runtime.Module({
   KeywordBigInt,
   KeywordUnknown,
   KeywordAny,
+  KeywordObject,
   KeywordNever,
   KeywordSymbol,
   KeywordVoid,
+  KeywordThis,
   Keyword,
   TemplateInterpolate,
+  TemplateSpan,
   TemplateBody,
-  TemplateText,
   TemplateLiteral,
   LiteralString,
   LiteralNumber,
@@ -636,7 +679,12 @@ export const SyntaxModule = new Runtime.Module({
   ExprTerm,
   ExprTail,
   Expr,
+  GenericType,
+  InferType,
   Type,
+  PropertyKeyNumber,
+  PropertyKeyIdent,
+  PropertyKeyQuoted,
   PropertyKey,
   Readonly,
   Optional,
@@ -644,35 +692,40 @@ export const SyntaxModule = new Runtime.Module({
   PropertyDelimiter,
   PropertyList,
   Object: _Object,
+  ElementNamed,
+  ElementReadonlyOptional,
+  ElementReadonly,
+  ElementOptional,
+  ElementBase,
+  Element,
   ElementList,
   Tuple,
+  ParameterReadonlyOptional,
+  ParameterReadonly,
+  ParameterOptional,
+  ParameterType,
+  ParameterBase,
   Parameter,
   ParameterList,
   Function,
   Constructor,
+  MappedReadonly,
+  MappedOptional,
+  MappedAs,
   Mapped,
-  AsyncIterator,
-  Iterator,
-  Argument,
-  Awaited,
-  Array,
-  Record,
-  Promise,
-  ConstructorParameters,
-  FunctionParameters,
-  InstanceType,
-  ReturnType,
-  Partial,
-  Required,
-  Pick,
-  Omit,
-  Exclude,
-  Extract,
-  Uppercase,
-  Lowercase,
-  Capitalize,
-  Uncapitalize,
-  Date,
-  Uint8Array,
   Reference,
+  // Json,
+  Options,
+  JsonNumber,
+  JsonBoolean,
+  JsonString,
+  JsonNull,
+  JsonProperty,
+  JsonPropertyList,
+  JsonObject,
+  JsonElementList,
+  JsonArray,
+  Json,
+  // Script
+  Script
 })

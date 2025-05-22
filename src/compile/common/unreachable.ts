@@ -26,7 +26,16 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './comment.ts'
-export * from './escape.ts'
-export * from './infer.ts'
-export * from './unreachable.ts'
+// deno-fmt-ignore-file
+
+import { Runtime } from '../../runtime/index.ts'
+
+export class UnreachableError extends Error {
+  constructor(public parser: Runtime.IParser) {
+    super('unreachable')
+  }
+}
+
+export function Unreachable(parser: Runtime.IParser): never {
+  throw new UnreachableError(parser)
+}

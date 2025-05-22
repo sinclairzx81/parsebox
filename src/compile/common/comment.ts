@@ -30,6 +30,7 @@ THE SOFTWARE.
 // deno-lint-ignore-file no-unused-vars
 
 import { Runtime } from '../../runtime/index.ts'
+import { Unreachable } from './unreachable.ts'
 import { Escape } from './escape.ts'
 
 function FromContext(parser: Runtime.IContext): string {
@@ -78,7 +79,7 @@ function FromParser(parser: Runtime.IParser): string {
     Runtime.IsRef(parser) ? FromRef(parser) : 
     Runtime.IsIdent(parser) ? FromIdent(parser) : 
     Runtime.IsNumber(parser) ? FromNumber(parser) : 
-    '<unreachable>'
+    Unreachable(parser)
   )
 }
 export function CompileComment(name: string, parser: Runtime.IParser): string {
