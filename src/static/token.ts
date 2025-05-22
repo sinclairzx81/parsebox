@@ -204,14 +204,18 @@ export type Ident<Code extends string> = NextIdent<Trim.TrimAll<Code>>
 // ------------------------------------------------------------------
 // Until
 // ------------------------------------------------------------------
-type UntilStartsWith<Value extends string, Input extends string> = (
-  Input extends `${Value}${string}` ? true : false
+type UntilStartsWith<Values extends string[], Input extends string> = (
+  Values extends [infer Left extends string, ...infer Right extends string[]]
+    ? Input extends `${Left}${string}` 
+      ? true
+      : UntilStartsWith<Right, Input>
+    : false
 )
-export type Until<Value extends string, Input extends string, Result extends string = ''> = (
+export type Until<Values extends string[], Input extends string, Result extends string = ''> = (
   Input extends `` ? [] :
-  UntilStartsWith<Value, Input> extends true
+  UntilStartsWith<Values, Input> extends true
     ? [Result, Input]
     : Input extends `${infer Left extends string}${infer Right extends string}`
-      ? Until<Value, Right, `${Result}${Left}`>
+      ? Until<Values, Right, `${Result}${Left}`>
       : never
 )

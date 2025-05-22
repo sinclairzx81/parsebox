@@ -189,20 +189,20 @@ const R3 = Runtime.Parse(T, 'Y Z')                   // const R3 = [[], 'Y Z']
 
 ### Until
 
-The Until combinator parses all characters up to (but not including) the specified string. The specified string remains unconsumed in the input. If the string is not found, parsing fails.
+The Until combinator will parse characters up to (but not including) one of the specified sentinel string values. If a sentinel value is not found, parsing fails.
 
 **BNF**
 
 ```bnf
-<T> ::= ? any character until 'Z' ?
+<T> ::= ? any character until ['Z'] ?
 ```
 
 **TypeScript**
 
 ```typescript
-const T = Runtime.Until('Z')                        // const T = {
+const T = Runtime.Until(['Z'])                      // const T = {
                                                     //   type: 'Until',
-                                                    //   value: 'Z'
+                                                    //   values: ['Z']
                                                     // }
 
 const R = Runtime.Parse(T, 'X Y Z')                 // const R = ['X Y ', 'Z']

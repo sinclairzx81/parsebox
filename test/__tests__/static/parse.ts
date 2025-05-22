@@ -24,10 +24,16 @@ Assert<Static.Parse<Static.Const<'A'>, '  A '>, ['A', ' ']>()
 // ------------------------------------------------------------------
 // Until
 // ------------------------------------------------------------------
-Assert<Static.Parse<Static.Until<'A'>, ''>, []>()
-Assert<Static.Parse<Static.Until<'A'>, 'A'>, ['', 'A']>()
-Assert<Static.Parse<Static.Until<'A'>, '  A'>, ['  ', 'A']>()
-Assert<Static.Parse<Static.Until<'A'>, '  A '>, ['  ', 'A ']>()
+Assert<Static.Parse<Static.Until<['A']>, ''>, []>()
+Assert<Static.Parse<Static.Until<['A']>, 'A'>, ['', 'A']>()
+Assert<Static.Parse<Static.Until<['A']>, '  A'>, ['  ', 'A']>()
+Assert<Static.Parse<Static.Until<['A']>, '  A '>, ['  ', 'A ']>()
+
+Assert<Static.Parse<Static.Until<['A', 'B']>, ''>, []>
+Assert<Static.Parse<Static.Until<['A', 'B']>, 'BA'>, ['', 'BA']>
+Assert<Static.Parse<Static.Until<['A', 'B']>, '  BA'>, ['  ', 'BA']>
+Assert<Static.Parse<Static.Until<['A', 'B']>, '  BA '>, ['  ', 'BA ']>
+
 // ------------------------------------------------------------------
 // Ident
 // ------------------------------------------------------------------

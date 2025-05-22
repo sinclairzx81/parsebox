@@ -88,25 +88,24 @@ export interface Const<Value extends string = string, Mapping extends IMapping =
 // Until
 // ------------------------------------------------------------------
 /** Creates a Until Parser */
-export interface Until<Value extends string = string, Mapping extends IMapping = Identity> extends IParser<Mapping> {
+export interface Until<Values extends string[] = string[], Mapping extends IMapping = Identity> extends IParser<Mapping> {
   type: 'Until'
-  value: Value
+  values: Values
 }
 // ------------------------------------------------------------------
 // Ident
 // ------------------------------------------------------------------
-/** Creates an Ident Parser. */
+/** Creates an Ident Parser */
 export interface Ident<Mapping extends IMapping = Identity> extends IParser<Mapping> {
   type: 'Ident'
 }
 // ------------------------------------------------------------------
 // Number
 // ------------------------------------------------------------------
-/** Creates a Number Parser. */
+/** Creates a Number Parser */
 export interface Number<Mapping extends IMapping = Identity> extends IParser<Mapping> {
   type: 'Number'
 }
-
 // ------------------------------------------------------------------
 // Optional
 // ------------------------------------------------------------------

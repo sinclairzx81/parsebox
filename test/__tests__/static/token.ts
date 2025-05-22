@@ -110,104 +110,122 @@ Assert<Static.Token.Const<'\n  ', '  \n  AA '>, ['\n  ', 'AA ']>()
 // ------------------------------------------------------------------
 // Until: Empty
 // ------------------------------------------------------------------
-Assert<Static.Token.Until<'', ''>, []>
-Assert<Static.Token.Until<'', 'A'>, ['', 'A']>
-Assert<Static.Token.Until<'', '   A'>, ['', '   A']>
+Assert<Static.Token.Until<[''], ''>, []>
+Assert<Static.Token.Until<[''], 'A'>, ['', 'A']>
+Assert<Static.Token.Until<[''], '   A'>, ['', '   A']>
 
 // ------------------------------------------------------------------
 // Until: Single-Char
 // ------------------------------------------------------------------
-Assert<Static.Token.Until<'A', 'A'>, ['', 'A']>
-Assert<Static.Token.Until<'A', 'A '>, ['', 'A ']>
-Assert<Static.Token.Until<'A', 'AA'>, ['', 'AA']>
-Assert<Static.Token.Until<'A', 'AA '>, ['', 'AA ']>
+Assert<Static.Token.Until<['A'], 'A'>, ['', 'A']>
+Assert<Static.Token.Until<['A'], 'A '>, ['', 'A ']>
+Assert<Static.Token.Until<['A'], 'AA'>, ['', 'AA']>
+Assert<Static.Token.Until<['A'], 'AA '>, ['', 'AA ']>
 
 // ------------------------------------------------------------------
 // Until: Multi-Char
 // ------------------------------------------------------------------
-Assert<Static.Token.Until<'AB', 'AB'>, ['', 'AB']>
-Assert<Static.Token.Until<'AB', 'AB '>, ['', 'AB ']>
-Assert<Static.Token.Until<'AB', 'ABA'>, ['', 'ABA']>
-Assert<Static.Token.Until<'AB', 'ABA '>, ['', 'ABA ']>
+Assert<Static.Token.Until<['AB'], 'AB'>, ['', 'AB']>
+Assert<Static.Token.Until<['AB'], 'AB '>, ['', 'AB ']>
+Assert<Static.Token.Until<['AB'], 'ABA'>, ['', 'ABA']>
+Assert<Static.Token.Until<['AB'], 'ABA '>, ['', 'ABA ']>
 
 // ------------------------------------------------------------------
 // Until: Single-Char -> Ignore-Whitespace
 // ------------------------------------------------------------------
-Assert<Static.Token.Until<'A', '  A'>, ['  ', 'A']>
-Assert<Static.Token.Until<'A', '  A '>, ['  ', 'A ']>
-Assert<Static.Token.Until<'A', '  AA'>, ['  ', 'AA']>
-Assert<Static.Token.Until<'A', '  AA '>, ['  ', 'AA ']>
-Assert<Static.Token.Until<'A', '\nAA '>, ['\n', 'AA ']>
-Assert<Static.Token.Until<'A', ' \nAA '>, [' \n', 'AA ']>
-Assert<Static.Token.Until<'A', '\n AA '>, ['\n ', 'AA ']>
-Assert<Static.Token.Until<'A', ' \n AA '>, [' \n ', 'AA ']>
+Assert<Static.Token.Until<['A'], '  A'>, ['  ', 'A']>
+Assert<Static.Token.Until<['A'], '  A '>, ['  ', 'A ']>
+Assert<Static.Token.Until<['A'], '  AA'>, ['  ', 'AA']>
+Assert<Static.Token.Until<['A'], '  AA '>, ['  ', 'AA ']>
+Assert<Static.Token.Until<['A'], '\nAA '>, ['\n', 'AA ']>
+Assert<Static.Token.Until<['A'], ' \nAA '>, [' \n', 'AA ']>
+Assert<Static.Token.Until<['A'], '\n AA '>, ['\n ', 'AA ']>
+Assert<Static.Token.Until<['A'], ' \n AA '>, [' \n ', 'AA ']>
 
 // ------------------------------------------------------------------
 // Until: Multi-Char -> Ignore-Whitespace
 // ------------------------------------------------------------------
-Assert<Static.Token.Until<'AB', '  AB'>, ['  ', 'AB']>
-Assert<Static.Token.Until<'AB', '  AB '>, ['  ', 'AB ']>
-Assert<Static.Token.Until<'AB', '  ABA'>, ['  ', 'ABA']>
-Assert<Static.Token.Until<'AB', '  ABA '>, ['  ', 'ABA ']>
-Assert<Static.Token.Until<'AB', '\nABA '>, ['\n', 'ABA ']>
-Assert<Static.Token.Until<'AB', ' \nABA '>, [' \n', 'ABA ']>
-Assert<Static.Token.Until<'AB', '\n ABA '>, ['\n ', 'ABA ']>
-Assert<Static.Token.Until<'AB', ' \n ABA '>, [' \n ', 'ABA ']>
+Assert<Static.Token.Until<['AB'], '  AB'>, ['  ', 'AB']>
+Assert<Static.Token.Until<['AB'], '  AB '>, ['  ', 'AB ']>
+Assert<Static.Token.Until<['AB'], '  ABA'>, ['  ', 'ABA']>
+Assert<Static.Token.Until<['AB'], '  ABA '>, ['  ', 'ABA ']>
+Assert<Static.Token.Until<['AB'], '\nABA '>, ['\n', 'ABA ']>
+Assert<Static.Token.Until<['AB'], ' \nABA '>, [' \n', 'ABA ']>
+Assert<Static.Token.Until<['AB'], '\n ABA '>, ['\n ', 'ABA ']>
+Assert<Static.Token.Until<['AB'], ' \n ABA '>, [' \n ', 'ABA ']>
 
 // ------------------------------------------------------------------
 // Until: Single-Whitespace
 // ------------------------------------------------------------------
-Assert<Static.Token.Until<' ', ''>, []>
-Assert<Static.Token.Until<' ', ' '>, ['', ' ']>
-Assert<Static.Token.Until<' ', ' A'>, ['', ' A']>
-Assert<Static.Token.Until<' ', ' A '>, ['', ' A ']>
-Assert<Static.Token.Until<' ', ' AA'>, ['', ' AA']>
-Assert<Static.Token.Until<' ', ' AA '>, ['', ' AA ']>
+Assert<Static.Token.Until<[' '], ''>, []>
+Assert<Static.Token.Until<[' '], ' '>, ['', ' ']>
+Assert<Static.Token.Until<[' '], ' A'>, ['', ' A']>
+Assert<Static.Token.Until<[' '], ' A '>, ['', ' A ']>
+Assert<Static.Token.Until<[' '], ' AA'>, ['', ' AA']>
+Assert<Static.Token.Until<[' '], ' AA '>, ['', ' AA ']>
 
 // ------------------------------------------------------------------
 // Until: Multi-Whitespace
 // ------------------------------------------------------------------
-Assert<Static.Token.Until<'  ', ''>, []>
-Assert<Static.Token.Until<'  ', ' '>, []>
-Assert<Static.Token.Until<'  ', '  A'>, ['', '  A']>
-Assert<Static.Token.Until<'  ', '  A '>, ['', '  A ']>
-Assert<Static.Token.Until<'  ', '  AA'>, ['', '  AA']>
-Assert<Static.Token.Until<'  ', '  AA '>, ['', '  AA ']>
+Assert<Static.Token.Until<['  '], ''>, []>
+Assert<Static.Token.Until<['  '], ' '>, []>
+Assert<Static.Token.Until<['  '], '  A'>, ['', '  A']>
+Assert<Static.Token.Until<['  '], '  A '>, ['', '  A ']>
+Assert<Static.Token.Until<['  '], '  AA'>, ['', '  AA']>
+Assert<Static.Token.Until<['  '], '  AA '>, ['', '  AA ']>
 
 // ------------------------------------------------------------------
 // Until: Newline
 // ------------------------------------------------------------------
-Assert<Static.Token.Until<'\n', ''>, []>
-Assert<Static.Token.Until<'\n', ' '>, []>
-Assert<Static.Token.Until<'\n', '\nA'>, ['', '\nA']>
-Assert<Static.Token.Until<'\n', '  \nA '>, ['  ', '\nA ']>
-Assert<Static.Token.Until<'\n', '  \nAA'>, ['  ', '\nAA']>
-Assert<Static.Token.Until<'\n', '  \nAA '>, ['  ', '\nAA ']>
+Assert<Static.Token.Until<['\n'], ''>, []>
+Assert<Static.Token.Until<['\n'], ' '>, []>
+Assert<Static.Token.Until<['\n'], '\nA'>, ['', '\nA']>
+Assert<Static.Token.Until<['\n'], '  \nA '>, ['  ', '\nA ']>
+Assert<Static.Token.Until<['\n'], '  \nAA'>, ['  ', '\nAA']>
+Assert<Static.Token.Until<['\n'], '  \nAA '>, ['  ', '\nAA ']>
 
 // ------------------------------------------------------------------
 // Until: Newline-Single-Whitespace
 // ------------------------------------------------------------------
-Assert<Static.Token.Until<'\n ', ''>, []>
-Assert<Static.Token.Until<'\n ', ' '>, []>
-Assert<Static.Token.Until<'\n ', '\nA'>, []>
-Assert<Static.Token.Until<'\n ', '  \nA '>, []>
-Assert<Static.Token.Until<'\n ', '  \nAA'>, []>
-Assert<Static.Token.Until<'\n ', '  \nAA '>, []>
-Assert<Static.Token.Until<'\n ', '\n A'>, ['', '\n A']>
-Assert<Static.Token.Until<'\n ', '  \n A '>, ['  ', '\n A ']>
-Assert<Static.Token.Until<'\n ', '  \n AA'>, ['  ', '\n AA']>
-Assert<Static.Token.Until<'\n ', '  \n AA '>, ['  ', '\n AA ']>
+Assert<Static.Token.Until<['\n '], ''>, []>
+Assert<Static.Token.Until<['\n '], ' '>, []>
+Assert<Static.Token.Until<['\n '], '\nA'>, []>
+Assert<Static.Token.Until<['\n '], '  \nA '>, []>
+Assert<Static.Token.Until<['\n '], '  \nAA'>, []>
+Assert<Static.Token.Until<['\n '], '  \nAA '>, []>
+Assert<Static.Token.Until<['\n '], '\n A'>, ['', '\n A']>
+Assert<Static.Token.Until<['\n '], '  \n A '>, ['  ', '\n A ']>
+Assert<Static.Token.Until<['\n '], '  \n AA'>, ['  ', '\n AA']>
+Assert<Static.Token.Until<['\n '], '  \n AA '>, ['  ', '\n AA ']>
 
 // ------------------------------------------------------------------
 // Until: Newline-Multi-Whitespace
 // ------------------------------------------------------------------
-Assert<Static.Token.Until<'\n  ', ''>, []>
-Assert<Static.Token.Until<'\n  ', ' '>, []>
-Assert<Static.Token.Until<'\n  ', '\nA'>, []>
-Assert<Static.Token.Until<'\n  ', '  \nA '>, []>
-Assert<Static.Token.Until<'\n  ', '  \nAA'>, []>
-Assert<Static.Token.Until<'\n  ', '  \nAA '>, []>
-Assert<Static.Token.Until<'\n  ', '\n  A'>, ['', '\n  A']>
-Assert<Static.Token.Until<'\n  ', '  \n  A '>, ['  ', '\n  A ']>
-Assert<Static.Token.Until<'\n  ', '  \n  AA'>, ['  ', '\n  AA']>
-Assert<Static.Token.Until<'\n  ', '  \n  AA '>, ['  ', '\n  AA ']>
+Assert<Static.Token.Until<['\n  '], ''>, []>
+Assert<Static.Token.Until<['\n  '], ' '>, []>
+Assert<Static.Token.Until<['\n  '], '\nA'>, []>
+Assert<Static.Token.Until<['\n  '], '  \nA '>, []>
+Assert<Static.Token.Until<['\n  '], '  \nAA'>, []>
+Assert<Static.Token.Until<['\n  '], '  \nAA '>, []>
+Assert<Static.Token.Until<['\n  '], '\n  A'>, ['', '\n  A']>
+Assert<Static.Token.Until<['\n  '], '  \n  A '>, ['  ', '\n  A ']>
+Assert<Static.Token.Until<['\n  '], '  \n  AA'>, ['  ', '\n  AA']>
+Assert<Static.Token.Until<['\n  '], '  \n  AA '>, ['  ', '\n  AA ']>
+
+// ------------------------------------------------------------------
+// Until: Multi Sentinal Test
+// ------------------------------------------------------------------
+Assert<Static.Token.Until<['A', 'B'], ''>, []>
+Assert<Static.Token.Until<['A', 'B'], 'A'>, ['', 'A']>
+Assert<Static.Token.Until<['A', 'B'], 'B'>, ['', 'B']>
+Assert<Static.Token.Until<['A', 'B'], 'AB'>, ['', 'AB']>
+Assert<Static.Token.Until<['A', 'B'], 'BA'>, ['', 'BA']>
+Assert<Static.Token.Until<['A', 'B'], '   AB'>, ['   ', 'AB']>
+Assert<Static.Token.Until<['A', 'B'], '   BA'>, ['   ', 'BA']>
+Assert<Static.Token.Until<['A', ' B'], '   BA'>, ['  ', ' BA']>
+Assert<Static.Token.Until<[' A', 'B'], '   BA'>, ['   ', 'BA']>
+Assert<Static.Token.Until<['B', 'A'], '   AB'>, ['   ', 'AB']>
+Assert<Static.Token.Until<['B', 'A'], '   BA'>, ['   ', 'BA']>
+Assert<Static.Token.Until<['B', ' A'], '   BA'>, ['   ', 'BA']>
+Assert<Static.Token.Until<[' B', 'A'], '   BA'>, ['  ', ' BA']>
+
