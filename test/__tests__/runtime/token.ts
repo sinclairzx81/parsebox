@@ -193,3 +193,114 @@ Deno.test('Until: Multi Sentinal Test', () => {
   Assert(Runtime.Token.Until(['B', ' A'], '   BA'), ['   ', 'BA'])
   Assert(Runtime.Token.Until([' B', 'A'], '   BA'), ['  ', ' BA'])
 })
+
+Deno.test('UntilNonEmpty: Empty', () => {
+  Assert(Runtime.Token.UntilNonEmpty([''], ''), [])
+  Assert(Runtime.Token.UntilNonEmpty([''], 'A'), [])
+  Assert(Runtime.Token.UntilNonEmpty([''], '   A'), [])
+})
+
+Deno.test('UntilNonEmpty: Single-Char', () => {
+  Assert(Runtime.Token.UntilNonEmpty(['A'], 'A'), [])
+  Assert(Runtime.Token.UntilNonEmpty(['A'], 'A '), [])
+  Assert(Runtime.Token.UntilNonEmpty(['A'], 'AA'), [])
+  Assert(Runtime.Token.UntilNonEmpty(['A'], 'AA '), [])
+})
+
+Deno.test('UntilNonEmpty: Multi-Char', () => {
+  Assert(Runtime.Token.UntilNonEmpty(['AB'], 'AB'), [])
+  Assert(Runtime.Token.UntilNonEmpty(['AB'], 'AB '), [])
+  Assert(Runtime.Token.UntilNonEmpty(['AB'], 'ABA'), [])
+  Assert(Runtime.Token.UntilNonEmpty(['AB'], 'ABA '), [])
+})
+
+Deno.test('UntilNonEmpty: Single-Char -> Ignore-Whitespace', () => {
+  Assert(Runtime.Token.UntilNonEmpty(['A'], '  A'), ['  ', 'A'])
+  Assert(Runtime.Token.UntilNonEmpty(['A'], '  A '), ['  ', 'A '])
+  Assert(Runtime.Token.UntilNonEmpty(['A'], '  AA'), ['  ', 'AA'])
+  Assert(Runtime.Token.UntilNonEmpty(['A'], '  AA '), ['  ', 'AA '])
+  Assert(Runtime.Token.UntilNonEmpty(['A'], '\nAA '), ['\n', 'AA '])
+  Assert(Runtime.Token.UntilNonEmpty(['A'], ' \nAA '), [' \n', 'AA '])
+  Assert(Runtime.Token.UntilNonEmpty(['A'], '\n AA '), ['\n ', 'AA '])
+  Assert(Runtime.Token.UntilNonEmpty(['A'], ' \n AA '), [' \n ', 'AA '])
+})
+
+Deno.test('UntilNonEmpty: Multi-Char -> Ignore-Whitespace', () => {
+  Assert(Runtime.Token.UntilNonEmpty(['AB'], '  AB'), ['  ', 'AB'])
+  Assert(Runtime.Token.UntilNonEmpty(['AB'], '  AB '), ['  ', 'AB '])
+  Assert(Runtime.Token.UntilNonEmpty(['AB'], '  ABA'), ['  ', 'ABA'])
+  Assert(Runtime.Token.UntilNonEmpty(['AB'], '  ABA '), ['  ', 'ABA '])
+  Assert(Runtime.Token.UntilNonEmpty(['AB'], '\nABA '), ['\n', 'ABA '])
+  Assert(Runtime.Token.UntilNonEmpty(['AB'], ' \nABA '), [' \n', 'ABA '])
+  Assert(Runtime.Token.UntilNonEmpty(['AB'], '\n ABA '), ['\n ', 'ABA '])
+  Assert(Runtime.Token.UntilNonEmpty(['AB'], ' \n ABA '), [' \n ', 'ABA '])
+})
+
+Deno.test('UntilNonEmpty: Single-Whitespace', () => {
+  Assert(Runtime.Token.UntilNonEmpty([' '], ''), [])
+  Assert(Runtime.Token.UntilNonEmpty([' '], ' '), [])
+  Assert(Runtime.Token.UntilNonEmpty([' '], ' A'), [])
+  Assert(Runtime.Token.UntilNonEmpty([' '], ' A '), [])
+  Assert(Runtime.Token.UntilNonEmpty([' '], ' AA'), [])
+  Assert(Runtime.Token.UntilNonEmpty([' '], ' AA '), [])
+})
+
+Deno.test('UntilNonEmpty: Multi-Whitespace', () => {
+  Assert(Runtime.Token.UntilNonEmpty(['  '], ''), [])
+  Assert(Runtime.Token.UntilNonEmpty(['  '], ' '), [])
+  Assert(Runtime.Token.UntilNonEmpty(['  '], '  A'), [])
+  Assert(Runtime.Token.UntilNonEmpty(['  '], '  A '), [])
+  Assert(Runtime.Token.UntilNonEmpty(['  '], '  AA'), [])
+  Assert(Runtime.Token.UntilNonEmpty(['  '], '  AA '), [])
+})
+
+Deno.test('UntilNonEmpty: Newline', () => {
+  Assert(Runtime.Token.UntilNonEmpty(['\n'], ''), [])
+  Assert(Runtime.Token.UntilNonEmpty(['\n'], ' '), [])
+  Assert(Runtime.Token.UntilNonEmpty(['\n'], '\nA'), [])
+  Assert(Runtime.Token.UntilNonEmpty(['\n'], '  \nA '), ['  ', '\nA '])
+  Assert(Runtime.Token.UntilNonEmpty(['\n'], '  \nAA'), ['  ', '\nAA'])
+  Assert(Runtime.Token.UntilNonEmpty(['\n'], '  \nAA '), ['  ', '\nAA '])
+})
+
+Deno.test('UntilNonEmpty: Newline-Single-Whitespace', () => {
+  Assert(Runtime.Token.UntilNonEmpty(['\n '], ''), [])
+  Assert(Runtime.Token.UntilNonEmpty(['\n '], ' '), [])
+  Assert(Runtime.Token.UntilNonEmpty(['\n '], '\nA'), [])
+  Assert(Runtime.Token.UntilNonEmpty(['\n '], '  \nA '), [])
+  Assert(Runtime.Token.UntilNonEmpty(['\n '], '  \nAA'), [])
+  Assert(Runtime.Token.UntilNonEmpty(['\n '], '  \nAA '), [])
+  Assert(Runtime.Token.UntilNonEmpty(['\n '], '\n A'), [])
+  Assert(Runtime.Token.UntilNonEmpty(['\n '], '  \n A '), ['  ', '\n A '])
+  Assert(Runtime.Token.UntilNonEmpty(['\n '], '  \n AA'), ['  ', '\n AA'])
+  Assert(Runtime.Token.UntilNonEmpty(['\n '], '  \n AA '), ['  ', '\n AA '])
+})
+
+Deno.test('UntilNonEmpty: Newline-Multi-Whitespace', () => {
+  Assert(Runtime.Token.UntilNonEmpty(['\n  '], ''), [])
+  Assert(Runtime.Token.UntilNonEmpty(['\n  '], ' '), [])
+  Assert(Runtime.Token.UntilNonEmpty(['\n  '], '\nA'), [])
+  Assert(Runtime.Token.UntilNonEmpty(['\n  '], '  \nA '), [])
+  Assert(Runtime.Token.UntilNonEmpty(['\n  '], '  \nAA'), [])
+  Assert(Runtime.Token.UntilNonEmpty(['\n  '], '  \nAA '), [])
+  Assert(Runtime.Token.UntilNonEmpty(['\n  '], '\n  A'), [])
+  Assert(Runtime.Token.UntilNonEmpty(['\n  '], '  \n  A '), ['  ', '\n  A '])
+  Assert(Runtime.Token.UntilNonEmpty(['\n  '], '  \n  AA'), ['  ', '\n  AA'])
+  Assert(Runtime.Token.UntilNonEmpty(['\n  '], '  \n  AA '), ['  ', '\n  AA '])
+})
+
+Deno.test('UntilNonEmpty: Multi Sentinal Test', () => {
+  Assert(Runtime.Token.UntilNonEmpty(['A', 'B'], ''), [])
+  Assert(Runtime.Token.UntilNonEmpty(['A', 'B'], 'A'), [])
+  Assert(Runtime.Token.UntilNonEmpty(['A', 'B'], 'B'), [])
+  Assert(Runtime.Token.UntilNonEmpty(['A', 'B'], 'AB'), [])
+  Assert(Runtime.Token.UntilNonEmpty(['A', 'B'], 'BA'), [])
+  Assert(Runtime.Token.UntilNonEmpty(['A', 'B'], '   AB'), ['   ', 'AB'])
+  Assert(Runtime.Token.UntilNonEmpty(['A', 'B'], '   BA'), ['   ', 'BA'])
+  Assert(Runtime.Token.UntilNonEmpty(['A', ' B'], '   BA'), ['  ', ' BA'])
+  Assert(Runtime.Token.UntilNonEmpty([' A', 'B'], '   BA'), ['   ', 'BA'])
+  Assert(Runtime.Token.UntilNonEmpty(['B', 'A'], '   AB'), ['   ', 'AB'])
+  Assert(Runtime.Token.UntilNonEmpty(['B', 'A'], '   BA'), ['   ', 'BA'])
+  Assert(Runtime.Token.UntilNonEmpty(['B', ' A'], '   BA'), ['   ', 'BA'])
+  Assert(Runtime.Token.UntilNonEmpty([' B', 'A'], '   BA'), ['  ', ' BA'])
+})
