@@ -12,6 +12,7 @@ Deno.test('Array', () => {
   Assert(Runtime.Parse(Runtime.Array(Runtime.Const('AA')), 'AAAB'), [['AA'], 'AB'])
   Assert(Runtime.Parse(Runtime.Array(Runtime.Const('AA')), 'B'), [[], 'B'])
 })
+
 // ----------------------------------------------------------------
 // Const
 // ----------------------------------------------------------------
@@ -21,6 +22,7 @@ Deno.test('Const', () => {
   Assert(Runtime.Parse(Runtime.Const('A'), '  A'), ['A', ''])
   Assert(Runtime.Parse(Runtime.Const('A'), '  A '), ['A', ' '])
 })
+
 // ----------------------------------------------------------------
 // Until
 // ----------------------------------------------------------------
@@ -34,6 +36,21 @@ Deno.test('Until', () => {
   Assert(Runtime.Parse(Runtime.Until(['A', 'B']), 'BA'), ['', 'BA'])
   Assert(Runtime.Parse(Runtime.Until(['A', 'B']), '  BA'), ['  ', 'BA'])
   Assert(Runtime.Parse(Runtime.Until(['A', 'B']), '  BA '), ['  ', 'BA '])
+})
+
+// ----------------------------------------------------------------
+// UntilNonEmpty
+// ----------------------------------------------------------------
+Deno.test('UntilNonEmpty', () => {
+  Assert(Runtime.Parse(Runtime.UntilNonEmpty(['A']), ''), [])
+  Assert(Runtime.Parse(Runtime.UntilNonEmpty(['A']), 'A'), [])
+  Assert(Runtime.Parse(Runtime.UntilNonEmpty(['A']), '  A'), ['  ', 'A'])
+  Assert(Runtime.Parse(Runtime.UntilNonEmpty(['A']), '  A '), ['  ', 'A '])
+
+  Assert(Runtime.Parse(Runtime.UntilNonEmpty(['A', 'B']), ''), [])
+  Assert(Runtime.Parse(Runtime.UntilNonEmpty(['A', 'B']), 'BA'), [])
+  Assert(Runtime.Parse(Runtime.UntilNonEmpty(['A', 'B']), '  BA'), ['  ', 'BA'])
+  Assert(Runtime.Parse(Runtime.UntilNonEmpty(['A', 'B']), '  BA '), ['  ', 'BA '])
 })
 
 // ----------------------------------------------------------------

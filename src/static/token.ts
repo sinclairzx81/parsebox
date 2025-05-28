@@ -219,3 +219,11 @@ export type Until<Values extends string[], Input extends string, Result extends 
       ? Until<Values, Right, `${Result}${Left}`>
       : never
 )
+// ------------------------------------------------------------------
+// UntilNonEmpty
+// ------------------------------------------------------------------
+export type UntilNonEmpty<Values extends string[], Input extends string> = (
+  Until<Values, Input> extends [infer Left extends string, infer Right extends string]
+    ? Left extends '' ? [] : [Left, Right]
+    : []
+)

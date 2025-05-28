@@ -326,11 +326,11 @@ export interface IUntil<Output extends unknown = unknown> extends IParser<Output
   type: 'Until'
   values: string[]
 }
-/** `[TERM]` Creates a Until Parser */
+/** Creates a Until Parser */
 export function Until<Mapping extends IMapping<string>>(values: string[], mapping: Mapping): IUntil<string>
-/** `[TERM]` Creates a Until Parser */
+/** Creates a Until Parser */
 export function Until(values: string[]): IUntil<string>
-/** `[TERM]` Creates a Until Parser */
+/** Creates a Until Parser */
 export function Until(...args: unknown[]): never {
   const [values, mapping] = args.length === 2 ? [args[0], args[1]] : [args[0], Identity]
   return { type: 'Until', values, mapping } as never
@@ -341,5 +341,29 @@ export function IsUntil(value: unknown): value is IUntil {
     && Guard.HasPropertyKey(value, 'type')
     && Guard.HasPropertyKey(value, 'values')
     && Guard.IsEqual(value.type, 'Until')
+    && Guard.IsArray(value.values)
+}
+// ------------------------------------------------------------------
+// UntilNonEmpty
+// ------------------------------------------------------------------
+export interface IUntilNonEmpty<Output extends unknown = unknown> extends IParser<Output> {
+  type: 'UntilNonEmpty'
+  values: string[]
+}
+/** Creates a UntilNonEmpty Parser */
+export function UntilNonEmpty<Mapping extends IMapping<string>>(values: string[], mapping: Mapping): IUntilNonEmpty<string>
+/** Creates a UntilNonEmpty Parser */
+export function UntilNonEmpty(values: string[]): IUntilNonEmpty<string>
+/** Creates a UntilNonEmpty Parser */
+export function UntilNonEmpty(...args: unknown[]): never {
+  const [values, mapping] = args.length === 2 ? [args[0], args[1]] : [args[0], Identity]
+  return { type: 'UntilNonEmpty', values, mapping } as never
+}
+/** Returns true if the value is a UntilNonEmpty Parser */
+export function IsUntilNonEmpty(value: unknown): value is IUntilNonEmpty {
+  return Guard.IsObject(value)
+    && Guard.HasPropertyKey(value, 'type')
+    && Guard.HasPropertyKey(value, 'values')
+    && Guard.IsEqual(value.type, 'UntilNonEmpty')
     && Guard.IsArray(value.values)
 }

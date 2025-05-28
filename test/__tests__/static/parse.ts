@@ -34,6 +34,21 @@ Assert<Static.Parse<Static.Until<['A', 'B']>, 'BA'>, ['', 'BA']>
 Assert<Static.Parse<Static.Until<['A', 'B']>, '  BA'>, ['  ', 'BA']>
 Assert<Static.Parse<Static.Until<['A', 'B']>, '  BA '>, ['  ', 'BA ']>
 
+
+// ----------------------------------------------------------------
+// UntilNonEmpty
+// ----------------------------------------------------------------
+Assert<Static.Parse<Static.UntilNonEmpty<['A']>, ''>, []>
+Assert<Static.Parse<Static.UntilNonEmpty<['A']>, 'A'>, []>
+Assert<Static.Parse<Static.UntilNonEmpty<['A']>, '  A'>, ['  ', 'A']>
+Assert<Static.Parse<Static.UntilNonEmpty<['A']>, '  A '>, ['  ', 'A ']>
+
+Assert<Static.Parse<Static.UntilNonEmpty<['A', 'B']>, ''>, []>
+Assert<Static.Parse<Static.UntilNonEmpty<['A', 'B']>, 'BA'>, []>
+Assert<Static.Parse<Static.UntilNonEmpty<['A', 'B']>, '  BA'>, ['  ', 'BA']>
+Assert<Static.Parse<Static.UntilNonEmpty<['A', 'B']>, '  BA '>, ['  ', 'BA ']>
+
+
 // ------------------------------------------------------------------
 // Ident
 // ------------------------------------------------------------------

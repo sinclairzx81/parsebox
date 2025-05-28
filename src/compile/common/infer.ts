@@ -32,40 +32,58 @@ THE SOFTWARE.
 import { Runtime } from '../../runtime/index.ts'
 import { Unreachable } from './unreachable.ts'
 
-function InferUnion(parsers: Runtime.IParser[]): string {
-  return [...new Set(parsers.map((parser) => Infer(parser)))].join(' | ')
-}
-function InferTuple(parsers: Runtime.IParser[]): string {
-  return `[${parsers.map(() => 'unknown').join(', ')}]`
-}
 function InferArray(parser: Runtime.IParser): string {
   return `(${Infer(parser)})[]`
 }
 function InferContext(left: Runtime.IParser, right: Runtime.IParser) {
   return Infer(right)
 }
+function InferConst(parser: Runtime.IConst) {
+  return `'${parser.value}'`
+}
 function InferOptional(parser: Runtime.IParser) {
   return `([${Infer(parser)}] | [])`
 }
-function InferConst(parser: Runtime.IConst) {
-  return `'${parser.value}'`
+
+
+function InferUnion(parsers: Runtime.IParser[]): string {
+  return [...new Set(parsers.map((parser) => Infer(parser)))].join(' | ')
+}
+function InferString(parser: Runtime.IString) {
+  return `string`
+}
+function InferRef(parser: Runtime.IRef) {
+  return `unknown`
+}
+function InferIdent(parser: Runtime.IIdent) {
+  return `string`
+}
+function InferNumber(parser: Runtime.INumber) {
+  return `string`
+}
+function InferTuple(parsers: Runtime.IParser[]): string {
+  return `[${parsers.map(() => 'unknown').join(', ')}]`
 }
 function InferUntil(parser: Runtime.IUntil) {
   return `string`
 }
+function InferUntilNonEmpty(parser: Runtime.IUntilNonEmpty) {
+  return `string`
+}
 export function Infer(parser: Runtime.IParser): string {
   return (
+    Runtime.IsArray(parser) ? InferArray(parser.parser) :
     Runtime.IsContext(parser) ? InferContext(parser.right, parser.right) :
+    Runtime.IsConst(parser) ? InferConst(parser) :
+    Runtime.IsIdent(parser) ? InferIdent(parser) :
+    Runtime.IsNumber(parser) ? InferNumber(parser) :
+    Runtime.IsOptional(parser) ? InferOptional(parser.parser) :
+    Runtime.IsRef(parser) ? InferRef(parser) :
+    Runtime.IsString(parser) ? InferString(parser) :
     Runtime.IsTuple(parser) ? InferTuple(parser.parsers) :
     Runtime.IsUnion(parser) ? InferUnion(parser.parsers) :
-    Runtime.IsArray(parser) ? InferArray(parser.parser) :
-    Runtime.IsOptional(parser) ? InferOptional(parser.parser) :
-    Runtime.IsRef(parser) ? `unknown` :
-    Runtime.IsConst(parser) ? InferConst(parser) :
     Runtime.IsUntil(parser) ? InferUntil(parser) :
-    Runtime.IsString(parser) ? `string` :
-    Runtime.IsIdent(parser) ? `string` :
-    Runtime.IsNumber(parser) ? `string` :
+    Runtime.IsUntilNonEmpty(parser) ? InferUntilNonEmpty(parser) :
     Unreachable(parser)
   )
 }
