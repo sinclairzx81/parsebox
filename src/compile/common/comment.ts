@@ -27,23 +27,26 @@ THE SOFTWARE.
 ---------------------------------------------------------------------------*/
 
 // deno-fmt-ignore-file
-// deno-lint-ignore-file no-unused-vars
+// deno-lint-ignore-file
 
 import { Runtime } from '../../runtime/index.ts'
 import { Unreachable } from './unreachable.ts'
 import { Escape } from './escape.ts'
 
+function FromArray(parser: Runtime.IArray): string {
+  return `${FromParser(parser.parser)}[]`
+}
 function FromContext(parser: Runtime.IContext): string {
   return `${FromParser(parser.left)} -> ${FromParser(parser.right)}`
 }
-function FromTuple(parser: Runtime.ITuple): string {
-  return `[${parser.parsers.map((parser) => `${FromParser(parser)}`).join(', ')}]`
+function FromConst(parser: Runtime.IConst): string {
+  return `'${Escape(parser.value)}'`
 }
-function FromUnion(parser: Runtime.IUnion): string {
-  return parser.parsers.map((parser) => `${FromParser(parser)}`).join(' | ')
+function FromIdent(parser: Runtime.IIdent): string {
+  return `<Ident>`
 }
-function FromArray(parser: Runtime.IArray): string {
-  return `${FromParser(parser.parser)}[]`
+function FromNumber(parser: Runtime.INumber): string {
+  return `<Number>`
 }
 function FromOptional(parser: Runtime.IOptional): string {
   return `${FromParser(parser.parser)}?`
@@ -51,34 +54,35 @@ function FromOptional(parser: Runtime.IOptional): string {
 function FromRef(parser: Runtime.IRef): string {
   return `${parser.ref}`
 }
-function FromConst(parser: Runtime.IConst): string {
-  return `'${Escape(parser.value)}'`
+function FromString(parser: Runtime.IString): string {
+  return `<String>`
+}
+function FromTuple(parser: Runtime.ITuple): string {
+  return `[${parser.parsers.map((parser) => `${FromParser(parser)}`).join(', ')}]`
+}
+function FromUnion(parser: Runtime.IUnion): string {
+  return parser.parsers.map((parser) => `${FromParser(parser)}`).join(' | ')
 }
 function FromUntil(parser: Runtime.IUntil): string {
   return `string`
 }
-function FromIdent(parser: Runtime.IIdent): string {
-  return `<Ident>`
-}
-function FromString(parser: Runtime.IString): string {
-  return `<String>`
-}
-function FromNumber(parser: Runtime.INumber): string {
-  return `<Number>`
+function FromUntilNonEmpty(parser: Runtime.IUntilNonEmpty): string {
+  return `string`
 }
 function FromParser(parser: Runtime.IParser): string {
   return (
+    Runtime.IsArray(parser) ? FromArray(parser) : 
     Runtime.IsContext(parser) ? FromContext(parser) : 
+    Runtime.IsConst(parser) ? FromConst(parser) : 
+    Runtime.IsIdent(parser) ? FromIdent(parser) : 
+    Runtime.IsNumber(parser) ? FromNumber(parser) :
+    Runtime.IsOptional(parser) ? FromOptional(parser) : 
+    Runtime.IsRef(parser) ? FromRef(parser) : 
+    Runtime.IsString(parser) ? FromString(parser) : 
     Runtime.IsTuple(parser) ? FromTuple(parser) : 
     Runtime.IsUnion(parser) ? FromUnion(parser) : 
-    Runtime.IsArray(parser) ? FromArray(parser) : 
-    Runtime.IsOptional(parser) ? FromOptional(parser) : 
-    Runtime.IsString(parser) ? FromString(parser) : 
-    Runtime.IsConst(parser) ? FromConst(parser) : 
     Runtime.IsUntil(parser) ? FromUntil(parser) : 
-    Runtime.IsRef(parser) ? FromRef(parser) : 
-    Runtime.IsIdent(parser) ? FromIdent(parser) : 
-    Runtime.IsNumber(parser) ? FromNumber(parser) : 
+    Runtime.IsUntilNonEmpty(parser) ? FromUntilNonEmpty(parser) : 
     Unreachable(parser)
   )
 }

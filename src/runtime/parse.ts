@@ -129,6 +129,12 @@ function ParseUntil<Values extends string[]>(values: [...Values], code: string, 
   return Token.Until(values, code) as never
 }
 // ------------------------------------------------------------------
+// Until
+// ------------------------------------------------------------------
+function ParseUntilNonEmpty<Values extends string[]>(values: [...Values], code: string, context: unknown): [] | [string, string] {
+  return Token.UntilNonEmpty(values, code) as never
+}
+// ------------------------------------------------------------------
 // Parser
 // ------------------------------------------------------------------
 function ParseParser<Parser extends Types.IParser>(moduleProperties: Types.IModuleProperties, parser: Parser, code: string, context: unknown): [] | [Types.StaticParser<Parser>, string] {
@@ -144,6 +150,7 @@ function ParseParser<Parser extends Types.IParser>(moduleProperties: Types.IModu
     Types.IsTuple(parser) ? ParseTuple(moduleProperties, parser.parsers, code, context) :
     Types.IsUnion(parser) ? ParseUnion(moduleProperties, parser.parsers, code, context) :
     Types.IsUntil(parser) ?  ParseUntil(parser.values, code, context) :
+    Types.IsUntilNonEmpty(parser) ?  ParseUntilNonEmpty(parser.values, code, context) :
     []
   )
   return (result.length === 2 ? [parser.mapping(result[0], context), result[1]] : result) as never

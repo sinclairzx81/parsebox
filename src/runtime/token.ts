@@ -252,3 +252,14 @@ export function Until(value: string[], input: string, result: string = ''): [] |
     })()
   )
 }
+// ------------------------------------------------------------------
+// UntilNonEmpty
+// ------------------------------------------------------------------
+export function UntilNonEmpty(value: string[], input: string): [] | [string, string] {
+  const result = Until(value, input)
+  return (
+    result.length === 2
+      ? result[0].length === 0 ? []: result
+      : []
+  )
+}
