@@ -85,14 +85,6 @@ export interface Const<Value extends string = string, Mapping extends IMapping =
   value: Value
 }
 // ------------------------------------------------------------------
-// Until
-// ------------------------------------------------------------------
-/** Creates a Until Parser */
-export interface Until<Values extends string[] = string[], Mapping extends IMapping = Identity> extends IParser<Mapping> {
-  type: 'Until'
-  values: Values
-}
-// ------------------------------------------------------------------
 // Ident
 // ------------------------------------------------------------------
 /** Creates an Ident Parser */
@@ -137,4 +129,20 @@ export interface Tuple<Parsers extends IParser[] = [], Mapping extends IMapping 
 export interface Union<Parsers extends IParser[] = [], Mapping extends IMapping = Identity> extends IParser<Mapping> {
   type: 'Union'
   parsers: [...Parsers]
+}
+// ------------------------------------------------------------------
+// Until
+// ------------------------------------------------------------------
+/** Creates a Until Parser */
+export interface Until<Values extends string[] = string[], Mapping extends IMapping = Identity> extends IParser<Mapping> {
+  type: 'Until'
+  values: Values
+}
+// ------------------------------------------------------------------
+// UntilNonEmpty
+// ------------------------------------------------------------------
+/** Creates a UntilNonEmpty Parser */
+export interface UntilNonEmpty<Values extends string[] = string[], Mapping extends IMapping = Identity> extends IParser<Mapping> {
+  type: 'UntilNonEmpty'
+  values: Values
 }

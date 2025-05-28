@@ -69,9 +69,11 @@ License: MIT
   - [Tuple](#Tuple)
   - [Union](#Union)
   - [Array](#Array)
-  - [Until](#Until)
   - [Optional](#Optional)
   - [Epsilon](#Epsilon)
+- [Range](#Range)
+  - [Until](#Until)
+  - [UntilNonEmpty](#UntilNonEmpty)
 - [Terminals](#Terminals)
   - [Number](#Number)
   - [String](#String)
@@ -187,27 +189,6 @@ const R2 = Runtime.Parse(T, 'X X X Y Z')             // const R2 = [['X', 'X', '
 const R3 = Runtime.Parse(T, 'Y Z')                   // const R3 = [[], 'Y Z']
 ```
 
-### Until
-
-The Until combinator will parse characters up to (but not including) one of the specified sentinel string values. If a sentinel value is not found, parsing fails.
-
-**BNF**
-
-```bnf
-<T> ::= ? any character until ['Z'] ?
-```
-
-**TypeScript**
-
-```typescript
-const T = Runtime.Until(['Z'])                      // const T = {
-                                                    //   type: 'Until',
-                                                    //   values: ['Z']
-                                                    // }
-
-const R = Runtime.Parse(T, 'X Y Z')                 // const R = ['X Y ', 'Z']
-```
-
 ### Optional
 
 The Optional combinator parses zero or one occurrence of the interior parser, returning a tuple with one element or an empty tuple if there is no match.
@@ -256,7 +237,58 @@ const R1 = Runtime.Parse(T, 'X Y Z')                // const R1 = [['X', 'Y'], '
 const R2 = Runtime.Parse(T, 'Y Z')                  // const R2 = [[], 'Y Z']
 ```
 
-## Terminals
+## Range Combinators
+
+ParseBox range combinators match character sequences up to one or more terminating sentinel strings. These combinators are used to match arbituary Unicode (UTF-16) sequences.
+
+
+### Until
+
+The Until combinator parses characters up to (but not including) one of the specified sentinel string values. It captures all characters encountered before the sentinel. If a sentinel value is not found in the input, parsing fails. Until succeeds even if it matches a zero-length string. This occurs if a sentinel is found immediately at the current parsing position.
+
+**BNF**
+
+```bnf
+<T> ::= ? any character sequence (0 or more) until 'Z' ?
+```
+
+**TypeScript**
+
+```typescript
+const T = Runtime.Until(['Z'])                      // const T = {
+                                                    //   type: 'Until',
+                                                    //   values: ['Z']
+                                                    // }
+
+const R = Runtime.Parse(T, 'X Y Z')                 // const R = ['X Y ', 'Z']
+```
+
+### UntilNonEmpty
+
+The UntilNonEmpty combinator works the same as Until, but it fails if the parsed content yields a zero-length string.
+
+**BNF**
+
+```bnf
+<T> ::= ? any character sequence (1 or more) until 'Z'. fails on zero length ?
+```
+
+**TypeScript**
+
+```typescript
+const T = Runtime.UntilNonEmpty(['Z'])              // const T = {
+                                                    //   type: 'UntilNonEmpty',
+                                                    //   values: ['Z']
+                                                    // }
+
+const R1 = Runtime.Parse(T, 'X Y Z')                // const R1 = ['X Y ', 'Z']
+
+const R2 = Runtime.Parse(T, ' Z')                   // const R2 = [' ', 'Z']
+
+const R3 = Runtime.Parse(T, 'Z')                    // const R3 = []
+```
+
+## Terminal Combinators
 
 ParseBox provides combinators for parsing common lexical tokens, such as numbers, identifiers, and strings, enabling static, optimized parsing of typical JavaScript constructs.
 

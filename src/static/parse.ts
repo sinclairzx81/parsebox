@@ -116,6 +116,14 @@ type UntilParser<Values extends string[], Input extends string, _Context extends
     : []
 )
 // ------------------------------------------------------------------
+// UntilNonEmpty
+// ------------------------------------------------------------------
+type UntilNonEmptyParser<Values extends string[], Input extends string, _Context extends unknown> = (
+  Tokens.UntilNonEmpty<Values, Input> extends [infer Match extends string, infer Rest extends string]
+    ? [Match, Rest]
+    : []
+)
+// ------------------------------------------------------------------
 // Parse
 // ------------------------------------------------------------------
 type ParseCode<Parser extends Types.IParser, Input extends string, Context extends unknown = unknown> = (
@@ -129,6 +137,7 @@ type ParseCode<Parser extends Types.IParser, Input extends string, Context exten
   Parser extends Types.Tuple<infer Parsers extends Types.IParser[]> ? TupleParser<Parsers, Input, Context> :
   Parser extends Types.Union<infer Parsers extends Types.IParser[]> ? UnionParser<Parsers, Input, Context> :
   Parser extends Types.Until<infer Values extends string[]> ? UntilParser<Values, Input, Context> :
+  Parser extends Types.UntilNonEmpty<infer Values extends string[]> ? UntilNonEmptyParser<Values, Input, Context> :
   []
 )
 type ParseMapping<Parser extends Types.IParser, Result extends unknown, Context extends unknown = unknown> = (
