@@ -32,25 +32,17 @@ import * as Tokens from './token.ts'
 import * as Types from './types.ts'
 
 // ------------------------------------------------------------------
-// Context
-// ------------------------------------------------------------------
-type ContextParser<Left extends Types.IParser, Right extends Types.IParser, Input extends string, Context extends unknown> = (
-  Parse<Left, Input, Context> extends [infer Context extends unknown, infer Rest extends string]
-    ? Parse<Right, Rest, Context>
-    : []
-)
-// ------------------------------------------------------------------
 // Array
 // ------------------------------------------------------------------
-type ArrayParser<Parser extends Types.IParser, Input extends string, Context extends unknown, Result extends unknown[] = []> = (
-  Parse<Parser, Input, Context> extends [infer Value1 extends unknown, infer Rest extends string]
-    ? ArrayParser<Parser, Rest, Context, [...Result, Value1]>
+type ArrayParser<Parser extends Types.IParser, Input extends string, Result extends unknown[] = []> = (
+  Parse<Parser, Input> extends [infer Value1 extends unknown, infer Rest extends string]
+    ? ArrayParser<Parser, Rest, [...Result, Value1]>
     : [Result, Input]
 )
 // ------------------------------------------------------------------
 // Const
 // ------------------------------------------------------------------
-type ConstParser<Value extends string, Input extends string, _Context extends unknown> = (
+type ConstParser<Value extends string, Input extends string> = (
   Tokens.Const<Value, Input> extends [infer Match extends Value, infer Rest extends string]
     ? [Match, Rest]
     : []
@@ -58,7 +50,7 @@ type ConstParser<Value extends string, Input extends string, _Context extends un
 // ------------------------------------------------------------------
 // Ident
 // ------------------------------------------------------------------
-type IdentParser<Input extends string, _Context extends unknown> = (
+type IdentParser<Input extends string> = (
   Tokens.Ident<Input> extends [infer Match extends string, infer Rest extends string]
     ? [Match, Rest]
     : []
@@ -66,7 +58,7 @@ type IdentParser<Input extends string, _Context extends unknown> = (
 // ------------------------------------------------------------------
 // Number
 // ------------------------------------------------------------------
-type NumberParser<Input extends string, _Context extends unknown> = (
+type NumberParser<Input extends string> = (
   Tokens.Number<Input> extends [infer Match extends string, infer Rest extends string]
     ? [Match, Rest]
     : []
@@ -74,15 +66,15 @@ type NumberParser<Input extends string, _Context extends unknown> = (
 // ------------------------------------------------------------------
 // Optional
 // ------------------------------------------------------------------
-type OptionalParser<Parser extends Types.IParser, Input extends string, Context extends unknown> = (
-  Parse<Parser, Input, Context> extends [infer Value extends unknown, infer Rest extends string]
+type OptionalParser<Parser extends Types.IParser, Input extends string> = (
+  Parse<Parser, Input> extends [infer Value extends unknown, infer Rest extends string]
     ? [[Value], Rest]
     : [[], Input]
 )
 // ------------------------------------------------------------------
 // String
 // ------------------------------------------------------------------
-type StringParser<Options extends string[], Input extends string, _Context extends unknown> = (
+type StringParser<Options extends string[], Input extends string> = (
   Tokens.String<Options, Input> extends [infer Match extends string, infer Rest extends string]
     ? [Match, Rest]
     : []
@@ -90,27 +82,27 @@ type StringParser<Options extends string[], Input extends string, _Context exten
 // ------------------------------------------------------------------
 // Tuple
 // ------------------------------------------------------------------
-type TupleParser<Parsers extends Types.IParser[], Input extends string, Context extends unknown, Result extends unknown[] = []> = (
+type TupleParser<Parsers extends Types.IParser[], Input extends string, Result extends unknown[] = []> = (
   Parsers extends [infer Left extends Types.IParser, ...infer Right extends Types.IParser[]]
-    ? Parse<Left, Input, Context> extends [infer Value extends unknown, infer Rest extends string]
-      ? TupleParser<Right, Rest, Context, [...Result, Value]>
+    ? Parse<Left, Input> extends [infer Value extends unknown, infer Rest extends string]
+      ? TupleParser<Right, Rest, [...Result, Value]>
       : []
     : [Result, Input]
 )
 // ------------------------------------------------------------------
 // Union
 // ------------------------------------------------------------------
-type UnionParser<Parsers extends Types.IParser[], Input extends string, Context extends unknown> = (
+type UnionParser<Parsers extends Types.IParser[], Input extends string> = (
   Parsers extends [infer Left extends Types.IParser, ...infer Right extends Types.IParser[]]
-    ? Parse<Left, Input, Context> extends [infer Value extends unknown, infer Rest extends string]
+    ? Parse<Left, Input> extends [infer Value extends unknown, infer Rest extends string]
       ? [Value, Rest]
-      : UnionParser<Right, Input, Context>
+      : UnionParser<Right, Input>
     : []
 )
 // ------------------------------------------------------------------
 // Until
 // ------------------------------------------------------------------
-type UntilParser<Values extends string[], Input extends string, _Context extends unknown> = (
+type UntilParser<Values extends string[], Input extends string> = (
   Tokens.Until<Values, Input> extends [infer Match extends string, infer Rest extends string]
     ? [Match, Rest]
     : []
@@ -118,7 +110,7 @@ type UntilParser<Values extends string[], Input extends string, _Context extends
 // ------------------------------------------------------------------
 // UntilNonEmpty
 // ------------------------------------------------------------------
-type UntilNonEmptyParser<Values extends string[], Input extends string, _Context extends unknown> = (
+type UntilNonEmptyParser<Values extends string[], Input extends string> = (
   Tokens.UntilNonEmpty<Values, Input> extends [infer Match extends string, infer Rest extends string]
     ? [Match, Rest]
     : []
@@ -126,26 +118,25 @@ type UntilNonEmptyParser<Values extends string[], Input extends string, _Context
 // ------------------------------------------------------------------
 // Parse
 // ------------------------------------------------------------------
-type ParseCode<Parser extends Types.IParser, Input extends string, Context extends unknown = unknown> = (
-  Parser extends Types.Context<infer Left extends Types.IParser, infer Right extends Types.IParser> ? ContextParser<Left, Right, Input, Context> :
-  Parser extends Types.Array<infer Parser extends Types.IParser> ? ArrayParser<Parser, Input, Context> :
-  Parser extends Types.Const<infer Value extends string> ? ConstParser<Value, Input, Context> :
-  Parser extends Types.Ident ? IdentParser<Input, Context> :
-  Parser extends Types.Number ? NumberParser<Input, Context> :
-  Parser extends Types.Optional<infer Parser extends Types.IParser> ? OptionalParser<Parser, Input, Context> :
-  Parser extends Types.String<infer Options extends string[]> ? StringParser<Options, Input, Context> :
-  Parser extends Types.Tuple<infer Parsers extends Types.IParser[]> ? TupleParser<Parsers, Input, Context> :
-  Parser extends Types.Union<infer Parsers extends Types.IParser[]> ? UnionParser<Parsers, Input, Context> :
-  Parser extends Types.Until<infer Values extends string[]> ? UntilParser<Values, Input, Context> :
-  Parser extends Types.UntilNonEmpty<infer Values extends string[]> ? UntilNonEmptyParser<Values, Input, Context> :
+type ParseCode<Parser extends Types.IParser, Input extends string> = (
+  Parser extends Types.Array<infer Parser extends Types.IParser> ? ArrayParser<Parser, Input> :
+  Parser extends Types.Const<infer Value extends string> ? ConstParser<Value, Input> :
+  Parser extends Types.Ident ? IdentParser<Input> :
+  Parser extends Types.Number ? NumberParser<Input> :
+  Parser extends Types.Optional<infer Parser extends Types.IParser> ? OptionalParser<Parser, Input> :
+  Parser extends Types.String<infer Options extends string[]> ? StringParser<Options, Input> :
+  Parser extends Types.Tuple<infer Parsers extends Types.IParser[]> ? TupleParser<Parsers, Input> :
+  Parser extends Types.Union<infer Parsers extends Types.IParser[]> ? UnionParser<Parsers, Input> :
+  Parser extends Types.Until<infer Values extends string[]> ? UntilParser<Values, Input> :
+  Parser extends Types.UntilNonEmpty<infer Values extends string[]> ? UntilNonEmptyParser<Values, Input> :
   []
 )
-type ParseMapping<Parser extends Types.IParser, Result extends unknown, Context extends unknown = unknown> = (
-  (Parser['mapping'] & { input: Result, context: Context })['output']
+type ParseMapping<Parser extends Types.IParser, Result extends unknown = unknown> = (
+  (Parser['mapping'] & { input: Result })['output']
 )
 /** Parses code with the given parser */
-export type Parse<Parser extends Types.IParser, Input extends string, Context extends unknown = unknown> = (
-  ParseCode<Parser, Input, Context> extends [infer Code extends unknown, infer Rest extends string]
-    ? [ParseMapping<Parser, Code, Context>, Rest]
+export type Parse<Parser extends Types.IParser, Input extends string> = (
+  ParseCode<Parser, Input> extends [infer Code extends unknown, infer Rest extends string]
+    ? [ParseMapping<Parser, Code>, Rest]
     : []
 )

@@ -26,6 +26,6 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * as Token from "./token.ts"
-export * from "./parse.ts"
-export * from "./types.ts"
+export * as Token from './token.ts'
+export * from './parse.ts'
+export * from './types.ts'

@@ -35,17 +35,12 @@ import { Unreachable } from './unreachable.ts'
 function InferArray(parser: Runtime.IParser): string {
   return `(${Infer(parser)})[]`
 }
-function InferContext(left: Runtime.IParser, right: Runtime.IParser) {
-  return Infer(right)
-}
 function InferConst(parser: Runtime.IConst) {
   return `'${parser.value}'`
 }
 function InferOptional(parser: Runtime.IParser) {
   return `([${Infer(parser)}] | [])`
 }
-
-
 function InferUnion(parsers: Runtime.IParser[]): string {
   return [...new Set(parsers.map((parser) => Infer(parser)))].join(' | ')
 }
@@ -73,17 +68,16 @@ function InferUntilNonEmpty(parser: Runtime.IUntilNonEmpty) {
 export function Infer(parser: Runtime.IParser): string {
   return (
     Runtime.IsArray(parser) ? InferArray(parser.parser) :
-    Runtime.IsContext(parser) ? InferContext(parser.right, parser.right) :
-    Runtime.IsConst(parser) ? InferConst(parser) :
-    Runtime.IsIdent(parser) ? InferIdent(parser) :
-    Runtime.IsNumber(parser) ? InferNumber(parser) :
-    Runtime.IsOptional(parser) ? InferOptional(parser.parser) :
-    Runtime.IsRef(parser) ? InferRef(parser) :
-    Runtime.IsString(parser) ? InferString(parser) :
-    Runtime.IsTuple(parser) ? InferTuple(parser.parsers) :
-    Runtime.IsUnion(parser) ? InferUnion(parser.parsers) :
-    Runtime.IsUntil(parser) ? InferUntil(parser) :
-    Runtime.IsUntilNonEmpty(parser) ? InferUntilNonEmpty(parser) :
-    Unreachable(parser)
+      Runtime.IsConst(parser) ? InferConst(parser) :
+        Runtime.IsIdent(parser) ? InferIdent(parser) :
+          Runtime.IsNumber(parser) ? InferNumber(parser) :
+            Runtime.IsOptional(parser) ? InferOptional(parser.parser) :
+              Runtime.IsRef(parser) ? InferRef(parser) :
+                Runtime.IsString(parser) ? InferString(parser) :
+                  Runtime.IsTuple(parser) ? InferTuple(parser.parsers) :
+                    Runtime.IsUnion(parser) ? InferUnion(parser.parsers) :
+                      Runtime.IsUntil(parser) ? InferUntil(parser) :
+                        Runtime.IsUntilNonEmpty(parser) ? InferUntilNonEmpty(parser) :
+                          Unreachable(parser)
   )
 }

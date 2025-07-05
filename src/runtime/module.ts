@@ -35,18 +35,12 @@ import { Parse } from './parse.ts'
 // Module
 // ------------------------------------------------------------------
 export class Module<Properties extends Types.IModuleProperties = Types.IModuleProperties> {
-  constructor(public readonly parsers: Properties) {}
-  /** Parses using one of the parsers defined on this instance */
-  public Parse<Key extends keyof Properties>(key: Key, content: string, context: unknown): [] | [Types.StaticParser<Properties[Key]>, string]
+  constructor(public readonly parsers: Properties) { }
   /** Parses using one of the parsers defined on this instance */
   public Parse<Key extends keyof Properties>(key: Key, content: string): [] | [Types.StaticParser<Properties[Key]>, string]
   /** Parses using one of the parsers defined on this instance */
   public Parse(...args: never[]): never {
-    const [key, content, context] = (
-      args.length === 3 ? [args[0], args[1], args[2]] : 
-      args.length === 2 ? [args[0], args[1], undefined] : 
-      (() => { throw Error('Invalid parse arguments') })()
-    )
-    return Parse(this.parsers, this.parsers[key], content, context) as never
+    const [key, content] = [args[0], args[1]]
+    return Parse(this.parsers, this.parsers[key], content) as never
   }
 }

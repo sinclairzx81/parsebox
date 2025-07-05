@@ -1,26 +1,8 @@
 // deno-fmt-ignore-file
 
 import { Static, Runtime, Compile } from '@sinclair/parsebox'
-import { Syntax } from './typebox/compiled/index.ts'
 import { ParseJson } from './json/index.ts'
 import { ParseEbnf } from './ebnf/index.ts'
-
-// ------------------------------------------------------------------
-//
-// Example: TypeBox | Compiled
-//
-// ParseBox is the working project for developing the TypeBox syntax
-// parsers. You can test TypeBox inference here. Check the TypeBox
-// directory for Compiled and Interpreted variants.
-//
-// ------------------------------------------------------------------
-const Type = Syntax(`{
-  x: number,
-  y: number,
-  z: number
-}`)
-
-console.dir(Type, { depth: 100 })
 
 // ------------------------------------------------------------------
 //
@@ -134,8 +116,6 @@ console.log(Json)
     ])
   })
   const project = Compile.Project(ListModule, {
-    contextDefault: '{}',
-    contextType: 'unknown',
     mappingPath: './mapping',
     mappingImports: [],
     parserImports: []

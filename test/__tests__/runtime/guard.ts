@@ -15,12 +15,6 @@ Deno.test('IsConst', () => {
   Assert(Runtime.IsConst(Runtime.Const(undefined)), false)
 })
 
-Deno.test('IsContext', () => {
-  Assert(Runtime.IsContext(Runtime.Context(Runtime.Const('A'), Runtime.Const('B'))), true)
-  // @ts-ignore  
-  Assert(Runtime.IsContext(Runtime.Const(undefined)), false)
-})
-
 Deno.test('IsIdent', () => {
   Assert(Runtime.IsIdent(Runtime.Const('A')), false)
   Assert(Runtime.IsIdent(Runtime.Ident()), true)
