@@ -27,7 +27,7 @@ THE SOFTWARE.
 ---------------------------------------------------------------------------*/
 
 // deno-fmt-ignore-file
-// deno-lint-ignore-file no-unused-vars no-explicit-any
+// deno-lint-ignore-file
 
 import * as Token from './token.ts'
 import * as Types from './types.ts'
@@ -35,23 +35,14 @@ import * as Types from './types.ts'
 export function Throw(message: string): never {
   throw new Error(message)
 }
-
-// ------------------------------------------------------------------
-// Context
-// ------------------------------------------------------------------
-function ParseContext<ModuleProperties extends Types.IModuleProperties, Parser extends Types.IParser>(moduleProperties: ModuleProperties, left: Parser, right: Parser, code: string, context: unknown): unknown[] {
-  const result = ParseParser(moduleProperties, left, code, context)
-  return result.length === 2 ? ParseParser(moduleProperties, right, result[1], result[0]) : []
-}
-
 // ------------------------------------------------------------------
 // Array
 // ------------------------------------------------------------------
-function ParseArray<ModuleProperties extends Types.IModuleProperties, Parser extends Types.IParser>(moduleProperties: ModuleProperties, parser: Parser, code: string, context: unknown): unknown[] {
+function ParseArray<ModuleProperties extends Types.IModuleProperties, Parser extends Types.IParser>(moduleProperties: ModuleProperties, parser: Parser, input: string): unknown[] {
   const buffer = [] as unknown[]
-  let rest = code
+  let rest = input
   while (rest.length > 0) {
-    const result = ParseParser(moduleProperties, parser, rest, context)
+    const result = ParseParser(moduleProperties, parser, rest)
     if (result.length === 0) return [buffer, rest]
     buffer.push(result[0])
     rest = result[1]
@@ -62,49 +53,49 @@ function ParseArray<ModuleProperties extends Types.IModuleProperties, Parser ext
 // ------------------------------------------------------------------
 // Const
 // ------------------------------------------------------------------
-function ParseConst<Value extends string>(value: Value, code: string, context: unknown): [] | [Value, string] {
-  return Token.Const(value, code) as never
+function ParseConst<Value extends string>(value: Value, input: string): [] | [Value, string] {
+  return Token.Const(value, input) as never
 }
 // ------------------------------------------------------------------
 // Ident
 // ------------------------------------------------------------------
-function ParseIdent(code: string, _context: unknown): [] | [string, string] {
-  return Token.Ident(code)
+function ParseIdent(input: string): [] | [string, string] {
+  return Token.Ident(input)
 }
 // ------------------------------------------------------------------
 // Number
 // ------------------------------------------------------------------
-function ParseNumber(code: string, _context: unknown): [] | [string, string] {
-  return Token.Number(code)
+function ParseNumber(input: string): [] | [string, string] {
+  return Token.Number(input)
 }
 // ------------------------------------------------------------------
 // Optional
 // ------------------------------------------------------------------
-function ParseOptional<ModuleProperties extends Types.IModuleProperties, Parser extends Types.IParser>(moduleProperties: ModuleProperties, parser: Parser, code: string, context: unknown): [] | [[unknown] | [], unknown] {
-  const result = ParseParser(moduleProperties, parser, code, context)
-  return (result.length === 2 ? [[result[0]], result[1]] : [[], code]) as never
+function ParseOptional<ModuleProperties extends Types.IModuleProperties, Parser extends Types.IParser>(moduleProperties: ModuleProperties, parser: Parser, input: string): [] | [[unknown] | [], unknown] {
+  const result = ParseParser(moduleProperties, parser, input)
+  return (result.length === 2 ? [[result[0]], result[1]] : [[], input]) as never
 }
 // ------------------------------------------------------------------
 // Ref
 // ------------------------------------------------------------------
-function ParseRef<ModuleProperties extends Types.IModuleProperties, Ref extends string>(moduleProperties: ModuleProperties, ref: Ref, code: string, context: unknown): [] | [string, string] {
-  const parser =  ref in moduleProperties ? moduleProperties[ref] : Throw(`Cannot dereference Parser '${ref}'`)
-  return ParseParser(moduleProperties, parser, code, context) as never
+function ParseRef<ModuleProperties extends Types.IModuleProperties, Ref extends string>(moduleProperties: ModuleProperties, ref: Ref, input: string): [] | [string, string] {
+  const parser = ref in moduleProperties ? moduleProperties[ref] : Throw(`Cannot dereference Parser '${ref}'`)
+  return ParseParser(moduleProperties, parser, input) as never
 }
 // ------------------------------------------------------------------
 // String
 // ------------------------------------------------------------------
-function ParseString(options: string[], code: string, _context: unknown): [] | [string, string] {
+function ParseString(options: string[], code: string): [] | [string, string] {
   return Token.String(options, code)
 }
 // ------------------------------------------------------------------
 // Tuple
 // ------------------------------------------------------------------
-function ParseTuple<ModuleProperties extends Types.IModuleProperties, Parsers extends Types.IParser[]>(moduleProperties: ModuleProperties, parsers: [...Parsers], code: string, context: unknown): [] | [unknown[], string] {
+function ParseTuple<ModuleProperties extends Types.IModuleProperties, Parsers extends Types.IParser[]>(moduleProperties: ModuleProperties, parsers: [...Parsers], input: string): [] | [unknown[], string] {
   const buffer = [] as unknown[]
-  let rest = code
+  let rest = input
   for (const parser of parsers) {
-    const result = ParseParser(moduleProperties, parser, rest, context)
+    const result = ParseParser(moduleProperties, parser, rest)
     if (result.length === 0) return []
     buffer.push(result[0])
     rest = result[1]
@@ -114,9 +105,9 @@ function ParseTuple<ModuleProperties extends Types.IModuleProperties, Parsers ex
 // ------------------------------------------------------------------
 // Union
 // ------------------------------------------------------------------
-function ParseUnion<ModuleProperties extends Types.IModuleProperties, Parsers extends Types.IParser[]>(moduleProperties: ModuleProperties, parsers: [...Parsers], code: string, context: unknown): [] | [unknown, string] {
+function ParseUnion<ModuleProperties extends Types.IModuleProperties, Parsers extends Types.IParser[]>(moduleProperties: ModuleProperties, parsers: [...Parsers], input: string): [] | [unknown, string] {
   for (const parser of parsers) {
-    const result = ParseParser(moduleProperties, parser, code, context)
+    const result = ParseParser(moduleProperties, parser, input)
     if (result.length === 0) continue
     return result
   }
@@ -125,53 +116,48 @@ function ParseUnion<ModuleProperties extends Types.IModuleProperties, Parsers ex
 // ------------------------------------------------------------------
 // Until
 // ------------------------------------------------------------------
-function ParseUntil<Values extends string[]>(values: [...Values], code: string, context: unknown): [] | [string, string] {
-  return Token.Until(values, code) as never
+function ParseUntil<Values extends string[]>(values: [...Values], input: string): [] | [string, string] {
+  return Token.Until(values, input) as never
 }
 // ------------------------------------------------------------------
 // Until
 // ------------------------------------------------------------------
-function ParseUntilNonEmpty<Values extends string[]>(values: [...Values], code: string, context: unknown): [] | [string, string] {
+function ParseUntilNonEmpty<Values extends string[]>(values: [...Values], code: string): [] | [string, string] {
   return Token.UntilNonEmpty(values, code) as never
 }
 // ------------------------------------------------------------------
 // Parser
 // ------------------------------------------------------------------
-function ParseParser<Parser extends Types.IParser>(moduleProperties: Types.IModuleProperties, parser: Parser, code: string, context: unknown): [] | [Types.StaticParser<Parser>, string] {
+function ParseParser<Parser extends Types.IParser>(moduleProperties: Types.IModuleProperties, parser: Parser, input: string): [] | [Types.StaticParser<Parser>, string] {
   const result = (
-    Types.IsContext(parser) ? ParseContext(moduleProperties, parser.left, parser.right, code, context) :
-    Types.IsArray(parser) ? ParseArray(moduleProperties, parser.parser, code, context) :
-    Types.IsConst(parser) ? ParseConst(parser.value, code, context) :
-    Types.IsIdent(parser) ? ParseIdent(code, context) :
-    Types.IsNumber(parser) ? ParseNumber(code, context) :
-    Types.IsOptional(parser) ? ParseOptional(moduleProperties, parser.parser, code, context) :
-    Types.IsRef(parser) ? ParseRef(moduleProperties, parser.ref, code, context) :
-    Types.IsString(parser) ? ParseString(parser.options, code, context) :
-    Types.IsTuple(parser) ? ParseTuple(moduleProperties, parser.parsers, code, context) :
-    Types.IsUnion(parser) ? ParseUnion(moduleProperties, parser.parsers, code, context) :
-    Types.IsUntil(parser) ?  ParseUntil(parser.values, code, context) :
-    Types.IsUntilNonEmpty(parser) ?  ParseUntilNonEmpty(parser.values, code, context) :
-    []
+    Types.IsArray(parser) ? ParseArray(moduleProperties, parser.parser, input) :
+      Types.IsConst(parser) ? ParseConst(parser.value, input) :
+        Types.IsIdent(parser) ? ParseIdent(input) :
+          Types.IsNumber(parser) ? ParseNumber(input) :
+            Types.IsOptional(parser) ? ParseOptional(moduleProperties, parser.parser, input) :
+              Types.IsRef(parser) ? ParseRef(moduleProperties, parser.ref, input) :
+                Types.IsString(parser) ? ParseString(parser.options, input) :
+                  Types.IsTuple(parser) ? ParseTuple(moduleProperties, parser.parsers, input) :
+                    Types.IsUnion(parser) ? ParseUnion(moduleProperties, parser.parsers, input) :
+                      Types.IsUntil(parser) ? ParseUntil(parser.values, input) :
+                        Types.IsUntilNonEmpty(parser) ? ParseUntilNonEmpty(parser.values, input) :
+                          []
   )
-  return (result.length === 2 ? [parser.mapping(result[0], context), result[1]] : result) as never
+  return (result.length === 2 ? [parser.mapping(result[0]), result[1]] : result) as never
 }
 
 // ------------------------------------------------------------------
 // Parse
 // ------------------------------------------------------------------
 /** Parses content using the given Parser */
-export function Parse<Parser extends Types.IParser>(moduleProperties: Types.IModuleProperties, parser: Parser, code: string, context: unknown): [] | [Types.StaticParser<Parser>, string]
-/** Parses content using the given Parser */
-export function Parse<Parser extends Types.IParser>(moduleProperties: Types.IModuleProperties, parser: Parser, code: string): [] | [Types.StaticParser<Parser>, string]
-/** Parses content using the given Parser */
-export function Parse<Parser extends Types.IParser>(parser: Parser, content: string, context: unknown): [] | [Types.StaticParser<Parser>, string]
+export function Parse<Parser extends Types.IParser>(moduleProperties: Types.IModuleProperties, parser: Parser, input: string): [] | [Types.StaticParser<Parser>, string]
 /** Parses content using the given Parser */
 export function Parse<Parser extends Types.IParser>(parser: Parser, content: string): [] | [Types.StaticParser<Parser>, string]
 /** Parses content using the given parser */
 export function Parse(...args: any[]): never {
   const withModuleProperties = typeof args[1] === 'string' ? false : true
-  const [moduleProperties, parser, content, context] = withModuleProperties 
-    ? [args[0], args[1], args[2], args[3]]
-    : [{}, args[0], args[1], args[2]]
-  return ParseParser(moduleProperties, parser, content, context) as never
+  const [moduleProperties, parser, input] = withModuleProperties
+    ? [args[0], args[1], args[2]]
+    : [{}, args[0], args[1]]
+  return ParseParser(moduleProperties, parser, input) as never
 }

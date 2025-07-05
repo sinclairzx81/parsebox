@@ -36,9 +36,6 @@ import { Escape } from './escape.ts'
 function FromArray(parser: Runtime.IArray): string {
   return `${FromParser(parser.parser)}[]`
 }
-function FromContext(parser: Runtime.IContext): string {
-  return `${FromParser(parser.left)} -> ${FromParser(parser.right)}`
-}
 function FromConst(parser: Runtime.IConst): string {
   return `'${Escape(parser.value)}'`
 }
@@ -71,19 +68,18 @@ function FromUntilNonEmpty(parser: Runtime.IUntilNonEmpty): string {
 }
 function FromParser(parser: Runtime.IParser): string {
   return (
-    Runtime.IsArray(parser) ? FromArray(parser) : 
-    Runtime.IsContext(parser) ? FromContext(parser) : 
-    Runtime.IsConst(parser) ? FromConst(parser) : 
-    Runtime.IsIdent(parser) ? FromIdent(parser) : 
-    Runtime.IsNumber(parser) ? FromNumber(parser) :
-    Runtime.IsOptional(parser) ? FromOptional(parser) : 
-    Runtime.IsRef(parser) ? FromRef(parser) : 
-    Runtime.IsString(parser) ? FromString(parser) : 
-    Runtime.IsTuple(parser) ? FromTuple(parser) : 
-    Runtime.IsUnion(parser) ? FromUnion(parser) : 
-    Runtime.IsUntil(parser) ? FromUntil(parser) : 
-    Runtime.IsUntilNonEmpty(parser) ? FromUntilNonEmpty(parser) : 
-    Unreachable(parser)
+    Runtime.IsArray(parser) ? FromArray(parser) :
+      Runtime.IsConst(parser) ? FromConst(parser) :
+        Runtime.IsIdent(parser) ? FromIdent(parser) :
+          Runtime.IsNumber(parser) ? FromNumber(parser) :
+            Runtime.IsOptional(parser) ? FromOptional(parser) :
+              Runtime.IsRef(parser) ? FromRef(parser) :
+                Runtime.IsString(parser) ? FromString(parser) :
+                  Runtime.IsTuple(parser) ? FromTuple(parser) :
+                    Runtime.IsUnion(parser) ? FromUnion(parser) :
+                      Runtime.IsUntil(parser) ? FromUntil(parser) :
+                        Runtime.IsUntilNonEmpty(parser) ? FromUntilNonEmpty(parser) :
+                          Unreachable(parser)
   )
 }
 export function CompileComment(name: string, parser: Runtime.IParser): string {

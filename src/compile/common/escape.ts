@@ -30,7 +30,7 @@ THE SOFTWARE.
 
 export function Escape(input: string): string {
   return input.replace(/\n/g, "\\n")
-  .replace(/\r/g, "\\r")
-  .replace(/"/g, '\\"')
-  .replace(/'/g, "\\'");
+    .replace(/\r/g, "\\r")
+    .replace(/"/g, '\\"')
+    .replace(/'/g, "\\'");
 }

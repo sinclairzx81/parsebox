@@ -26,5 +26,5 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from "./type.ts"
-export * from "./map.ts"
+export * from './type.ts'
+export * from './map.ts'

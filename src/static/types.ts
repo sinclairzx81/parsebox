@@ -60,15 +60,6 @@ export interface IParser<Mapping extends IMapping = Identity> {
   mapping: Mapping
 }
 // ------------------------------------------------------------------
-// Context
-// ------------------------------------------------------------------
-/** `[Context]` Creates a Context Parser */
-export interface Context<Left extends IParser = IParser, Right extends IParser = IParser, Mapping extends IMapping = Identity> extends IParser<Mapping> {
-  type: 'Context'
-  left: Left
-  right: Right
-}
-// ------------------------------------------------------------------
 // Array
 // ------------------------------------------------------------------
 /** `[EBNF]` Creates an Array Parser */

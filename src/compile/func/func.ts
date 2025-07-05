@@ -27,127 +27,120 @@ THE SOFTWARE.
 ---------------------------------------------------------------------------*/
 
 // deno-fmt-ignore-file
-// deno-lint-ignore-file no-unused-vars
+// deno-lint-ignore-file
 
 import { Runtime } from '../../runtime/index.ts'
 import { Infer, Escape, Unreachable } from '../common/index.ts'
-import { Options } from '../options.ts'
 
 // ------------------------------------------------------------------
 // CompileState
 // ------------------------------------------------------------------
 const state = { reducers: new Set<string>() }
-// ------------------------------------------------------------------
-// Context
-// ------------------------------------------------------------------
-function FromContext(options: Options, name: string, left: Runtime.IParser, right: Runtime.IParser): string {
-  return `If(${FromParser(options, name, left)}, ([_0, input]) => ${FromParser(options, name, right).replace('context', `_0 as ${options.contextType}`)}, () => [])`
-}
+
 // ------------------------------------------------------------------
 // Array
 // ------------------------------------------------------------------
-function FromArrayReducer(options: Options, name: string, parser: Runtime.IParser): string {
+function FromArrayReducer(name: string, parser: Runtime.IParser): string {
   const reducer_name = `${name}_${state.reducers.size}`
-  const reducer = `export const ${reducer_name} = (input: string, context: ${options.contextType}, result: unknown[] = []): [unknown[], string] => If(${FromParser(options, reducer_name, parser)}, ([_0, input]) => ${reducer_name}(input, context, [...result, _0]), () => [result, input]) as [unknown[], string]`
+  const reducer = `export const ${reducer_name} = (input: string, result: unknown[] = []): [unknown[], string] => If(${FromParser(reducer_name, parser)}, ([_0, input]) => ${reducer_name}(input, [...result, _0]), () => [result, input]) as [unknown[], string]`
   state.reducers.add(reducer)
   return reducer_name
 }
-function FromArray(options: Options, name: string, parser: Runtime.IParser): string {
-  const reducer_name = FromArrayReducer(options, name, parser)
-  return `${reducer_name}(input, context)`
+function FromArray(name: string, parser: Runtime.IParser): string {
+  const reducer_name = FromArrayReducer(name, parser)
+  return `${reducer_name}(input)`
 }
 // ------------------------------------------------------------------
 // Const
 // ------------------------------------------------------------------
-function FromConst(options: Options, name: string, value: string): string {
+function FromConst(name: string, value: string): string {
   return `Runtime.Token.Const('${Escape(value)}', input)`
 }
 // ------------------------------------------------------------------
 // Ident
 // ------------------------------------------------------------------
-function FromIdent(options: Options, name: string): string {
+function FromIdent(name: string): string {
   return `Runtime.Token.Ident(input)`
 }
 // ------------------------------------------------------------------
 // Number
 // ------------------------------------------------------------------
-function FromNumber(options: Options, name: string): string {
+function FromNumber(name: string): string {
   return `Runtime.Token.Number(input)`
 }
 // ------------------------------------------------------------------
 // Optional
 // ------------------------------------------------------------------
-function FromOptional(options: Options, name: string, parser: Runtime.IOptional): string {
-  return `If(${FromParser(options, name, parser.parser)}, ([_0, input]) => [[_0], input], () => [[], input])`
+function FromOptional(name: string, parser: Runtime.IOptional): string {
+  return `If(${FromParser(name, parser.parser)}, ([_0, input]) => [[_0], input], () => [[], input])`
 }
 // ------------------------------------------------------------------
 // Ref
 // ------------------------------------------------------------------
-function FromRef(options: Options, name: string, ref: string): string {
-  return `${ref}(input, context)`
+function FromRef(name: string, ref: string): string {
+  return `${ref}(input)`
 }
 // ------------------------------------------------------------------
 // String
 // ------------------------------------------------------------------
-function FromString(options: Options, name: string, string_options: string[]): string {
+function FromString(name: string, string_options: string[]): string {
   const _options = string_options.map((option) => `'${Escape(option)}'`).join(', ')
   return `Runtime.Token.String([${_options}], input)`
 }
 // ------------------------------------------------------------------
 // Tuple
 // ------------------------------------------------------------------
-function FromTuple(options: Options, name: string, parsers: Runtime.IParser[]): string {
+function FromTuple(name: string, parsers: Runtime.IParser[]): string {
   const parameters = `[${parsers.map((_, index) => `_${index}`).join(', ')}]`
   const initial = `[${parameters}, input]`
-  return parsers.reduceRight((result, right, index) => `If(${FromParser(options, name, right)}, ([_${index}, input]) => ${result})`, initial)
+  return parsers.reduceRight((result, right, index) => `If(${FromParser(name, right)}, ([_${index}, input]) => ${result})`, initial)
 }
 // ------------------------------------------------------------------
 // Union
 // ------------------------------------------------------------------
-function FromUnion(options: Options, name: string, parsers: Runtime.IParser[]): string {
-  return parsers.length === 0 ? '[]' : parsers.reduceRight((result, right) => `If(${FromParser(options, name, right)}, ([_0, input]) => [_0, input], () => ${result})`, '[]')
+function FromUnion(name: string, parsers: Runtime.IParser[]): string {
+  return parsers.length === 0 ? '[]' : parsers.reduceRight((result, right) => `If(${FromParser(name, right)}, ([_0, input]) => [_0, input], () => ${result})`, '[]')
 }
 // ------------------------------------------------------------------
 // Until
 // ------------------------------------------------------------------
-function FromUntil(options: Options, name: string, values: string[]): string {
+function FromUntil(name: string, values: string[]): string {
   const escaped = values.map(value => `'${Escape(value)}'`)
   return `Runtime.Token.Until([${escaped.join(', ')}], input)`
 }
 // ------------------------------------------------------------------
 // UntilNonEmpty
 // ------------------------------------------------------------------
-function FromUntilNonEmpty(options: Options, name: string, values: string[]): string {
+function FromUntilNonEmpty(name: string, values: string[]): string {
   const escaped = values.map(value => `'${Escape(value)}'`)
   return `Runtime.Token.UntilNonEmpty([${escaped.join(', ')}], input)`
 }
 // ------------------------------------------------------------------
 // Parser
 // ------------------------------------------------------------------
-function FromParser(options: Options, name: string, parser: Runtime.IParser): string {
+function FromParser(name: string, parser: Runtime.IParser): string {
   return (
-    Runtime.IsArray(parser) ? FromArray(options, name, parser.parser) :
-    Runtime.IsContext(parser) ? FromContext(options, name, parser.left, parser.right) :
-    Runtime.IsConst(parser) ? FromConst(options, name, parser.value) :
-    Runtime.IsIdent(parser) ? FromIdent(options, name) :
-    Runtime.IsNumber(parser) ? FromNumber(options, name) :
-    Runtime.IsOptional(parser) ? FromOptional(options, name, parser) :
-    Runtime.IsRef(parser) ? FromRef(options, name, parser.ref) :
-    Runtime.IsString(parser) ? FromString(options, name, parser.options) :
-    Runtime.IsTuple(parser) ? FromTuple(options, name, parser.parsers) :
-    Runtime.IsUnion(parser) ? FromUnion(options, name, parser.parsers) :
-    Runtime.IsUntil(parser) ? FromUntil(options, name, parser.values) :
-    Runtime.IsUntilNonEmpty(parser) ? FromUntilNonEmpty(options, name, parser.values) :
-    Unreachable(parser)
+    Runtime.IsArray(parser) ? FromArray(name, parser.parser) :
+      Runtime.IsConst(parser) ? FromConst(name, parser.value) :
+        Runtime.IsIdent(parser) ? FromIdent(name) :
+          Runtime.IsNumber(parser) ? FromNumber(name) :
+            Runtime.IsOptional(parser) ? FromOptional(name, parser) :
+              Runtime.IsRef(parser) ? FromRef(name, parser.ref) :
+                Runtime.IsString(parser) ? FromString(name, parser.options) :
+                  Runtime.IsTuple(parser) ? FromTuple(name, parser.parsers) :
+                    Runtime.IsUnion(parser) ? FromUnion(name, parser.parsers) :
+                      Runtime.IsUntil(parser) ? FromUntil(name, parser.values) :
+                        Runtime.IsUntilNonEmpty(parser) ? FromUntilNonEmpty(name, parser.values) :
+                          Unreachable(parser)
   )
 }
 // ------------------------------------------------------------------
 // Func
 // ------------------------------------------------------------------
-export function CompileFunc(options: Options, name: string, parser: Runtime.IParser): string {
+export function CompileFunc(name: string, parser: Runtime.IParser): string {
   state.reducers.clear()
   const semanticsFunc = `S.${name}Mapping`
-  const type = `export const ${name} = (input: string, context: ${options.contextType} = ${options.contextDefault}): [unknown, string] | [] => If(${FromParser(options, name, parser)}, ([_0, input]) => [${semanticsFunc}(_0 as ${Infer(parser)}, context), input])`
+  const type = `export const ${name} = (input: string): [unknown, string] | [] => If(${FromParser(name, parser)}, ([_0, input]) => [${semanticsFunc}(_0 as ${Infer(parser)}), input])`
   const reducers = [...state.reducers]
   return [...reducers, type].join('\n')
 }

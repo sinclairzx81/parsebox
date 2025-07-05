@@ -26,5 +26,5 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from "./func.ts"
-export * from "./map.ts"
+export * from './func.ts'
+export * from './map.ts'

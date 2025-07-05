@@ -30,21 +30,16 @@ THE SOFTWARE.
 export interface Options {
   /** The path to mapping module  */
   mappingPath: string
-  /** The context type */
-  contextType: string
-  /** The default context type */
-  contextDefault: string
   /** Imports to be added to the mapping module */
   mappingImports: string[]
   /** Imports to be added to the parser module */
   parserImports: string[]
 }
+
 /** Default Compiler Options */
 export function DefaultOptions(): Options {
   return {
     mappingPath: "./mapping",
-    contextType: "unknown",
-    contextDefault: "{}",
     mappingImports: [],
     parserImports: [],
   }

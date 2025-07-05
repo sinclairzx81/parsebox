@@ -46,7 +46,7 @@ export type StaticParser<Parser extends IParser> = Parser extends IParser<infer 
 // ------------------------------------------------------------------
 // Mapping
 // ------------------------------------------------------------------
-export type IMapping<Input extends unknown = any, Output extends unknown = unknown> = (input: Input, context: any) => Output
+export type IMapping<Input extends unknown = any, Output extends unknown = unknown> = (input: Input) => Output
 
 /** Maps input to output. This is the default Mapping */
 export const Identity = (value: unknown) => value
@@ -62,36 +62,6 @@ export function As<T>(mapping: T): ((value: unknown) => T) {
 export interface IParser<Output extends unknown = unknown> {
   type: string
   mapping: IMapping<any, Output>
-}
-// ------------------------------------------------------------------
-// Context
-// ------------------------------------------------------------------
-export type ContextParameter<_Left extends IParser, Right extends IParser> = (
-  StaticParser<Right>
-)
-export interface IContext<Output extends unknown = unknown> extends IParser<Output> {
-  type: 'Context'
-  left: IParser
-  right: IParser
-}
-/** `[Context]` Creates a Context Parser */
-export function Context<Left extends IParser, Right extends IParser, Mapping extends IMapping = IMapping<ContextParameter<Left, Right>>>(left: Left, right: Right, mapping: Mapping): IContext<ReturnType<Mapping>>
-/** `[Context]` Creates a Context Parser */
-export function Context<Left extends IParser, Right extends IParser>(left: Left, right: Right): IContext<ContextParameter<Left, Right>>
-/** `[Context]` Creates a Context Parser */
-export function Context(...args: unknown[]): never {
-  const [left, right, mapping] = args.length === 3 ? [args[0], args[1], args[2]] : [args[0], args[1], Identity]
-  return { type: 'Context', left, right, mapping } as never
-}
-/** Returns true if the value is a Context Parser */
-export function IsContext(value: unknown): value is IContext {
-  return Guard.IsObject(value) 
-    && Guard.HasPropertyKey(value, 'type') 
-    && Guard.HasPropertyKey(value, 'left') 
-    && Guard.HasPropertyKey(value, 'right')
-    && Guard.IsEqual(value.type, 'Context') 
-    && Guard.IsObject(value.left) 
-    && Guard.IsObject(value.right)
 }
 // ------------------------------------------------------------------
 // Array
@@ -209,8 +179,8 @@ export function Ident(...params: unknown[]): never {
 }
 /** Returns true if the value is a Ident Parser */
 export function IsIdent(value: unknown): value is IIdent {
-  return Guard.IsObject(value) 
-    && Guard.HasPropertyKey(value, 'type') 
+  return Guard.IsObject(value)
+    && Guard.HasPropertyKey(value, 'type')
     && Guard.IsEqual(value.type, 'Ident')
 }
 // ------------------------------------------------------------------
@@ -255,10 +225,10 @@ export function Optional(...args: unknown[]): never {
 }
 /** Returns true if the value is a Optional Parser */
 export function IsOptional(value: unknown): value is IOptional {
-  return Guard.IsObject(value) 
-    && Guard.HasPropertyKey(value, 'type') 
-    && Guard.HasPropertyKey(value, 'parser') 
-    && Guard.IsEqual(value.type, 'Optional') 
+  return Guard.IsObject(value)
+    && Guard.HasPropertyKey(value, 'type')
+    && Guard.HasPropertyKey(value, 'parser')
+    && Guard.IsEqual(value.type, 'Optional')
     && Guard.IsObject(value.parser)
 }
 // ------------------------------------------------------------------
@@ -313,10 +283,10 @@ export function Union(...args: unknown[]): never {
 }
 /** Returns true if the value is a Union Parser */
 export function IsUnion(value: unknown): value is IUnion {
-  return Guard.IsObject(value) 
-    && Guard.HasPropertyKey(value, 'type') 
-    && Guard.HasPropertyKey(value, 'parsers') 
-    && Guard.IsEqual(value.type, 'Union') 
+  return Guard.IsObject(value)
+    && Guard.HasPropertyKey(value, 'type')
+    && Guard.HasPropertyKey(value, 'parsers')
+    && Guard.IsEqual(value.type, 'Union')
     && Guard.IsArray(value.parsers)
 }
 // ------------------------------------------------------------------

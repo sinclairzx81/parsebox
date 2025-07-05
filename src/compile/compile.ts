@@ -70,10 +70,10 @@ export function Types(module: Runtime.Module, options: Options = DefaultOptions(
   const types: Type[] = Object.entries(module.parsers).map(([key, parser]) => {
     return {
       comment: CompileComment(key, parser),
-      funcMap: CompileFuncMap(options, key, parser),
-      typeMap: CompileTypeMap(options, key, parser),
-      type: CompileType(options, key, parser),
-      func: CompileFunc(options, key, parser),
+      funcMap: CompileFuncMap(key, parser),
+      typeMap: CompileTypeMap(key, parser),
+      type: CompileType(key, parser),
+      func: CompileFunc(key, parser),
     }
   })
   return { header, types }

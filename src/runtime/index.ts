@@ -26,4 +26,4 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * as Runtime from "./runtime.ts"
+export * as Runtime from './runtime.ts'

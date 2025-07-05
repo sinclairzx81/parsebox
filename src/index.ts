@@ -26,6 +26,6 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from "./compile/index.ts"
-export * from "./runtime/index.ts"
-export * from "./static/index.ts"
+export * from './compile/index.ts'
+export * from './runtime/index.ts'
+export * from './static/index.ts'
