@@ -79,7 +79,6 @@ License: MIT
   - [String](#String)
   - [Ident](#Ident)
 - [Mapping](#Mapping)
-- [Context](#Context)
 - [Modules](#Modules)
 - [Advanced](#Advanced)
 - [Contribute](#Contribute)
@@ -406,66 +405,6 @@ type R = Static.Parse<Let, 'let n = 10'>            // type R = [{
                                                     //   ident: 'n',
                                                     //   value: 10
                                                     // }, '' ]
-```
-
-## Context
-
-ParseBox allows exterior values to be passed into and referenced within semantic actions. A context is passed as the last argument to the Static and Runtime parse types/functions, and is propagated into each action. The following demonstrates its usage.
-
-### Runtime
-
-The Runtime Parse function accepts a context as the last argument, which is received as the second argument to the OptionMapping function.
-
-```typescript
-import { Runtime } from '@sinclair/parsebox'
-
-// Context Received as Second Argument
-const OptionMapping = (input: 'A' | 'B' | 'C', context: Record<ProeprtyKey, string>) => {
-  return (
-    input in context 
-      ? context[input] 
-      : undefined
-  )
-}
-const Option = Runtime.Union([
-  Runtime.Const('A'),
-  Runtime.Const('B'),
-  Runtime.Const('C')
-], OptionMapping)
-
-const R = Runtime.Parse(Option, 'A', {              // const R = ['Matched Foo', '']
-  A: 'Matched Foo',
-  B: 'Matched Bar',
-  C: 'Matched Baz',
-})
-```
-
-### Static
-
-The Static Parse type accepts a context as the last generic argument, which is received via the `this['context']` property on the OptionMapping type.
-
-```typescript
-import { Static } from '@sinclair/parsebox'
-
-// Context Received on Context Property
-interface OptionMapping extends Static.IMapping {
-  output: (
-    this['input'] extends keyof this['context'] 
-      ? this['context'][this['input']] 
-      : undefined
-  )
-}
-type Option = Static.Union<[
-  Static.Const<'A'>,
-  Static.Const<'B'>,
-  Static.Const<'C'>
-], OptionMapping>
-
-type R = Static.Parse<Option, 'A', {                // type R = ['Matched Foo', '']
-  A: 'Matched Foo',
-  B: 'Matched Bar',
-  C: 'Matched Baz',
-}>
 ```
 
 ## Modules
