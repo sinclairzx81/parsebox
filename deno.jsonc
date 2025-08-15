@@ -1,0 +1,30 @@
+{
+  "tasks": {
+    "clean": "deno run -A tasks.ts clean",
+    "format": "deno run -A tasks.ts format",
+    "start": "deno run -A tasks.ts start",
+    "test": "deno run -A tasks.ts test",
+    "report": "deno run -A tasks.ts report",
+    "build": "deno run -A tasks.ts build",
+    "publish": "deno run -A tasks.ts publish"
+  },
+  "imports": {
+    // --------------------------------------------------------------
+    // Tasksmith
+    // --------------------------------------------------------------
+    "tasksmith": "https://raw.githubusercontent.com/sinclairzx81/tasksmith/0.8.5/src/index.ts",
+    "test": "./test/common/index.ts",
+    // --------------------------------------------------------------
+    // ParseBox
+    // --------------------------------------------------------------
+    "@sinclair/parsebox": "./src/index.ts"
+  },
+  "fmt": {
+    "lineWidth": 240,
+    "semiColons": false,
+    "singleQuote": true
+  },
+  "compilerOptions": {
+    "strict": true
+  }
+}

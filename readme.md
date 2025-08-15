@@ -71,12 +71,11 @@ License: MIT
   - [Array](#Array)
   - [Optional](#Optional)
   - [Epsilon](#Epsilon)
-- [Range](#Range)
-  - [Until](#Until)
-  - [UntilNonEmpty](#UntilNonEmpty)
-- [Terminals](#Terminals)
+- [Token](#Token)
   - [Number](#Number)
+  - [Integer](#Integer)
   - [String](#String)
+  - [BigInt](#BigInt)
   - [Ident](#Ident)
 - [Mapping](#Mapping)
 - [Modules](#Modules)
@@ -236,64 +235,13 @@ const R1 = Runtime.Parse(T, 'X Y Z')                // const R1 = [['X', 'Y'], '
 const R2 = Runtime.Parse(T, 'Y Z')                  // const R2 = [[], 'Y Z']
 ```
 
-## Range Combinators
+## Token
 
-ParseBox range combinators match character sequences up to one or more terminating sentinel strings. These combinators are used to match arbituary Unicode (UTF-16) sequences.
-
-
-### Until
-
-The Until combinator parses characters up to (but not including) one of the specified sentinel string values. It captures all characters encountered before the sentinel. If a sentinel value is not found in the input, parsing fails. Until succeeds even if it matches a zero-length string. This occurs if a sentinel is found immediately at the current parsing position.
-
-**BNF**
-
-```bnf
-<T> ::= ? any character sequence (0 or more) until 'Z' ?
-```
-
-**TypeScript**
-
-```typescript
-const T = Runtime.Until(['Z'])                      // const T = {
-                                                    //   type: 'Until',
-                                                    //   values: ['Z']
-                                                    // }
-
-const R = Runtime.Parse(T, 'X Y Z')                 // const R = ['X Y ', 'Z']
-```
-
-### UntilNonEmpty
-
-The UntilNonEmpty combinator works the same as Until, but it fails if the parsed content yields a zero-length string.
-
-**BNF**
-
-```bnf
-<T> ::= ? any character sequence (1 or more) until 'Z'. fails on zero length ?
-```
-
-**TypeScript**
-
-```typescript
-const T = Runtime.UntilNonEmpty(['Z'])              // const T = {
-                                                    //   type: 'UntilNonEmpty',
-                                                    //   values: ['Z']
-                                                    // }
-
-const R1 = Runtime.Parse(T, 'X Y Z')                // const R1 = ['X Y ', 'Z']
-
-const R2 = Runtime.Parse(T, ' Z')                   // const R2 = [' ', 'Z']
-
-const R3 = Runtime.Parse(T, 'Z')                    // const R3 = []
-```
-
-## Terminal Combinators
-
-ParseBox provides combinators for parsing common lexical tokens, such as numbers, identifiers, and strings, enabling static, optimized parsing of typical JavaScript constructs.
+ParseBox provides built-in combinators with optimized implementations for commonly used literal forms such as numbers, strings, and identifiers.
 
 ### Number
 
-Parses numeric literals, including integers, decimals, and floating-point numbers. Invalid formats, like leading zeroes, are not matched.
+Parses a number with fractional parts
 
 ```typescript
 const T = Runtime.Number()
@@ -306,7 +254,25 @@ const R2 = Runtime.Parse(T, '3.14')                 // const R2 = ['3.14', '']
 
 const R3 = Runtime.Parse(T, '.1')                   // const R3 = ['.1', '']
 
-const E = Runtime.Parse(T, '01')                    // const E = []
+const E = Runtime.Parse(T, '01')                    // const E = ['0', '1']
+```
+
+### Integer
+
+Parses a literal integer
+
+```typescript
+const T = Runtime.Integer()
+
+// ...
+
+const R1 = Runtime.Parse(T, '1')                    // const R1 = ['1', '']
+
+const R2 = Runtime.Parse(T, '3.14')                 // const R2 = ['3', '.14']
+
+const R3 = Runtime.Parse(T, '.1')                   // const R3 = []
+
+const E = Runtime.Parse(T, '01')                    // const E = ['0', '1']
 ```
 
 ### String
@@ -321,22 +287,35 @@ const T = Runtime.String(['"'])
 const R = Runtime.Parse(T, '"hello"')              // const R = ['hello', '']
 ```
 
-### Ident
+### BigInt
 
-Parses valid JavaScript identifiers, typically used to extract variable or function names. The following example demonstrates parsing a `let` statement.
-
-```bnf
-<let> ::= "let" <ident> "=" <number>
-```
+Parses a literal bigint number. This combinator will succeed if the number is integer and trailed by a `n`. The `n` is omitted from the result.
 
 ```typescript
-const Expression = Runtime.Number()                 //  const Expression = { type: 'Number' }
+const T = Runtime.BigInt()
 
+// ...
+
+const R1 = Runtime.Parse(T, '1n')                    // const R1 = ['1', '']
+
+const R2 = Runtime.Parse(T, '1n2')                   // const R2 = ['1', '2']
+
+const R3 = Runtime.Parse(T, '.1n')                   // const R3 = []
+
+const E = Runtime.Parse(T, '01n')                    // const E = []
+```
+
+
+### Ident
+
+Parses an identifier
+
+```typescript
 const Let = Runtime.Tuple([                         //  const Let = {
   Runtime.Const('let'),                             //    type: 'Tuple',
-  Runtime.Ident(),                                  //    parsers: [
+  Runtime.Ident(), /* here */                       //    parsers: [
   Runtime.Const('='),                               //      { type: 'Const', value: 'let' },
-  Expression                                        //      { type: 'Ident' },
+  Runtime.Number()                                  //      { type: 'Ident' },
 ])                                                  //      { type: 'Const', value: '=' },
                                                     //      { type: 'Number' },
                                                     //    ]

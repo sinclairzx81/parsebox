@@ -1,4 +1,4 @@
-import { Task } from 'https://raw.githubusercontent.com/sinclairzx81/tasksmith/0.8.2/src/index.ts'
+import { Task } from 'tasksmith'
 
 // ------------------------------------------------------------------
 // Clean
@@ -10,7 +10,7 @@ Task.run('clean', async () => {
 // Format
 // ------------------------------------------------------------------
 Task.run('format', async () => {
-  await Task.shell('deno fmt src')
+  await Task.shell('deno fmt src test')
 })
 // ------------------------------------------------------------------
 // Start
@@ -21,13 +21,27 @@ Task.run('start', async () => {
 // ------------------------------------------------------------------
 // Test
 // ------------------------------------------------------------------
-Task.run('test', async () => {
-  await Task.shell('deno test -A test')
+Task.run('test', async (filter: string = '') => {
+  await Task.test.run(['test/parsebox'], { filter })
+})
+// ------------------------------------------------------------------
+// Fast
+// ------------------------------------------------------------------
+Task.run('fast', async (filter: string = '') => {
+  await Task.test.run(['test/parsebox'], { 
+    watch: true, noCheck: true, filter,
+  })
+})
+// ------------------------------------------------------------------
+// Report
+// ------------------------------------------------------------------
+Task.run('report', async () => {
+  await Task.test.report(['test/parsebox'])
 })
 // ------------------------------------------------------------------
 // Build
 // ------------------------------------------------------------------
-Task.run('build', () => Task.build('src', {
+Task.run('build', () => Task.build.dual('src', {
   compiler: 'latest',
   outdir: 'target/build',
   additional: ['license', 'readme.md'],

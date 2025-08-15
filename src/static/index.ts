@@ -1,10 +1,10 @@
 /*--------------------------------------------------------------------------
 
-@sinclair/parsebox
+ParseBox
 
 The MIT License (MIT)
 
-Copyright (c) 2024-2025 Haydn Paterson (sinclair) <haydn.developer@gmail.com>
+Copyright (c) 2024-2025 Haydn Paterson
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -26,4 +26,17 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * as Static from './static.ts'
+export type { Array } from './array.ts'
+export type { BigInt } from './bigint.ts'
+export type { Const } from './const.ts'
+export type { Ident } from './ident.ts'
+export type { Integer } from './integer.ts'
+export type { Number } from './number.ts'
+export type { Optional } from './optional.ts'
+export type { Parse } from './parse.ts'
+export type { As, Identity, IMapping, IParser } from './parser.ts'
+export type { String } from './string.ts'
+export type { Tuple } from './tuple.ts'
+export type { Union } from './union.ts'
+export type { Until_1 } from './until_1.ts'
+export type { Until } from './until.ts'

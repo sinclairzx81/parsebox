@@ -1,96 +1,96 @@
 // deno-fmt-ignore-file
 
-import { Static, Runtime, Compile } from '@sinclair/parsebox'
+import { Static, Runtime, Build } from '@sinclair/parsebox'
 import { ParseJson } from './json/index.ts'
 import { ParseEbnf } from './ebnf/index.ts'
 
-// ------------------------------------------------------------------
-//
-// Example: Ebnf | Interpreted
-//
-// ------------------------------------------------------------------
-const Ebnf = ParseEbnf(`
+// // ------------------------------------------------------------------
+// //
+// // Example: Ebnf | Interpreted
+// //
+// // ------------------------------------------------------------------
+// const Ebnf = ParseEbnf(`
 
-  Operand ::= Ident ;
+//   Operand ::= Ident ;
 
-  Factor ::= "(" Expr ")"
-              | Operand ;
+//   Factor ::= "(" Expr ")"
+//               | Operand ;
 
-  TermTail ::= ("*" Factor TermTail)
-             | ("/" Factor TermTail)
-             | e ;
+//   TermTail ::= ("*" Factor TermTail)
+//              | ("/" Factor TermTail)
+//              | e ;
 
-  ExprTail ::= ("+" Term ExprTail) 
-             | ("-" Term ExprTail)
-             | e ;
+//   ExprTail ::= ("+" Term ExprTail) 
+//              | ("-" Term ExprTail)
+//              | e ;
 
-  Term ::= Factor TermTail ;
+//   Term ::= Factor TermTail ;
 
-  Expr ::= Term ExprTail ;
+//   Expr ::= Term ExprTail ;
 
-`)
+// `)
 
-const Result = Ebnf.Parse('Expr', `X * (Y + Z)`)
+// const Result = Ebnf.Parse('Expr', `X * (Y + Z)`)
 
-console.dir(Result, { depth: 100 })
+// console.dir(Result, { depth: 100 })
 
-// ------------------------------------------------------------------
-//
-// Example: Json | Interpreted
-//
-// ------------------------------------------------------------------
-const Json = ParseJson(`{ 
-  "x": 1, 
-  "y": 2, 
-  "z": 3 
-}`)
+// // ------------------------------------------------------------------
+// //
+// // Example: Json | Interpreted
+// //
+// // ------------------------------------------------------------------
+// const Json = ParseJson(`{ 
+//   "x": 1, 
+//   "y": 2, 
+//   "z": 3 
+// }`)
 
-console.log(Json)
+// console.log(Json)
 
-// ------------------------------------------------------------------
-//
-// Example: Expression | Interpreted
-//
-// ------------------------------------------------------------------
-{
-  type Result = Static.Parse<Expr, 'x * (y + z)'> // hover
+// // ------------------------------------------------------------------
+// //
+// // Example: Expression | Interpreted
+// //
+// // ------------------------------------------------------------------
+// {
+//   type Result = Static.Parse<Expr, 'x * (y + z)'> // hover
 
-  type BinaryReduce<Left extends unknown, Right extends unknown[]> = (
-    Right extends [infer Operator, infer Right, infer Rest extends unknown[]] 
-      ? { left: Left; operator: Operator; right: BinaryReduce<Right, Rest> } 
-      : Left
-  )
-  interface BinaryMapping extends Static.IMapping {
-    output: this['input'] extends [infer Left, infer Right extends unknown[]] 
-      ? BinaryReduce<Left, Right> 
-      : never
-  }
-  interface FactorMapping extends Static.IMapping {
-    output: (
-      this['input'] extends ['(', infer Expr, ')'] ? Expr : 
-      this['input'] extends [infer Operand] ? Operand : 
-      never
-    )
-  }
-  type Operand = Static.Ident
-  type Factor = Static.Union<[
-    Static.Tuple<[Static.Const<'('>, Expr, Static.Const<')'>]>, 
-    Static.Tuple<[Operand]>
-  ], FactorMapping>
+//   type BinaryReduce<Left extends unknown, Right extends unknown[]> = (
+//     Right extends [infer Operator, infer Right, infer Rest extends unknown[]] 
+//       ? { left: Left; operator: Operator; right: BinaryReduce<Right, Rest> } 
+//       : Left
+//   )
+//   interface BinaryMapping extends Static.IMapping {
+//     output: this['input'] extends [infer Left, infer Right extends unknown[]] 
+//       ? BinaryReduce<Left, Right> 
+//       : never
+//   }
+//   interface FactorMapping extends Static.IMapping {
+//     output: (
+//       this['input'] extends ['(', infer Expr, ')'] ? Expr : 
+//       this['input'] extends [infer Operand] ? Operand : 
+//       never
+//     )
+//   }
+//   type Operand = Static.Ident
+//   type Factor = Static.Union<[
+//     Static.Tuple<[Static.Const<'('>, Expr, Static.Const<')'>]>, 
+//     Static.Tuple<[Operand]>
+//   ], FactorMapping>
 
-  type TermTail = Static.Union<[
-    Static.Tuple<[Static.Const<'*'>, Factor, TermTail]>, 
-    Static.Tuple<[Static.Const<'/'>, Factor, TermTail]>, 
-    Static.Tuple<[]>
-  ]>
-  type ExprTail = Static.Union<[
-    Static.Tuple<[Static.Const<'+'>, Term, ExprTail]>, 
-    Static.Tuple<[Static.Const<'-'>, Term, ExprTail]>, 
-    Static.Tuple<[]>
-  ]>
-  type Term = Static.Tuple<[Factor, TermTail], BinaryMapping>
-  type Expr = Static.Tuple<[Term, ExprTail], BinaryMapping>
-}
+//   type TermTail = Static.Union<[
+//     Static.Tuple<[Static.Const<'*'>, Factor, TermTail]>, 
+//     Static.Tuple<[Static.Const<'/'>, Factor, TermTail]>, 
+//     Static.Tuple<[]>
+//   ]>
+//   type ExprTail = Static.Union<[
+//     Static.Tuple<[Static.Const<'+'>, Term, ExprTail]>, 
+//     Static.Tuple<[Static.Const<'-'>, Term, ExprTail]>, 
+//     Static.Tuple<[]>
+//   ]>
+//   type Term = Static.Tuple<[Factor, TermTail], BinaryMapping>
+//   type Expr = Static.Tuple<[Term, ExprTail], BinaryMapping>
+// }
 // ------------------------------------------------------------------
 //
 // Example: Compiled Parser
@@ -115,10 +115,8 @@ console.log(Json)
       Runtime.Tuple([]),
     ])
   })
-  const project = Compile.Project(ListModule, {
-    mappingPath: './mapping',
-    mappingImports: [],
-    parserImports: []
+  const project = Build.Project(ListModule, {
+    mappingPath: './mapping.ts',
   })
   console.log(project.parser)   // parser file content
   console.log(project.mapping)  // semantic mapping file content
