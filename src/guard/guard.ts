@@ -1,10 +1,10 @@
 /*--------------------------------------------------------------------------
 
-@sinclair/parsebox
+ParseBox
 
 The MIT License (MIT)
 
-Copyright (c) 2024-2025 Haydn Paterson (sinclair) <haydn.developer@gmail.com>
+Copyright (c) 2024-2025 Haydn Paterson
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -26,20 +26,35 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-// deno-fmt-ignore-file
-
+// --------------------------------------------------------------------------
+// Guards
+// --------------------------------------------------------------------------
+/** Returns true if this value is an array */
+export function IsArray(value: unknown): value is unknown[] {
+  return Array.isArray(value)
+}
+/** Returns true if this value is null */
+export function IsNull(value: unknown): value is null {
+  return IsEqual(value, null)
+}
+/** Returns true if this value is an object */
+export function IsObject(value: unknown): value is Record<PropertyKey, unknown> {
+  return IsEqual(typeof value, 'object') && !(IsNull(value))
+}
+/** Returns true if this value is string */
+export function IsString(value: unknown): value is string {
+  return IsEqual(typeof value, 'string')
+}
+// --------------------------------------------------------------------------
+// Relational
+// --------------------------------------------------------------------------
 export function IsEqual(left: unknown, right: unknown): boolean {
   return left === right
 }
-export function HasPropertyKey<Key extends PropertyKey>(value: Record<PropertyKey, unknown>, key: Key): value is Record<PropertyKey, unknown> & { [_ in Key]: unknown } {
-  return key in value
-}
-export function IsObject(value: unknown): value is Record<PropertyKey, unknown> {
-  return typeof value === 'object' && value !== null
-}
-export function IsArray(value: unknown): value is unknown[] {
-  return globalThis.Array.isArray(value)
-}
-export function IsString(value: unknown): value is string {
-  return typeof value === 'string'
+// --------------------------------------------------------------------------
+// Object
+// --------------------------------------------------------------------------
+/** Returns true if this value has this property key */
+export function HasPropertyKey<Key extends PropertyKey>(value: object, key: Key): value is { [_ in Key]: unknown } {
+  return Object.prototype.hasOwnProperty.call(value, key)
 }

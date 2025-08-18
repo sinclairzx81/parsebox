@@ -26,6 +26,8 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './compile/index.ts'
-export * from './runtime/index.ts'
-export * from './static/index.ts'
+export * as Build from './build/index.ts'
+export * as Runtime from './runtime/index.ts'
+export * as Static from './static/index.ts'
+export * as System from './system/index.ts'
+export * as Token from './token/index.ts'

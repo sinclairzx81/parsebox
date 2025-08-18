@@ -1,10 +1,10 @@
 /*--------------------------------------------------------------------------
 
-@sinclair/parsebox
+ParseBox
 
 The MIT License (MIT)
 
-Copyright (c) 2024-2025 Haydn Paterson (sinclair) <haydn.developer@gmail.com>
+Copyright (c) 2024-2025 Haydn Paterson
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -28,19 +28,18 @@ THE SOFTWARE.
 
 // deno-fmt-ignore-file
 
-import * as Types from './types.ts'
+import { type IProperties } from './parser.ts'
+import { type StaticParser } from './static.ts'
 import { Parse } from './parse.ts'
 
 // ------------------------------------------------------------------
 // Module
 // ------------------------------------------------------------------
-export class Module<Properties extends Types.IModuleProperties = Types.IModuleProperties> {
+export class Module<Properties extends IProperties = IProperties> {
   constructor(public readonly parsers: Properties) { }
+
   /** Parses using one of the parsers defined on this instance */
-  public Parse<Key extends keyof Properties>(key: Key, content: string): [] | [Types.StaticParser<Properties[Key]>, string]
-  /** Parses using one of the parsers defined on this instance */
-  public Parse(...args: never[]): never {
-    const [key, content] = [args[0], args[1]]
-    return Parse(this.parsers, this.parsers[key], content) as never
+  public Parse<Key extends keyof Properties>(key: Key, input: string): [] | [StaticParser<Properties[Key]>, string] {
+    return Parse(this.parsers, this.parsers[key], input) as never
   }
 }
