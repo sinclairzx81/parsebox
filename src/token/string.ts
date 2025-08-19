@@ -60,7 +60,7 @@ type TTakeString<Quotes extends string[], Input extends string> = (
     : [] // fail: did not match Initial
 )
 function TakeString<Quotes extends string[], Input extends string>(quotes: [...Quotes], input: Input): TTakeString<Quotes, Input> {
-  const initial = TakeInitial(quotes, input)
+  const initial = TakeInitial(quotes, input) as [string, string]
   return (
     IsResult(initial)
       ? TakeSpan(initial[0], `${initial[0]}${initial[1]}`)
