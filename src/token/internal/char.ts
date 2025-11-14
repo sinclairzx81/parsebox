@@ -67,6 +67,7 @@ export const Digit = [Zero, ...NonZero] as TDigit
 // ------------------------------------------------------------------
 export const WhiteSpace = ' '
 export const NewLine = '\n'
+export const TabSpace = '\t'
 export const UnderScore = '_'
 export const Dot = '.'
 export const DollarSign = '$'
@@ -74,6 +75,7 @@ export const Hyphen = '-'
 
 export type TWhiteSpace = typeof WhiteSpace
 export type TNewLine = typeof NewLine
+export type TTabSpace = typeof TabSpace
 export type TUnderScore = typeof UnderScore
 export type TDot = typeof Dot
 export type TDollarSign = typeof DollarSign

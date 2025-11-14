@@ -48,7 +48,7 @@ Task.run('build', () => Task.build.dual('src', {
   packageJson: {
     name: '@sinclair/parsebox',
     description: 'Parser Combinators in the TypeScript Type System',
-    version: '0.11.0',
+    version: '0.11.1',
     keywords: ['typescript', 'parser', 'combinator'],
     license: 'MIT',
     author: 'sinclairzx81',
