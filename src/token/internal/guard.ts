@@ -26,24 +26,9 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-// deno-fmt-ignore-file
-
-import { IsResult } from './result.ts'
-import { type TTake, Take } from './take.ts'
-
-/** Matches the given Value or empty string if no match. This function never fails */
-export type TOptional<Value extends string, Input extends string> = (
-  TTake<[Value], Input> extends [infer Optional extends string, infer Rest extends string]
-    ? [Optional, Rest]
-    : ['', Input]
-)
-/** Matches the given Value or empty string if no match. This function never fails */
-export function Optional<Value extends string, Input extends string>
-  (value: Value, input: Input): TOptional<Value, Value> {
-  const result = Take([value], input)
-  return (
-    IsResult(result)
-      ? result
-      : ['', input]
-  ) as never
+// ------------------------------------------------------------------
+// Internal Guards to ensure Token is portable.
+// ------------------------------------------------------------------
+export function IsEqual(left: unknown, right: unknown): boolean {
+  return left === right
 }

@@ -30,10 +30,11 @@ THE SOFTWARE.
 
 import { type TTrimWhitespace, TrimWhitespace } from './internal/trim.ts'
 import { type TTrim, Trim } from './internal/trim.ts'
-import { type TTake, TakeVariant } from './internal/take.ts'
+import { type TTake, Take } from './internal/take.ts'
 
 import { type TNewLine, NewLine } from './internal/char.ts'
 import { type TWhiteSpace, WhiteSpace } from './internal/char.ts'
+import { IsEqual } from './internal/guard.ts'
 
 // ------------------------------------------------------------------
 // TakeConst
@@ -56,10 +57,10 @@ export type TConst<Const extends string, Input extends string> = (
 /** Matches if next is the given Const value */
 export function Const<Const extends string, Input extends string>(const_: Const, input: Input): TConst<Const, Input> {
   return (
-    const_ === '' ? ['', input] : (
-      const_.startsWith(NewLine) ? TakeVariant(const_, TrimWhitespace(input)) :
-      const_.startsWith(WhiteSpace) ? TakeVariant(const_, input) :
-      TakeVariant(const_, Trim(input))
+    IsEqual(const_, '') ? ['', input] : (
+      const_.startsWith(NewLine) ? Take([const_], TrimWhitespace(input)) :
+      const_.startsWith(WhiteSpace) ? Take([const_], input) :
+      Take([const_], Trim(input))
     )
   ) as never
 }

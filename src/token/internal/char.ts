@@ -48,8 +48,10 @@ export type TAlpha = [
   'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V',
   'W', 'X', 'Y', 'Z',
 ]
-export const Alpha = Range(97, 122) // Lowercase
-  .concat(Range(65, 90)) as TAlpha // Uppercase
+export const Alpha = [
+  ...Range(97, 122), // Lowercase
+  ...Range(65, 90) // Uppercase
+] as TAlpha
 
 // ------------------------------------------------------------------
 // Digits
@@ -60,7 +62,7 @@ export type TDigit = [TZero, ...TNonZero]
 
 export const Zero = '0'
 export const NonZero = Range(49, 57) as TNonZero // 1 - 9
-export const Digit = [Zero].concat(NonZero) as TDigit
+export const Digit = [Zero, ...NonZero] as TDigit
 
 // ------------------------------------------------------------------
 // Characters

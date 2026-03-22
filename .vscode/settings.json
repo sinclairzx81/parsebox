@@ -5,5 +5,5 @@
     "package-lock.json": true
   },
   "deno.enable": true,
-  "deno.lint": false,
+  "deno.lint": false
 }

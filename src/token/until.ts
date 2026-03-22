@@ -26,6 +26,8 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
+import { IsEqual } from './internal/guard.ts'
+
 // deno-fmt-ignore-file
 
 // ------------------------------------------------------------------
@@ -64,7 +66,7 @@ export type TUntil<End extends string[], Input extends string, Result extends st
 /** Match Input until but not including End. No match if End not found. */
 export function Until<End extends string[], Input extends string>
   (end: [...End], input: Input, result: string = ''): TUntil<End, Input> {
-  if (input === '')
+  if (IsEqual(input, ''))
     return [] as never // fail: Input is empty
 
   if (IsEnd(end, input))

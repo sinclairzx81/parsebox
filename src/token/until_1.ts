@@ -28,6 +28,7 @@ THE SOFTWARE.
 
 // deno-fmt-ignore-file
 
+import { IsEqual } from './internal/guard.ts'
 import { IsResult } from './internal/result.ts'
 import { type TUntil, Until } from './until.ts'
 
@@ -48,7 +49,7 @@ export function Until_1<End extends string[], Input extends string>
     TUntil_1<End, Input> {
   const until = Until(end, input)
   return (
-    IsResult(until) && until[0] !== ''
+    IsResult(until) && !IsEqual(until[0], '')
       ? until
       : [] // fail: match has no characters or did not match Until
   ) as never

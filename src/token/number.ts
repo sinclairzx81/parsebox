@@ -28,9 +28,11 @@ THE SOFTWARE.
 
 // deno-fmt-ignore-file
 
+import { IsEqual } from './internal/guard.ts'
+
 import { IsResult } from './internal/result.ts'
 import { type TTrim, Trim } from './internal/trim.ts'
-import { type TTake, Take, TakeVariant } from './internal/take.ts'
+import { type TTake, Take } from './internal/take.ts'
 import { type TMany, Many } from './internal/many.ts'
 import { type TOptional, Optional } from './internal/optional.ts'
 
@@ -76,11 +78,9 @@ type TTakeFractional<Input extends string> = (
 function TakeFractional<Input extends string>(input: Input): TTakeFractional<Input> {
   const digits = Many(AllowedDigits, [UnderScore], input)
   return (
-    IsResult(digits)
-      ? digits[0] === ''
-        ? [] // fail: no Digits
-        : [digits[0], digits[1]]
-      : [] // fail: did not match Digits
+    IsResult(digits) && !IsEqual(digits[0], '')
+      ? [digits[0], digits[1]]
+      : [] // fail: did not match Digits or no Digits
   ) as never
 }
 // ------------------------------------------------------------------
@@ -96,7 +96,7 @@ type TLeadingDot<Sign extends string, Input extends string> = (
 function LeadingDot<Sign extends string, Input extends string>
   (sign: Sign, input: Input):
     TLeadingDot<Sign, Input> {
-  const dot = TakeVariant(Dot, input)
+  const dot = Take([Dot], input)
   if (IsResult(dot)) {
     const fractional = TakeFractional(dot[1])
     if (IsResult(fractional))
@@ -127,7 +127,7 @@ function LeadingInteger<Sign extends string, Input extends string>
   if (!IsResult(integer))
     return [] as never // fail: did not match Integer
 
-  const dot = TakeVariant(Dot, integer[1])
+  const dot = Take([Dot], integer[1])
   if (!IsResult(dot))
     return [sign + integer[0], integer[1]] as never // fail: did not match Dot, use Integer
 

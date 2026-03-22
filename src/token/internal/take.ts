@@ -26,9 +26,10 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { IsResult } from './result.ts'
-
 // deno-fmt-ignore-file
+
+import { IsEqual } from './guard.ts'
+import { IsResult } from './result.ts'
 
 // ------------------------------------------------------------------
 // TakeString
@@ -38,19 +39,22 @@ type TTakeVariant<Variant extends string, Input extends string> = (
     ? [Variant, Rest]
     : []
 )
-export function TakeVariant<Variant extends string, Input extends string>(variant: Variant, input: Input): TTakeVariant<Variant, Input> {
+function TakeVariant<Variant extends string, Input extends string>(variant: Variant, input: Input): TTakeVariant<Variant, Input> {
   return (
-    input.indexOf(variant) === 0 ? [variant, input.slice(variant.length)] : []
+    IsEqual(input.indexOf(variant), 0) ? [variant, input.slice(variant.length)] : []
   ) as never
 }
 // ------------------------------------------------------------------
 // Take
 // ------------------------------------------------------------------
 /** Takes one of the given variants or fail */
-export type TTake<Variants extends string[], Input extends string> = Variants extends [infer ValueLeft extends string, ...infer ValueRight extends string[]]
-  ? TTakeVariant<ValueLeft, Input> extends [infer Take extends string, infer Rest extends string] ? [Take, Rest]
-  : TTake<ValueRight, Input>
+export type TTake<Variants extends string[], Input extends string> = (
+  Variants extends [infer ValueLeft extends string, ...infer ValueRight extends string[]]
+  ? TTakeVariant<ValueLeft, Input> extends [infer Take extends string, infer Rest extends string]
+    ? [Take, Rest]
+    : TTake<ValueRight, Input>
   : []
+)
 /** Takes one of the given variants or fail */
 export function Take<Variants extends string[], Input extends string>(variants: [...Variants], input: Input): TTake<Variants, Input> {
   for (let i = 0; i < variants.length; i++) {

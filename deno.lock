@@ -5,7 +5,8 @@
     "jsr:@std/internal@^1.0.6": "1.0.6",
     "jsr:@std/path@1.0.8": "1.0.8",
     "npm:@sinclair/typebox@*": "0.34.33",
-    "npm:@types/node@*": "22.15.15"
+    "npm:@types/node@*": "22.15.15",
+    "npm:mitata@*": "1.0.34"
   },
   "jsr": {
     "@std/assert@1.0.12": {
@@ -30,6 +31,9 @@
       "dependencies": [
         "undici-types"
       ]
+    },
+    "mitata@1.0.34": {
+      "integrity": "sha512-Mc3zrtNBKIMeHSCQ0XqRLo1vbdIx1wvFV9c8NJAiyho6AjNfMY8bVhbS12bwciUdd1t4rj8099CH3N3NFahaUA=="
     },
     "undici-types@6.21.0": {
       "integrity": "sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ=="
@@ -170,5 +174,10 @@
     "https://raw.githubusercontent.com/sinclairzx81/tasksmith/0.8.5/src/test/test.ts": "894650a3af2f7c0c8e4e4f0930d6f3e7bfc5187c5c66ce869c0429b942a51c2d",
     "https://raw.githubusercontent.com/sinclairzx81/tasksmith/0.8.5/src/tsc/index.ts": "ef3fd7538b1f3d85e102f4b6317ad92e2f1dc007df6d7d7cceb283913e71117d",
     "https://raw.githubusercontent.com/sinclairzx81/tasksmith/0.8.5/src/tsc/tsc.ts": "2d84d6b8bf155811eec128a03095dbad9f15feb7602c7fc3c6a9e0c36dc38602"
+  },
+  "workspace": {
+    "dependencies": [
+      "npm:mitata@*"
+    ]
   }
 }

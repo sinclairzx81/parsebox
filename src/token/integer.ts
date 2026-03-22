@@ -30,7 +30,7 @@ THE SOFTWARE.
 
 import { IsResult } from './internal/result.ts'
 import { type TTrim, Trim } from './internal/trim.ts'
-import { type TTake, Take, TakeVariant } from './internal/take.ts'
+import { type TTake, Take } from './internal/take.ts'
 import { type TMany, Many } from './internal/many.ts'
 import { type TOptional, Optional } from './internal/optional.ts'
 
@@ -87,7 +87,7 @@ type TTakeInteger<Input extends string> = (
 function TakeInteger<Input extends string>(input: Input): TTakeInteger<Input> {
   const sign = TakeSign(input)
   if (IsResult(sign)) {
-    const zero = TakeVariant(Zero, sign[1])
+    const zero = Take([Zero], sign[1])
     if (IsResult(zero))
       return [sign[0] + zero[0], zero[1]] as never
 
