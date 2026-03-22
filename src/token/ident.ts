@@ -46,9 +46,6 @@ const Initial = [...Alpha, UnderScore, DollarSign]
 type TTakeInitial<Input extends string> = (
   TTake<TInitial, Input>
 )
-function TakeInitial<Input extends string>(input: Input): TTakeInitial<Input> {
-  return Take(Initial, input) as never
-}
 // ------------------------------------------------------------------
 // TakeRemaining
 // ------------------------------------------------------------------
@@ -61,7 +58,7 @@ type TTakeRemaining<Input extends string, Result extends string = ''> = (
     : [Result, Input]
 )
 function TakeRemaining<Input extends string>(input: Input, result: string = ''): TTakeRemaining<Input> {
-  const remaining = Take(Remaining, input) as string[]
+  const remaining = Take(Remaining, input)
   return (
     IsResult(remaining)
       ? TakeRemaining(remaining[1], `${result}${remaining[0]}`)
@@ -79,15 +76,17 @@ type TTakeIdent<Input extends string> = (
     : [] // fail: did not match Initial
 )
 function TakeIdent<Input extends string>(input: Input): TTakeIdent<Input> {
-  const initial = TakeInitial(input) as string[]
-  return (
-    IsResult(initial) ? (() => {
-      const remaining = TakeRemaining(initial[1])
-      return IsResult(remaining)
-        ? [`${initial[0]}${remaining[0]}`, remaining[1]]
-        : [] // fail: did not match Remaining
-    })() : [] // fail: did not match Initial
-  ) as never
+  const initial = Take(Initial, input) as [string, string] | []
+  if (IsResult(initial)) {
+    const remaining = TakeRemaining(initial[1])
+    if (IsResult(remaining))
+     return [initial[0] + remaining[0], remaining[1]] as never
+
+    // fail: did not match Remaining
+  }
+
+  // fail: did not match Initial
+  return [] as never;
 }
 // ------------------------------------------------------------------
 // Ident

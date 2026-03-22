@@ -28,10 +28,9 @@ THE SOFTWARE.
 
 // deno-fmt-ignore-file
 
-import { IsEqual } from './internal/guard.ts'
 import { IsResult } from './internal/result.ts'
 import { type TTrim, Trim } from './internal/trim.ts'
-import { type TTake, Take } from './internal/take.ts'
+import { type TTake, Take, TakeVariant } from './internal/take.ts'
 import { type TMany, Many } from './internal/many.ts'
 import { type TOptional, Optional } from './internal/optional.ts'
 
@@ -78,7 +77,7 @@ function TakeFractional<Input extends string>(input: Input): TTakeFractional<Inp
   const digits = Many(AllowedDigits, [UnderScore], input)
   return (
     IsResult(digits)
-      ? IsEqual(digits[0], '')
+      ? digits[0] === ''
         ? [] // fail: no Digits
         : [digits[0], digits[1]]
       : [] // fail: did not match Digits
@@ -95,17 +94,19 @@ type TLeadingDot<Sign extends string, Input extends string> = (
     : [] // fail: did not match Dot
 )
 function LeadingDot<Sign extends string, Input extends string>
-  (sign: Sign, input: Input): 
+  (sign: Sign, input: Input):
     TLeadingDot<Sign, Input> {
-  const dot = Take([Dot], input)
-  return (
-    IsResult(dot) ? (() => {
-      const fractional = TakeFractional(dot[1])
-      return IsResult(fractional)
-        ? [`${sign}0${dot[0]}${fractional[0]}`, fractional[1]]   
-        : [] // fail: did not match Fractional
-    })() : [] // fail: did not match Dot
-  ) as never
+  const dot = TakeVariant(Dot, input)
+  if (IsResult(dot)) {
+    const fractional = TakeFractional(dot[1])
+    if (IsResult(fractional))
+      return [sign + '0' + dot[0] + fractional[0], fractional[1]] as never
+
+    // fail: did not match Fractional
+  }
+
+  // fail: did not match Dot
+  return [] as never
 }
 // ------------------------------------------------------------------
 // TakeLeadingInteger
@@ -120,19 +121,21 @@ type TLeadingInteger<Sign extends string, Input extends string> = (
     : [] // fail: did not match Integer
 )
 function LeadingInteger<Sign extends string, Input extends string>
-  (sign: Sign, input: Input): 
+  (sign: Sign, input: Input):
     TLeadingInteger<Sign, Input> {
   const integer = Integer(input)
+  if (!IsResult(integer))
+    return [] as never // fail: did not match Integer
+
+  const dot = TakeVariant(Dot, integer[1])
+  if (!IsResult(dot))
+    return [sign + integer[0], integer[1]] as never // fail: did not match Dot, use Integer
+
+  const fractional = TakeFractional(dot[1])
   return (
-    IsResult(integer) ? (() => {
-      const dot = Take([Dot], integer[1])
-      return IsResult(dot) ? (() => {
-        const fractional = TakeFractional(dot[1])
-        return IsResult(fractional)
-          ? [`${sign}${integer[0]}${dot[0]}${fractional[0]}`, fractional[1]]
-          : [`${sign}${integer[0]}`, dot[1]] // fail: did not match Fractional, use Integer
-      })() : [`${sign}${integer[0]}`, integer[1]] // fail: did not match Dot, use Integer
-    })() : [] // fail: did not match Integer
+    IsResult(fractional)
+      ? [sign + integer[0] + dot[0] + fractional[0], fractional[1]]
+      : [sign + integer[0], dot[1]] // fail: did not match Fractional, use Integer
   ) as never
 }
 // ------------------------------------------------------------------

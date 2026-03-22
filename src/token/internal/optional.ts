@@ -29,7 +29,7 @@ THE SOFTWARE.
 // deno-fmt-ignore-file
 
 import { IsResult } from './result.ts'
-import { type TTake, Take } from './take.ts'
+import { type TTake, TakeVariant } from './take.ts'
 
 /** Matches the given Value or empty string if no match. This function never fails */
 export type TOptional<Value extends string, Input extends string> = (
@@ -40,10 +40,10 @@ export type TOptional<Value extends string, Input extends string> = (
 /** Matches the given Value or empty string if no match. This function never fails */
 export function Optional<Value extends string, Input extends string>
   (value: Value, input: Input): TOptional<Value, Value> {
-  const result = Take([value], input)
+  const result = TakeVariant(value, input)
   return (
-    IsResult(result) 
-      ? result 
+    IsResult(result)
+      ? result
       : ['', input]
   ) as never
 }

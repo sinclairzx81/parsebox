@@ -29,7 +29,7 @@ THE SOFTWARE.
 // deno-fmt-ignore-file
 
 import { IsResult } from './internal/result.ts'
-import { type TTake, Take } from './internal/take.ts'
+import { type TTake, TakeVariant } from './internal/take.ts'
 import { type TInteger, Integer } from './integer.ts'
 
 // ------------------------------------------------------------------
@@ -44,14 +44,13 @@ type TTakeBigInt<Input extends string> = (
 )
 function TakeBigInt<Input extends string>(input: Input): TTakeBigInt<Input> {
   const integer = Integer(input)
-  return (
-    IsResult(integer) ? (() => {
-      const n = Take(['n'], integer[1])
-      return IsResult(n)
-        ? [`${integer[0]}`, n[1]]
-        : [] // fail: did not match 'n'
-    })() : [] // fail: did not match Integer
-  ) as never
+  if (IsResult(integer)) {
+    const n = TakeVariant('n', integer[1])
+    if (IsResult(n))
+      return [integer[0], n[1]] as never
+  }
+
+  return [] as never
 }
 // ------------------------------------------------------------------
 // BigInt

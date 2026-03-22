@@ -28,7 +28,6 @@ THE SOFTWARE.
 
 // deno-fmt-ignore-file
 
-import { IsEqual } from './guard.ts'
 import * as Char from './char.ts'
 
 // ------------------------------------------------------------------
@@ -51,21 +50,19 @@ type TDiscardMultiLineComment<Input extends string> = (
 )
 function DiscardMultilineComment<Input extends string>(input: Input): TDiscardMultiLineComment<Input> {
   const index = input.indexOf(CloseComment)
-  const result = IsEqual(index, -1) ? '' : input.slice(index + 2)
-  return result as never
+  return (index > -1 ? input.slice(index + 2) : '') as never
 }
 // ------------------------------------------------------------------
 // DiscardLineComment
 // ------------------------------------------------------------------
 type TDiscardLineComment<Input extends string> = (
-  Input extends `${string}${Char.TNewLine}${infer Rest extends string}` 
-    ? TTrimWhitespace<`${Char.TNewLine}${Rest}`> 
+  Input extends `${string}${Char.TNewLine}${infer Rest extends string}`
+    ? TTrimWhitespace<`${Char.TNewLine}${Rest}`>
     : ''
 )
 function DiscardLineComment<Input extends string>(input: Input): TDiscardLineComment<Input> {
   const index = input.indexOf(Char.NewLine)
-  const result = IsEqual(index, -1) ? '' : input.slice(index)
-  return result as never
+  return (index > -1 ? input.slice(index) : '') as never
 }
 // ------------------------------------------------------------------
 // Whitespace Filters
@@ -121,4 +118,3 @@ export function Trim<Input extends string>(input: Input): TTrim<Input> {
     trimmed
   ) as never
 }
-

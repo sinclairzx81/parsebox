@@ -46,18 +46,18 @@ type TMultiLine<Start extends string, End extends string, Input extends string> 
     : [] // fail: did not match Start
 )
 function MultiLine<Start extends string, End extends string, Input extends string>
-  (start: Start, end: End, input: Input): 
+  (start: Start, end: End, input: Input):
     TMultiLine<Start, End, Input> {
-  return (
-    input.startsWith(start) ? (() => {
-      const until = Until([end], input.slice(start.length))
-      return IsResult(until) ? (() => {
-        return until[1].startsWith(end)
-          ? [`${until[0]}`, until[1].slice(end.length)]
-          : [] // fail: did not match End
-        })() : [] // fail: did not match Until
-    })() : [] // fail: did not match Start
-  ) as never
+  if (input.startsWith(start)) {
+    const until = Until([end], input.slice(start.length))
+    if (IsResult(until) && until[1].startsWith(end))
+      return [until[0], until[1].slice(end.length)] as never
+
+    // fail: did not match End or Until
+  }
+
+  // fail: did not match Start
+  return [] as never
 }
 // ------------------------------------------------------------------
 // SingleLine
@@ -72,18 +72,18 @@ type TSingleLine<Start extends string, End extends string, Input extends string>
     : [] // fail: not match Start
 )
 function SingleLine<Start extends string, End extends string, Input extends string>
-  (start: Start, end: End, input: Input): 
+  (start: Start, end: End, input: Input):
     TSingleLine<Start, End, Input> {
-  return (
-    input.startsWith(start) ? (() => {
-      const until = Until([NewLine, end], input.slice(start.length))
-      return IsResult(until) ? (() => {
-        return until[1].startsWith(end) 
-          ? [`${until[0]}`, until[1].slice(end.length)] 
-          : []  // fail: did not match End
-      })() : [] // fail: did not match Until
-    })() : [] // fail: not match Start
-  ) as never
+  if (input.startsWith(start)) {
+    const until = Until([NewLine, end], input.slice(start.length))
+    if (IsResult(until) && until[1].startsWith(end))
+      return [until[0], until[1].slice(end.length)] as never
+
+    // fail: did not match End or Until
+  }
+
+  // fail: not match Start
+  return [] as never
 }
 // ------------------------------------------------------------------
 // Span
@@ -96,7 +96,7 @@ export type TSpan<Start extends string, End extends string, MultiLine extends bo
 )
 /** Matches from Start and End capturing everything in-between. Start and End are consumed. */
 export function Span<Start extends string, End extends string, MultiLine extends boolean, Input extends string>
-  (start: Start, end: End, multiLine: MultiLine, input: Input): 
+  (start: Start, end: End, multiLine: MultiLine, input: Input):
     TSpan<Start, End, MultiLine, Input> {
   return (
     multiLine

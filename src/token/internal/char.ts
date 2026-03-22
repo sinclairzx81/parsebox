@@ -32,7 +32,9 @@ THE SOFTWARE.
 // Range
 // ------------------------------------------------------------------
 function Range(start: number, end: number): string[] {
-  return Array.from({ length: end - start + 1 }, (_, i) => String.fromCharCode(start + i))
+  return new Array(end - start + 1)
+    .fill(start)
+    .map((start, i) => String.fromCharCode(start + i))
 }
 // ------------------------------------------------------------------
 // Alphas
@@ -46,10 +48,8 @@ export type TAlpha = [
   'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V',
   'W', 'X', 'Y', 'Z',
 ]
-export const Alpha = [
-  ...Range(97, 122), // Lowercase
-  ...Range(65, 90) // Uppercase
-] as TAlpha 
+export const Alpha = Range(97, 122) // Lowercase
+  .concat(Range(65, 90)) as TAlpha // Uppercase
 
 // ------------------------------------------------------------------
 // Digits
@@ -60,7 +60,7 @@ export type TDigit = [TZero, ...TNonZero]
 
 export const Zero = '0'
 export const NonZero = Range(49, 57) as TNonZero // 1 - 9
-export const Digit = [Zero, ...NonZero] as TDigit
+export const Digit = [Zero].concat(NonZero) as TDigit
 
 // ------------------------------------------------------------------
 // Characters

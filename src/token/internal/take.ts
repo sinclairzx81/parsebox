@@ -26,45 +26,39 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-// deno-fmt-ignore-file
+import { IsResult } from './result.ts'
 
-import { IsEqual, IsString } from './guard.ts'
+// deno-fmt-ignore-file
 
 // ------------------------------------------------------------------
 // TakeString
 // ------------------------------------------------------------------
 type TTakeVariant<Variant extends string, Input extends string> = (
-  Input extends `${Variant}${infer Rest extends string}` 
+  Input extends `${Variant}${infer Rest extends string}`
     ? [Variant, Rest]
     : []
 )
-function TakeVariant<Variant extends string, Input extends string>(variant: Variant, input: Input): TTakeVariant<Variant, Input> {
+export function TakeVariant<Variant extends string, Input extends string>(variant: Variant, input: Input): TTakeVariant<Variant, Input> {
   return (
-    IsEqual(input.indexOf(variant), 0) 
-      ? [variant, input.slice(variant.length)] 
-      : []
+    input.indexOf(variant) === 0 ? [variant, input.slice(variant.length)] : []
   ) as never
 }
 // ------------------------------------------------------------------
 // Take
 // ------------------------------------------------------------------
 /** Takes one of the given variants or fail */
-export type TTake<Variants extends string[], Input extends string> = (
-  Variants extends [infer ValueLeft extends string, ...infer ValueRight extends string[]]
-  ? TTakeVariant<ValueLeft, Input> extends [infer Take extends string, infer Rest extends string] 
-    ? [Take, Rest]
-    : TTake<ValueRight, Input>
+export type TTake<Variants extends string[], Input extends string> = Variants extends [infer ValueLeft extends string, ...infer ValueRight extends string[]]
+  ? TTakeVariant<ValueLeft, Input> extends [infer Take extends string, infer Rest extends string] ? [Take, Rest]
+  : TTake<ValueRight, Input>
   : []
-)
 /** Takes one of the given variants or fail */
 export function Take<Variants extends string[], Input extends string>(variants: [...Variants], input: Input): TTake<Variants, Input> {
-  const [left, ...right] = variants
-  return (
-    IsString(left)
-      ? (() => {
-        const result = TakeVariant(left, input)
-        return IsEqual(result.length, 2) ? result : Take(right, input)
-      })()
-      : []
-  ) as never
+  for (let i = 0; i < variants.length; i++) {
+    const result = TakeVariant(variants[i], input) as [] | [string, string]
+    if (IsResult(result)) {
+      return result as never
+    }
+  }
+
+  return [] as never
 }

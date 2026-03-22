@@ -26,9 +26,7 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { IsArray, IsEqual } from './guard.ts'
-
 /** Checks the value is a Tuple-2 [string, string] result */
-export function IsResult(value: unknown): value is [string, string] {
-  return IsArray(value) && IsEqual(value.length, 2)
+export function IsResult(value: [] | [string, string]): value is [string, string] {
+  return value.length === 2
 }
