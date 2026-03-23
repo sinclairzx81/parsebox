@@ -56,6 +56,9 @@ function FromOptional(parser: Runtime.IOptional): string {
 function FromRef(parser: Runtime.IRef): string {
   return `${parser.ref}`
 }
+function FromRest(parser: Runtime.IRest): string {
+  return `string`
+}
 function FromString(parser: Runtime.IString): string {
   return `<String>`
 }
@@ -81,6 +84,7 @@ function FromParser(parser: Runtime.IParser): string {
     Runtime.IsNumber(parser) ? FromNumber(parser) :
     Runtime.IsOptional(parser) ? FromOptional(parser) :
     Runtime.IsRef(parser) ? FromRef(parser) :
+    Runtime.IsRest(parser) ? FromRest(parser) :
     Runtime.IsString(parser) ? FromString(parser) :
     Runtime.IsTuple(parser) ? FromTuple(parser) :
     Runtime.IsUnion(parser) ? FromUnion(parser) :

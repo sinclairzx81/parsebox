@@ -26,13 +26,20 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './bigint.ts'
-export * from './const.ts'
-export * from './ident.ts'
-export * from './integer.ts'
-export * from './number.ts'
-export * from './rest.ts'
-export * from './span.ts'
-export * from './string.ts'
-export * from './until_1.ts'
-export * from './until.ts'
+// deno-fmt-ignore-file
+
+import type { Identity, IMapping, IParser } from './parser.ts'
+import * as Token from '../token/index.ts'
+
+// ------------------------------------------------------------------
+// Type
+// ------------------------------------------------------------------
+export interface Rest<Mapping extends IMapping = Identity> extends IParser<Mapping> {
+  type: 'Rest'
+}
+// ------------------------------------------------------------------
+// Parse
+// ------------------------------------------------------------------
+export type ParseRest<Input extends string> = (
+  Token.TRest<Input>
+)

@@ -42,7 +42,7 @@ Task.run('report', async () => {
 // Build
 // ------------------------------------------------------------------
 Task.run('build', () => Task.build.dual('src', {
-  compiler: 'latest',
+  compiler: '6.0.2',
   outdir: 'target/build',
   additional: ['license', 'readme.md'],
   packageJson: {

@@ -59,6 +59,9 @@ function InferString(parser: Runtime.IString) {
 function InferRef(parser: Runtime.IRef) {
   return `unknown`
 }
+function InferRest(parser: Runtime.IRest) {
+  return `string`
+}
 function InferNumber(parser: Runtime.INumber) {
   return `string`
 }
@@ -81,6 +84,7 @@ export function Infer(parser: Runtime.IParser): string {
     Runtime.IsNumber(parser) ? InferNumber(parser) :
     Runtime.IsOptional(parser) ? InferOptional(parser.parser) :
     Runtime.IsRef(parser) ? InferRef(parser) :
+    Runtime.IsRest(parser) ? InferRest(parser) :
     Runtime.IsString(parser) ? InferString(parser) :
     Runtime.IsTuple(parser) ? InferTuple(parser.parsers) :
     Runtime.IsUnion(parser) ? InferUnion(parser.parsers) :

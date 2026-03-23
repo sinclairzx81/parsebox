@@ -26,13 +26,19 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './bigint.ts'
-export * from './const.ts'
-export * from './ident.ts'
-export * from './integer.ts'
-export * from './number.ts'
-export * from './rest.ts'
-export * from './span.ts'
-export * from './string.ts'
-export * from './until_1.ts'
-export * from './until.ts'
+// deno-fmt-ignore-file
+
+import { IsEqual } from './internal/guard.ts'
+
+// ------------------------------------------------------------------
+// Rest
+// ------------------------------------------------------------------
+/** Match remaining characters in the buffer until end. If no characters are in buffer, no match */
+export type TRest<Input extends string> = (
+  Input extends '' ? [] : [Input, '']
+)
+/** Match remaining characters in the buffer until end. If no characters are in buffer, no match */
+export function Rest<Input extends string>(input: Input): TRest<Input> {
+  const result = IsEqual(input, '') ? [] : [input, '']
+  return result as never
+}
