@@ -39,6 +39,9 @@ import { type TSpan, Span } from './span.ts'
 type TTakeInitial<Quotes extends string[], Input extends string> = (
   TTake<Quotes, Input>
 )
+function TakeInitial<Quotes extends string[], Input extends string>(quotes: [...Quotes], input: Input): TTakeInitial<Quotes, Input> {
+  return Take(quotes, input)
+}
 // ------------------------------------------------------------------
 // TakeSpan
 // ------------------------------------------------------------------
@@ -57,7 +60,7 @@ type TTakeString<Quotes extends string[], Input extends string> = (
     : [] // fail: did not match Initial
 )
 function TakeString<Quotes extends string[], Input extends string>(quotes: [...Quotes], input: Input): TTakeString<Quotes, Input> {
-  const initial = Take(quotes, input)
+  const initial = TakeInitial(quotes, input)
   return (
     IsResult(initial)
       ? TakeSpan(initial[0], initial[0] + initial[1])

@@ -26,9 +26,9 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { IsEqual } from './internal/guard.ts'
-
 // deno-fmt-ignore-file
+
+import { IsEqual } from './internal/guard.ts'
 
 // ------------------------------------------------------------------
 // IsEnd

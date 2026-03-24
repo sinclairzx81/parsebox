@@ -28,13 +28,13 @@ THE SOFTWARE.
 
 // deno-fmt-ignore-file
 
+import { IsEqual } from './internal/guard.ts'
 import { type TTrimWhitespace, TrimWhitespace } from './internal/trim.ts'
 import { type TTrim, Trim } from './internal/trim.ts'
 import { type TTake, Take } from './internal/take.ts'
 
 import { type TNewLine, NewLine } from './internal/char.ts'
 import { type TWhiteSpace, WhiteSpace } from './internal/char.ts'
-import { IsEqual } from './internal/guard.ts'
 
 // ------------------------------------------------------------------
 // TakeConst
@@ -42,6 +42,9 @@ import { IsEqual } from './internal/guard.ts'
 type TTakeConst<Const extends string, Input extends string> = (
   TTake<[Const], Input>
 )
+function TakeConst<Const extends string, Input extends string>(const_: Const, input: Input): TTakeConst<Const, Input> {
+  return Take([const_], input) as never
+}
 // ------------------------------------------------------------------
 // Const
 // ------------------------------------------------------------------
@@ -58,9 +61,9 @@ export type TConst<Const extends string, Input extends string> = (
 export function Const<Const extends string, Input extends string>(const_: Const, input: Input): TConst<Const, Input> {
   return (
     IsEqual(const_, '') ? ['', input] : (
-      const_.startsWith(NewLine) ? Take([const_], TrimWhitespace(input)) :
-      const_.startsWith(WhiteSpace) ? Take([const_], input) :
-      Take([const_], Trim(input))
+      const_.startsWith(NewLine) ? TakeConst(const_, TrimWhitespace(input)) :
+      const_.startsWith(WhiteSpace) ? TakeConst(const_, input) :
+      TakeConst(const_, Trim(input))
     )
   ) as never
 }

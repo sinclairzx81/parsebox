@@ -29,7 +29,6 @@ THE SOFTWARE.
 // deno-fmt-ignore-file
 
 import { IsEqual } from './internal/guard.ts'
-
 import { IsResult } from './internal/result.ts'
 import { type TTrim, Trim } from './internal/trim.ts'
 import { type TTake, Take } from './internal/take.ts'

@@ -1,7 +1,0 @@
-{
-  "languages": {
-    "TypeScript": {
-      "language_servers": ["deno", "!vtsls"]
-    }
-  }
-}

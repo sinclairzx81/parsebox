@@ -41,7 +41,9 @@ type TTakeVariant<Variant extends string, Input extends string> = (
 )
 function TakeVariant<Variant extends string, Input extends string>(variant: Variant, input: Input): TTakeVariant<Variant, Input> {
   return (
-    IsEqual(input.indexOf(variant), 0) ? [variant, input.slice(variant.length)] : []
+    IsEqual(input.indexOf(variant), 0)
+      ? [variant, input.slice(variant.length)]
+      : []
   ) as never
 }
 // ------------------------------------------------------------------
