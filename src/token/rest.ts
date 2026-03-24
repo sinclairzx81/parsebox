@@ -28,18 +28,17 @@ THE SOFTWARE.
 
 // deno-fmt-ignore-file
 
-import type { Identity, IMapping, IParser } from './parser.ts'
-import * as Token from '../token/index.ts'
+import { IsEqual } from './internal/guard.ts'
 
 // ------------------------------------------------------------------
-// Type
+// Rest
 // ------------------------------------------------------------------
-export interface Ident<Mapping extends IMapping = Identity> extends IParser<Mapping> {
-  type: 'Ident'
-}
-// ------------------------------------------------------------------
-// Parse
-// ------------------------------------------------------------------
-export type ParseIdent<Input extends string> = (
-  Token.TIdent<Input>
+/** Match remaining characters in the buffer until end. If no characters are in buffer, no match */
+export type TRest<Input extends string> = (
+  Input extends '' ? [] : [Input, '']
 )
+/** Match remaining characters in the buffer until end. If no characters are in buffer, no match */
+export function Rest<Input extends string>(input: Input): TRest<Input> {
+  const result = IsEqual(input, '') ? [] : [input, '']
+  return result as never
+}

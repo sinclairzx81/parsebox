@@ -4,7 +4,7 @@ ParseBox
 
 The MIT License (MIT)
 
-Copyright (c) 2024-2025 Haydn Paterson
+Copyright (c) 2024-2026 Haydn Paterson
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -95,6 +95,12 @@ function FromRef(name: string, ref: string): string {
   return `${ref}(input)`
 }
 // ------------------------------------------------------------------
+// Rest
+// ------------------------------------------------------------------
+function FromRest(name: string): string {
+  return `Token.Rest(input)`
+}
+// ------------------------------------------------------------------
 // String
 // ------------------------------------------------------------------
 function FromString(name: string, quotes: string[]): string {
@@ -142,6 +148,7 @@ function FromParser(name: string, parser: Runtime.IParser): string {
     Runtime.IsNumber(parser) ? FromNumber(name) :
     Runtime.IsOptional(parser) ? FromOptional(name, parser) :
     Runtime.IsRef(parser) ? FromRef(name, parser.ref) :
+    Runtime.IsRest(parser) ? FromRest(name) :
     Runtime.IsString(parser) ? FromString(name, parser.quotes) :
     Runtime.IsTuple(parser) ? FromTuple(name, parser.parsers) :
     Runtime.IsUnion(parser) ? FromUnion(name, parser.parsers) :

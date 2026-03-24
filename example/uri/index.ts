@@ -26,20 +26,5 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-// deno-fmt-ignore-file
-
-import type { Identity, IMapping, IParser } from './parser.ts'
-import * as Token from '../token/index.ts'
-
-// ------------------------------------------------------------------
-// Type
-// ------------------------------------------------------------------
-export interface Ident<Mapping extends IMapping = Identity> extends IParser<Mapping> {
-  type: 'Ident'
-}
-// ------------------------------------------------------------------
-// Parse
-// ------------------------------------------------------------------
-export type ParseIdent<Input extends string> = (
-  Token.TIdent<Input>
-)
+export * from './parse.ts'
+export * from './types.ts'

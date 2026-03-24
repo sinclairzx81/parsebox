@@ -28,18 +28,41 @@ THE SOFTWARE.
 
 // deno-fmt-ignore-file
 
-import type { Identity, IMapping, IParser } from './parser.ts'
 import * as Token from '../token/index.ts'
+
+import { Arguments } from '../system/arguments/index.ts'
+import { Guard } from '../guard/index.ts'
+import { type IParser, type IMapping, Identity } from './parser.ts'
 
 // ------------------------------------------------------------------
 // Type
 // ------------------------------------------------------------------
-export interface Ident<Mapping extends IMapping = Identity> extends IParser<Mapping> {
-  type: 'Ident'
+export interface IRest<Output extends unknown = unknown> extends IParser<Output> {
+  type: 'Rest'
+}
+// ------------------------------------------------------------------
+// Type
+// ------------------------------------------------------------------
+export function Rest<Mapping extends IMapping<string>>(mapping: Mapping): IRest<string>
+export function Rest(): IRest<string>
+export function Rest(...args: unknown[]): never {
+  const [mapping] = Arguments.Match<[IMapping]>(args, {
+    1: (mapping) => [mapping],
+    0: () => [Identity]
+  })
+  return { type: 'Rest', mapping } as never
+}
+// ------------------------------------------------------------------
+// Guard
+// ------------------------------------------------------------------
+export function IsRest(value: unknown): value is IRest {
+  return Guard.IsObject(value)
+    && Guard.HasPropertyKey(value, 'type')
+    && Guard.IsEqual(value.type, 'Rest')
 }
 // ------------------------------------------------------------------
 // Parse
 // ------------------------------------------------------------------
-export type ParseIdent<Input extends string> = (
-  Token.TIdent<Input>
-)
+export function ParseRest(input: string): [] | [string, string] {
+  return Token.Rest(input) as never
+}

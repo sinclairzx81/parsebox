@@ -42,13 +42,13 @@ Task.run('report', async () => {
 // Build
 // ------------------------------------------------------------------
 Task.run('build', () => Task.build.dual('src', {
-  compiler: 'latest',
+  compiler: '6.0.2',
   outdir: 'target/build',
   additional: ['license', 'readme.md'],
   packageJson: {
     name: '@sinclair/parsebox',
     description: 'Parser Combinators in the TypeScript Type System',
-    version: '0.11.1',
+    version: '0.11.2',
     keywords: ['typescript', 'parser', 'combinator'],
     license: 'MIT',
     author: 'sinclairzx81',
@@ -61,10 +61,8 @@ Task.run('build', () => Task.build.dual('src', {
 // ------------------------------------------------------------------
 // Publish
 // ------------------------------------------------------------------
-Task.run('publish', async (otp: string, target: string = `target/build`) => {
-  const { version } = JSON.parse(await Deno.readTextFile(`${target}/package.json`))
-  if(version.includes('-dev')) throw Error(`package version should not include -dev specifier`)
-  await Task.shell(`cd ${target} && npm publish sinclair-parsebox-${version}.tgz --access=public --otp ${otp}`)
+Task.run('publish', async (target: string = `target/build`) => {
+  const { version } = JSON.parse(await Task.file(`${target}/package.json`).read())
   await Task.shell(`git tag ${version}`)
   await Task.shell(`git push origin ${version}`)
 })

@@ -4,7 +4,7 @@ ParseBox
 
 The MIT License (MIT)
 
-Copyright (c) 2024-2025 Haydn Paterson
+Copyright (c) 2024-2026 Haydn Paterson
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -35,6 +35,7 @@ import type { Ident, ParseIdent } from './ident.ts'
 import type { Integer, ParseInteger } from './integer.ts'
 import type { Number, ParseNumber } from './number.ts'
 import type { Optional, ParseOptional } from './optional.ts'
+import type { ParseRest, Rest } from './rest.ts'
 import type { ParseString, String } from './string.ts'
 import type { ParseTuple, Tuple } from './tuple.ts'
 import type { ParseUnion, Union } from './union.ts'
@@ -54,6 +55,7 @@ type ParseInput<Input extends string, Parser extends IParser> = (
   Parser extends Integer ? ParseInteger<Input> :
   Parser extends Number ? ParseNumber<Input> : 
   Parser extends Optional<infer Parser extends IParser> ? ParseOptional<Parser, Input> : 
+  Parser extends Rest ? ParseRest<Input> : 
   Parser extends String<infer Quotes extends string[]> ? ParseString<Quotes, Input> : 
   Parser extends Tuple<infer Parsers extends IParser[]> ? ParseTuple<Parsers, Input> : 
   Parser extends Union<infer Parsers extends IParser[]> ? ParseUnion<Parsers, Input> : 

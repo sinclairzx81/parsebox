@@ -4,7 +4,7 @@ ParseBox
 
 The MIT License (MIT)
 
-Copyright (c) 2024-2025 Haydn Paterson
+Copyright (c) 2024-2026 Haydn Paterson
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -59,6 +59,9 @@ function InferString(parser: Runtime.IString) {
 function InferRef(parser: Runtime.IRef) {
   return `unknown`
 }
+function InferRest(parser: Runtime.IRest) {
+  return `string`
+}
 function InferNumber(parser: Runtime.INumber) {
   return `string`
 }
@@ -81,6 +84,7 @@ export function Infer(parser: Runtime.IParser): string {
     Runtime.IsNumber(parser) ? InferNumber(parser) :
     Runtime.IsOptional(parser) ? InferOptional(parser.parser) :
     Runtime.IsRef(parser) ? InferRef(parser) :
+    Runtime.IsRest(parser) ? InferRest(parser) :
     Runtime.IsString(parser) ? InferString(parser) :
     Runtime.IsTuple(parser) ? InferTuple(parser.parsers) :
     Runtime.IsUnion(parser) ? InferUnion(parser.parsers) :

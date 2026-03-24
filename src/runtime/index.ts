@@ -4,7 +4,7 @@ ParseBox
 
 The MIT License (MIT)
 
-Copyright (c) 2024-2025 Haydn Paterson
+Copyright (c) 2024-2026 Haydn Paterson
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -39,6 +39,7 @@ export { type IOptional, IsOptional, Optional } from './optional.ts'
 export { Parse } from './parse.ts'
 export { type IParser, type IProperties, type IMapping, As, Identity } from './parser.ts'
 export { type IRef, Ref, IsRef, } from './ref.ts'
+export { type IRest, Rest, IsRest, } from './rest.ts'
 export { type IString, IsString, String } from './string.ts'
 export { type ITuple, IsTuple, Tuple } from './tuple.ts'
 export { type IUnion, IsUnion, Union } from './union.ts'

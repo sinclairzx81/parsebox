@@ -4,7 +4,7 @@ ParseBox
 
 The MIT License (MIT)
 
-Copyright (c) 2024-2025 Haydn Paterson
+Copyright (c) 2024-2026 Haydn Paterson
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -31,6 +31,7 @@ export * from './const.ts'
 export * from './ident.ts'
 export * from './integer.ts'
 export * from './number.ts'
+export * from './rest.ts'
 export * from './span.ts'
 export * from './string.ts'
 export * from './until_1.ts'

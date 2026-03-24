@@ -28,52 +28,18 @@ THE SOFTWARE.
 
 // deno-fmt-ignore-file
 
-import { IsEqual, IsString } from './internal/guard.ts'
+import type { Identity, IMapping, IParser } from './parser.ts'
+import * as Token from '../token/index.ts'
 
 // ------------------------------------------------------------------
-// IsEnd
+// Type
 // ------------------------------------------------------------------
-type TIsEnd<End extends string[], Input extends string> = (
-  End extends [infer Left extends string, ...infer Right extends string[]] 
-    ? Input extends `${Left}${string}` 
-      ? true
-      : TIsEnd<Right, Input>
-    : false
-)
-function IsEnd<End extends string[], Input extends string>
-  (end: [...End], input: Input): 
-    TIsEnd<End, Input> {
-  const [left, ...right] = end
-  return (
-    IsString(left) 
-      ? input.startsWith(left) 
-        ? true 
-        : IsEnd(right, input) 
-      : false
-  ) as never
+export interface Rest<Mapping extends IMapping = Identity> extends IParser<Mapping> {
+  type: 'Rest'
 }
 // ------------------------------------------------------------------
-// Until
+// Parse
 // ------------------------------------------------------------------
-/** Match Input until but not including End. No match if End not found. */
-export type TUntil<End extends string[], Input extends string, Result extends string = ''> = (
-  Input extends ``
-    ? [] // fail: Input is empty
-    : TIsEnd<End, Input> extends true 
-      ? [Result, Input]
-      : Input extends `${infer Left extends string}${infer Right extends string}` 
-        ? TUntil<End, Right, `${Result}${Left}`>
-        : []
+export type ParseRest<Input extends string> = (
+  Token.TRest<Input>
 )
-/** Match Input until but not including End. No match if End not found. */
-export function Until<End extends string[], Input extends string>
-  (end: [...End], input: Input, result: string = ''): TUntil<End, Input> {
-  return (
-    IsEqual(input, '') 
-      ? [] // fail: Input is empty
-      : IsEnd(end, input) ? [result, input] : (() => {
-        const [left, right] = [input.slice(0, 1), input.slice(1)]
-        return Until(end, right, `${result}${left}`)
-      })()
-  ) as never
-}
