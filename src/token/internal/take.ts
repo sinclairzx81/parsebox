@@ -28,7 +28,8 @@ THE SOFTWARE.
 
 // deno-fmt-ignore-file
 
-import { IsEqual, IsString } from './guard.ts'
+import { IsMatch } from './match.ts'
+import { IsEqual } from './guard.ts'
 
 // ------------------------------------------------------------------
 // TakeString
@@ -58,13 +59,25 @@ export type TTake<Variants extends string[], Input extends string> = (
 )
 /** Takes one of the given variants or fail */
 export function Take<Variants extends string[], Input extends string>(variants: [...Variants], input: Input): TTake<Variants, Input> {
-  const [left, ...right] = variants
-  return (
-    IsString(left)
-      ? (() => {
-        const result = TakeVariant(left, input)
-        return IsEqual(result.length, 2) ? result : Take(right, input)
-      })()
-      : []
-  ) as never
+  // ----------------------------------------------------------------
+  // Symmetric
+  // ----------------------------------------------------------------
+  // const [left, ...right] = variants
+  // return (
+  //   IsString(left)
+  //     ? (() => {
+  //       const result = TakeVariant(left, input)
+  //       return IsEqual(result.length, 2) ? result : Take(right, input)
+  //     })()
+  //     : []
+  // ) as never
+  // ----------------------------------------------------------------
+  // Inline
+  // ----------------------------------------------------------------
+  for (let i = 0; i < variants.length; i++) {
+    const result = TakeVariant(variants[i], input)
+    if (IsMatch(result)) return result as never
+  }
+  return [] as never
+    
 }

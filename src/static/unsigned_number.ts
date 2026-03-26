@@ -26,9 +26,20 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { IsArray, IsEqual } from './guard.ts'
+// deno-fmt-ignore-file
 
-/** Checks the value is a Tuple-2 [string, string] result */
-export function IsResult(value: unknown): value is [string, string] {
-  return IsArray(value) && IsEqual(value.length, 2)
+import type { Identity, IMapping, IParser } from './parser.ts'
+import * as Token from '../token/index.ts'
+
+// ------------------------------------------------------------------
+// Type
+// ------------------------------------------------------------------
+export interface UnsignedNumber<Mapping extends IMapping = Identity> extends IParser<Mapping> {
+  type: 'UnsignedNumber'
 }
+// ------------------------------------------------------------------
+// Parse
+// ------------------------------------------------------------------
+export type ParseUnsignedNumber<Input extends string> = (
+  Token.TUnsignedNumber<Input>
+)

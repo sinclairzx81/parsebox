@@ -26,22 +26,15 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-// deno-fmt-ignore-file
+import { IsEqual } from './guard.ts'
 
-export type IProperties = Record<PropertyKey, IParser>
+type TResult = [string, string] | []
 
-// ------------------------------------------------------------------
-// Mapping
-// ------------------------------------------------------------------
-export type IMapping<Input extends unknown = any, Output extends unknown = unknown> = (input: Input) => Output
-
-/** Maps input to output. This is the default Mapping */
-export const Identity = (value: unknown) => value
-
-// ------------------------------------------------------------------
-// Parser
-// ------------------------------------------------------------------
-export interface IParser<Output extends unknown = unknown> {
-  type: string
-  mapping: IMapping<any, Output>
+/** Checks the value is a Tuple-2 [string, string] result */
+export function IsMatch(value: TResult): value is [string, string] {
+  return IsEqual(value.length, 2)
+}
+/** Matches on a result and dispatches either left or right arm */
+export function Match(input: TResult, ok: (value: string, rest: string) => TResult, fail: () => TResult): TResult {
+  return IsMatch(input) ? ok(input[0], input[1]) : fail()
 }

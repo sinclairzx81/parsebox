@@ -68,6 +68,12 @@ function FromTuple(parser: Runtime.ITuple): string {
 function FromUnion(parser: Runtime.IUnion): string {
   return parser.parsers.map((parser) => `${FromParser(parser)}`).join(' | ')
 }
+function FromUnsignedInteger(parser: Runtime.IUnsignedInteger): string {
+  return `<UnsignedInteger>`
+}
+function FromUnsignedNumber(parser: Runtime.IUnsignedNumber): string {
+  return `<UnsignedNumber>`
+}
 function FromUntil_1(parser: Runtime.IUntil_1): string {
   return `string`
 }
@@ -79,8 +85,8 @@ function FromParser(parser: Runtime.IParser): string {
     Runtime.IsArray(parser) ? FromArray(parser) :
     Runtime.IsBigInt(parser) ? FromBigInt(parser) :
     Runtime.IsConst(parser) ? FromConst(parser) :
-    Runtime.IsInteger(parser) ? FromInteger(parser) :
     Runtime.IsIdent(parser) ? FromIdent(parser) :
+    Runtime.IsInteger(parser) ? FromInteger(parser) :
     Runtime.IsNumber(parser) ? FromNumber(parser) :
     Runtime.IsOptional(parser) ? FromOptional(parser) :
     Runtime.IsRef(parser) ? FromRef(parser) :
@@ -88,6 +94,8 @@ function FromParser(parser: Runtime.IParser): string {
     Runtime.IsString(parser) ? FromString(parser) :
     Runtime.IsTuple(parser) ? FromTuple(parser) :
     Runtime.IsUnion(parser) ? FromUnion(parser) :
+    Runtime.IsUnsignedInteger(parser) ? FromUnsignedInteger(parser) :
+    Runtime.IsUnsignedNumber(parser) ? FromUnsignedNumber(parser) :
     Runtime.IsUntil_1(parser) ? FromUntil_1(parser) :
     Runtime.IsUntil(parser) ? FromUntil(parser) :
     Unreachable(parser)
