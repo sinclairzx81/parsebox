@@ -1,5 +1,7 @@
 import { Task } from 'tasksmith'
 
+const VERSION = '0.11.3'
+
 // ------------------------------------------------------------------
 // Clean
 // ------------------------------------------------------------------
@@ -48,7 +50,7 @@ Task.run('build', () => Task.build.dual('src', {
   packageJson: {
     name: '@sinclair/parsebox',
     description: 'Parser Combinators in the TypeScript Type System',
-    version: '0.11.2',
+    version: VERSION,
     keywords: ['typescript', 'parser', 'combinator'],
     license: 'MIT',
     author: 'sinclairzx81',
