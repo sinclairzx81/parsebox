@@ -79,5 +79,4 @@ export function Take<Variants extends string[], Input extends string>(variants: 
     if (IsMatch(result)) return result as never
   }
   return [] as never
-    
 }
