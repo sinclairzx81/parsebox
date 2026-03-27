@@ -1,0 +1,33 @@
+// deno-fmt-ignore-file
+
+import { Static } from '@sinclair/parsebox'
+function Assert<Left, _Right extends Left>(): void {}
+
+Assert<Static.Parse<Static.UnsignedNumber, '-1'>, []>()
+Assert<Static.Parse<Static.UnsignedNumber, '-1.0'>, []>()
+Assert<Static.Parse<Static.UnsignedNumber, '-.0'>, []>()
+Assert<Static.Parse<Static.UnsignedNumber, ''>, []>()
+Assert<Static.Parse<Static.UnsignedNumber, '01'>, ['0', '1']>()
+Assert<Static.Parse<Static.UnsignedNumber, ' 01'>, ['0', '1']>()
+Assert<Static.Parse<Static.UnsignedNumber, '01 '>, ['0', '1 ']>()
+Assert<Static.Parse<Static.UnsignedNumber, ' 01 '>, ['0', '1 ']>()
+Assert<Static.Parse<Static.UnsignedNumber, '0'>, ['0', '']>()
+Assert<Static.Parse<Static.UnsignedNumber, '0 '>, ['0', ' ']>()
+Assert<Static.Parse<Static.UnsignedNumber, ' 0'>, ['0', '']>()
+Assert<Static.Parse<Static.UnsignedNumber, ' 0 '>, ['0', ' ']>()
+Assert<Static.Parse<Static.UnsignedNumber, '100'>, ['100', '']>()
+Assert<Static.Parse<Static.UnsignedNumber, '100 '>, ['100', ' ']>()
+Assert<Static.Parse<Static.UnsignedNumber, ' 100'>, ['100', '']>()
+Assert<Static.Parse<Static.UnsignedNumber, ' 100 '>, ['100', ' ']>()
+Assert<Static.Parse<Static.UnsignedNumber, '0.1'>, ['0.1', '']>()
+Assert<Static.Parse<Static.UnsignedNumber, '0.1 '>, ['0.1', ' ']>()
+Assert<Static.Parse<Static.UnsignedNumber, ' 0.1'>, ['0.1', '']>()
+Assert<Static.Parse<Static.UnsignedNumber, ' 0.1 '>, ['0.1', ' ']>()
+Assert<Static.Parse<Static.UnsignedNumber, '100.1'>, ['100.1', '']>()
+Assert<Static.Parse<Static.UnsignedNumber, '100.1 '>, ['100.1', ' ']>()
+Assert<Static.Parse<Static.UnsignedNumber, ' 100.1'>, ['100.1', '']>()
+Assert<Static.Parse<Static.UnsignedNumber, ' 100.1 '>, ['100.1', ' ']>()
+Assert<Static.Parse<Static.UnsignedNumber, '100.1.1'>, ['100.1', '.1']>()
+Assert<Static.Parse<Static.UnsignedNumber, '100.1.1 '>, ['100.1', '.1 ']>()
+Assert<Static.Parse<Static.UnsignedNumber, ' 100.1.1'>, ['100.1', '.1']>()
+Assert<Static.Parse<Static.UnsignedNumber, ' 100.1.1 '>, ['100.1', '.1 ']>()

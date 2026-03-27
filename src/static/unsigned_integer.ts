@@ -28,35 +28,18 @@ THE SOFTWARE.
 
 // deno-fmt-ignore-file
 
-import { Match } from './internal/match.ts'
-import { type TTake, Take } from './internal/take.ts'
-import { type TInteger, Integer } from './integer.ts'
+import type { Identity, IMapping, IParser } from './parser.ts'
+import * as Token from '../token/index.ts'
 
 // ------------------------------------------------------------------
-// TakeBigInt
+// Type
 // ------------------------------------------------------------------
-type TTakeBigInt<Input extends string> = (
-  TInteger<Input> extends [infer Integer extends string, infer IntegerRest extends string]
-    ? TTake<['n'], IntegerRest> extends [infer _N extends string, infer NRest extends string]
-      ? [`${Integer}`, NRest]
-      : [] // fail: did not match 'n'
-    : [] // fail: did not match Integer
-)
-function TakeBigInt<Input extends string>(input: Input): TTakeBigInt<Input> {
-  return Match(Integer(input), (Integer, IntegerRest) => 
-    Match(Take(['n'], IntegerRest), (_N, NRest) => 
-      [`${Integer}`, NRest], 
-      () => []), // fail: did not match 'n'
-    () => []) as never // fail: did not match Integer
+export interface UnsignedInteger<Mapping extends IMapping = Identity> extends IParser<Mapping> {
+  type: 'UnsignedInteger'
 }
 // ------------------------------------------------------------------
-// BigInt
+// Parse
 // ------------------------------------------------------------------
-/** Matches if next is a Integer literal with trailing 'n'. Trailing 'n' is omitted in result. */
-export type TBigInt<Input extends string> = (
-  TTakeBigInt<Input>
+export type ParseUnsignedInteger<Input extends string> = (
+  Token.TUnsignedInteger<Input>
 )
-/** Matches if next is a Integer literal with trailing 'n'. Trailing 'n' is omitted in result. */
-export function BigInt<Input extends string>(input: Input): TBigInt<Input> {
-  return TakeBigInt(input) as never
-}

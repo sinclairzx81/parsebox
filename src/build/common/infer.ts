@@ -47,11 +47,11 @@ function InferIdent(parser: Runtime.IIdent) {
 function InferInteger(parser: Runtime.IInteger) {
   return `string`
 }
+function InferNumber(parser: Runtime.INumber) {
+  return `string`
+}
 function InferOptional(parser: Runtime.IParser) {
   return `([${Infer(parser)}] | [])`
-}
-function InferUnion(parsers: Runtime.IParser[]): string {
-  return [...new Set(parsers.map((parser) => Infer(parser)))].join(' | ')
 }
 function InferString(parser: Runtime.IString) {
   return `string`
@@ -62,11 +62,17 @@ function InferRef(parser: Runtime.IRef) {
 function InferRest(parser: Runtime.IRest) {
   return `string`
 }
-function InferNumber(parser: Runtime.INumber) {
-  return `string`
-}
 function InferTuple(parsers: Runtime.IParser[]): string {
   return `[${parsers.map(() => 'unknown').join(', ')}]`
+}
+function InferUnion(parsers: Runtime.IParser[]): string {
+  return [...new Set(parsers.map((parser) => Infer(parser)))].join(' | ')
+}
+function InferUnsignedInteger(parser: Runtime.IUnsignedInteger) {
+  return `number`
+}
+function InferUnsignedNumber(parser: Runtime.IUnsignedNumber) {
+  return `number`
 }
 function InferUntil_1(parser: Runtime.IUntil_1) {
   return `string`
@@ -79,8 +85,8 @@ export function Infer(parser: Runtime.IParser): string {
     Runtime.IsArray(parser) ? InferArray(parser.parser) :
     Runtime.IsBigInt(parser) ? InferBigInt(parser) :
     Runtime.IsConst(parser) ? InferConst(parser) :
-    Runtime.IsInteger(parser) ? InferInteger(parser) :
     Runtime.IsIdent(parser) ? InferIdent(parser) :
+    Runtime.IsInteger(parser) ? InferInteger(parser) :
     Runtime.IsNumber(parser) ? InferNumber(parser) :
     Runtime.IsOptional(parser) ? InferOptional(parser.parser) :
     Runtime.IsRef(parser) ? InferRef(parser) :
@@ -88,6 +94,8 @@ export function Infer(parser: Runtime.IParser): string {
     Runtime.IsString(parser) ? InferString(parser) :
     Runtime.IsTuple(parser) ? InferTuple(parser.parsers) :
     Runtime.IsUnion(parser) ? InferUnion(parser.parsers) :
+    Runtime.IsUnsignedInteger(parser) ? InferUnsignedInteger(parser) :
+    Runtime.IsUnsignedNumber(parser) ? InferUnsignedNumber(parser) :
     Runtime.IsUntil_1(parser) ? InferUntil_1(parser) :
     Runtime.IsUntil(parser) ? InferUntil(parser) :
     Unreachable(parser)

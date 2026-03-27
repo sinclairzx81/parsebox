@@ -39,6 +39,8 @@ import type { ParseRest, Rest } from './rest.ts'
 import type { ParseString, String } from './string.ts'
 import type { ParseTuple, Tuple } from './tuple.ts'
 import type { ParseUnion, Union } from './union.ts'
+import type { ParseUnsignedInteger, UnsignedInteger } from './unsigned_integer.ts'
+import type { ParseUnsignedNumber, UnsignedNumber } from './unsigned_number.ts'
 import type { ParseUntil_1, Until_1 } from './until_1.ts'
 import type { ParseUntil, Until } from './until.ts'
 
@@ -58,10 +60,12 @@ type ParseInput<Input extends string, Parser extends IParser> = (
   Parser extends Rest ? ParseRest<Input> : 
   Parser extends String<infer Quotes extends string[]> ? ParseString<Quotes, Input> : 
   Parser extends Tuple<infer Parsers extends IParser[]> ? ParseTuple<Parsers, Input> : 
-  Parser extends Union<infer Parsers extends IParser[]> ? ParseUnion<Parsers, Input> : 
+  Parser extends Union<infer Parsers extends IParser[]> ? ParseUnion<Parsers, Input> :
+  Parser extends UnsignedInteger ? ParseUnsignedInteger<Input> :
+  Parser extends UnsignedNumber ? ParseUnsignedNumber<Input> :  
   Parser extends Until<infer End extends string[]> ? ParseUntil<End, Input> : 
-  Parser extends Until_1<infer End extends string[]> ? ParseUntil_1<End, Input>
-  : []
+  Parser extends Until_1<infer End extends string[]> ? ParseUntil_1<End, Input> : 
+  []
 )
 // ------------------------------------------------------------------
 // ParseMapping

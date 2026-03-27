@@ -112,6 +112,8 @@ const Coverage = Runtime.Union([
   Runtime.Until_1(['x']),
   Runtime.Union([]),
   Runtime.Optional(Runtime.Ident()),
+  Runtime.UnsignedInteger(),
+  Runtime.UnsignedNumber(),
   Runtime.Rest(),
 ])
 export const JsonModule = new Runtime.Module({

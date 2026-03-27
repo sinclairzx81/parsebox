@@ -46,6 +46,8 @@ import { ParseRest, IsRest } from './rest.ts'
 import { ParseString, IsString } from './string.ts'
 import { ParseTuple, IsTuple } from './tuple.ts'
 import { ParseUnion, IsUnion } from './union.ts'
+import { ParseUnsignedInteger, IsUnsignedInteger } from './unsigned_integer.ts'
+import { ParseUnsignedNumber, IsUnsignedNumber} from './unsigned_number.ts'
 import { ParseUntil_1, IsUntil_1 } from './until_1.ts'
 import { ParseUntil, IsUntil } from './until.ts'
 
@@ -66,6 +68,8 @@ export function ParseParser<Parser extends IParser>(context: IProperties, parser
     IsString(parser) ? ParseString(parser.quotes, input) :
     IsTuple(parser) ? ParseTuple(context, parser.parsers, input) :
     IsUnion(parser) ? ParseUnion(context, parser.parsers, input) :
+    IsUnsignedInteger(parser) ? ParseUnsignedInteger(input) :
+    IsUnsignedNumber(parser) ? ParseUnsignedNumber(input) :
     IsUntil(parser) ? ParseUntil(parser.end, input) :
     IsUntil_1(parser) ? ParseUntil_1(parser.end, input) :
     []

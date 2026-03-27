@@ -122,6 +122,18 @@ function FromUnion(name: string, parsers: Runtime.IParser[]): string {
   return parsers.length === 0 ? '[]' : parsers.reduceRight((result, right) => `If(${FromParser(name, right)}, ([_0, input]) => [_0, input], () => ${result})`, '[]')
 }
 // ------------------------------------------------------------------
+// UnsignedInteger
+// ------------------------------------------------------------------
+function FromUnsignedInteger(name: string): string {
+  return `Token.UnsignedInteger(input)`
+}
+// ------------------------------------------------------------------
+// UnsignedNumber
+// ------------------------------------------------------------------
+function FromUnsignedNumber(name: string): string {
+  return `Token.UnsignedNumber(input)`
+}
+// ------------------------------------------------------------------
 // Until_1
 // ------------------------------------------------------------------
 function FromUntil_1(name: string, end: string[]): string {
@@ -152,6 +164,8 @@ function FromParser(name: string, parser: Runtime.IParser): string {
     Runtime.IsString(parser) ? FromString(name, parser.quotes) :
     Runtime.IsTuple(parser) ? FromTuple(name, parser.parsers) :
     Runtime.IsUnion(parser) ? FromUnion(name, parser.parsers) :
+    Runtime.IsUnsignedInteger(parser) ? FromUnsignedInteger(name) :
+    Runtime.IsUnsignedNumber(parser) ? FromUnsignedNumber(name) :
     Runtime.IsUntil_1(parser) ? FromUntil_1(name, parser.end) :
     Runtime.IsUntil(parser) ? FromUntil(name, parser.end) :
     Unreachable(parser)

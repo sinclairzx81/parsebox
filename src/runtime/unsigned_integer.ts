@@ -28,20 +28,41 @@ THE SOFTWARE.
 
 // deno-fmt-ignore-file
 
-export type IProperties = Record<PropertyKey, IParser>
+import * as Token from '../token/index.ts'
+
+import { Arguments } from '../system/arguments/index.ts'
+import { Guard } from '../guard/index.ts'
+import { type IParser, type IMapping, Identity } from './parser.ts'
 
 // ------------------------------------------------------------------
-// Mapping
+// Type
 // ------------------------------------------------------------------
-export type IMapping<Input extends unknown = any, Output extends unknown = unknown> = (input: Input) => Output
-
-/** Maps input to output. This is the default Mapping */
-export const Identity = (value: unknown) => value
-
+export interface IUnsignedInteger<Output extends unknown = unknown> extends IParser<Output> {
+  type: 'UnsignedInteger'
+}
 // ------------------------------------------------------------------
-// Parser
+// Factory
 // ------------------------------------------------------------------
-export interface IParser<Output extends unknown = unknown> {
-  type: string
-  mapping: IMapping<any, Output>
+export function UnsignedInteger<Mapping extends IMapping<string>>(mapping: Mapping): IUnsignedInteger<ReturnType<Mapping>>
+export function UnsignedInteger(): IUnsignedInteger<string>
+export function UnsignedInteger(...args: unknown[]): never {
+  const [mapping] = Arguments.Match<[IParser, IMapping]>(args, {
+    1: (mapping) => [mapping],
+    0: () => [Identity]
+  })
+  return { type: 'UnsignedInteger', mapping } as never
+}
+// ------------------------------------------------------------------
+// Guard
+// ------------------------------------------------------------------
+export function IsUnsignedInteger(value: unknown): value is IUnsignedInteger {
+  return Guard.IsObject(value)
+    && Guard.HasPropertyKey(value, 'type')
+    && Guard.IsEqual(value.type, 'UnsignedInteger')
+}
+// ------------------------------------------------------------------
+// Parse
+// ------------------------------------------------------------------
+export function ParseUnsignedInteger(input: string): [] | [string, string] {
+  return Token.UnsignedInteger(input)
 }
