@@ -5,41 +5,34 @@ const VERSION = '0.11.3'
 // ------------------------------------------------------------------
 // Clean
 // ------------------------------------------------------------------
-Task.run('clean', async () => {
-  await Task.folder('target').delete()
-})
+Task.run('clean', () => Task.folder('target').delete())
 // ------------------------------------------------------------------
 // Format
 // ------------------------------------------------------------------
-Task.run('format', async () => {
-  await Task.shell('deno fmt src test')
-})
+Task.run('format', () => Task.shell('deno fmt src test'))
+// ------------------------------------------------------------------
+// Lint
+// ------------------------------------------------------------------
+Task.run('lint', () => Task.shell('deno lint src'))
 // ------------------------------------------------------------------
 // Start
 // ------------------------------------------------------------------
-Task.run('start', async () => {
-  await Task.shell('deno run -A --watch example/index.ts')
-})
+Task.run('start', () => Task.shell('deno run -A --watch example/index.ts'))
 // ------------------------------------------------------------------
 // Test
 // ------------------------------------------------------------------
-Task.run('test', async (filter: string = '') => {
-  await Task.test.run(['test/parsebox'], { filter })
-})
+Task.run('test', async (filter: string = '') => 
+  Task.shell('deno lint src').catch(() => null).then(() => 
+    Task.test.run(['test/parsebox'], { filter }))
+)
 // ------------------------------------------------------------------
 // Fast
 // ------------------------------------------------------------------
-Task.run('fast', async (filter: string = '') => {
-  await Task.test.run(['test/parsebox'], { 
-    watch: true, noCheck: true, filter,
-  })
-})
+Task.run('fast', async (filter: string = '') => Task.test.run(['test/parsebox'], { watch: true, noCheck: true, filter }))
 // ------------------------------------------------------------------
 // Report
 // ------------------------------------------------------------------
-Task.run('report', async () => {
-  await Task.test.report(['test/parsebox'])
-})
+Task.run('report', async () => Task.test.report(['test/parsebox']))
 // ------------------------------------------------------------------
 // Build
 // ------------------------------------------------------------------

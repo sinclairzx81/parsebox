@@ -84,7 +84,7 @@ export function Parse<Parser extends IParser>(context: IProperties, parser: Pars
 /** Parses input using the given Parser */
 export function Parse<Parser extends IParser>(parser: Parser, content: string): [] | [StaticParser<Parser>, string]
 /** Parses input using the given Parser */
-export function Parse(...args: any[]): never {
+export function Parse(...args: unknown[]): never {
   const [context, parser, input] = Arguments.Match<[IProperties, IParser, string]>(args, {
     3: (context, parser, input) => [context, parser, input],
     2: (parser, input) => [{}, parser, input]

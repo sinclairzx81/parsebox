@@ -2,6 +2,7 @@
   "tasks": {
     "clean": "deno run -A tasks.ts clean",
     "format": "deno run -A tasks.ts format",
+    "lint": "deno run -A tasks.ts lint",
     "start": "deno run -A tasks.ts start",
     "test": "deno run -A tasks.ts test",
     "report": "deno run -A tasks.ts report",
@@ -25,6 +26,7 @@
     "singleQuote": true
   },
   "compilerOptions": {
-    "strict": true
+    "strict": true,
+    "verbatimModuleSyntax": true
   }
 }
