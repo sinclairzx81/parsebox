@@ -1,6 +1,6 @@
 import { Task } from 'tasksmith'
 
-const VERSION = '0.11.3'
+const VERSION = '0.11.4'
 
 // ------------------------------------------------------------------
 // Clean
@@ -37,7 +37,7 @@ Task.run('report', async () => Task.test.report(['test/parsebox']))
 // Build
 // ------------------------------------------------------------------
 Task.run('build', () => Task.build.dual('src', {
-  compiler: '6.0.2',
+  compiler: '6.0.3',
   outdir: 'target/build',
   additional: ['license', 'readme.md'],
   packageJson: {
