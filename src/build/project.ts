@@ -32,7 +32,7 @@ import * as Runtime from '../runtime/index.ts'
 import { BuildStaticParse, BuildStaticMapping } from './static/index.ts'
 import { BuildRuntimeParse, BuildRuntimeMapping } from './runtime/index.ts'
 import { CompileComment } from './common/index.ts'
-import { DefaultOptions, Options } from './options.ts'
+import { DefaultOptions, type Options } from './options.ts'
 
 // ------------------------------------------------------------------
 // Header

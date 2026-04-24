@@ -26,6 +26,7 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
+// deno-lint-ignore-file no-explicit-any
 // deno-fmt-ignore-file
 
 export type IProperties = Record<PropertyKey, IParser>

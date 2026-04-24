@@ -38,16 +38,16 @@ function FromArray(parser: Runtime.IArray): string {
 function FromConst(parser: Runtime.IConst): string {
   return `'${Escape(parser.const)}'`
 }
-function FromBigInt(parser: Runtime.IBigInt): string {
+function FromBigInt(_parser: Runtime.IBigInt): string {
   return `<BigInt>`
 }
-function FromIdent(parser: Runtime.IIdent): string {
+function FromIdent(_parser: Runtime.IIdent): string {
   return `<Ident>`
 }
-function FromInteger(parser: Runtime.IInteger): string {
+function FromInteger(_parser: Runtime.IInteger): string {
   return `<Integer>`
 }
-function FromNumber(parser: Runtime.INumber): string {
+function FromNumber(_parser: Runtime.INumber): string {
   return `<Number>`
 }
 function FromOptional(parser: Runtime.IOptional): string {
@@ -56,10 +56,10 @@ function FromOptional(parser: Runtime.IOptional): string {
 function FromRef(parser: Runtime.IRef): string {
   return `${parser.ref}`
 }
-function FromRest(parser: Runtime.IRest): string {
+function FromRest(_parser: Runtime.IRest): string {
   return `string`
 }
-function FromString(parser: Runtime.IString): string {
+function FromString(_parser: Runtime.IString): string {
   return `<String>`
 }
 function FromTuple(parser: Runtime.ITuple): string {
@@ -68,16 +68,16 @@ function FromTuple(parser: Runtime.ITuple): string {
 function FromUnion(parser: Runtime.IUnion): string {
   return parser.parsers.map((parser) => `${FromParser(parser)}`).join(' | ')
 }
-function FromUnsignedInteger(parser: Runtime.IUnsignedInteger): string {
+function FromUnsignedInteger(_parser: Runtime.IUnsignedInteger): string {
   return `<UnsignedInteger>`
 }
-function FromUnsignedNumber(parser: Runtime.IUnsignedNumber): string {
+function FromUnsignedNumber(_parser: Runtime.IUnsignedNumber): string {
   return `<UnsignedNumber>`
 }
-function FromUntil_1(parser: Runtime.IUntil_1): string {
+function FromUntil_1(_parser: Runtime.IUntil_1): string {
   return `string`
 }
-function FromUntil(parser: Runtime.IUntil): string {
+function FromUntil(_parser: Runtime.IUntil): string {
   return `string`
 }
 function FromParser(parser: Runtime.IParser): string {
