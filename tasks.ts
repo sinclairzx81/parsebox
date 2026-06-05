@@ -1,6 +1,6 @@
 import { Task } from 'tasksmith'
 
-const VERSION = '0.11.4'
+const VERSION = '0.11.5'
 
 // ------------------------------------------------------------------
 // Clean
