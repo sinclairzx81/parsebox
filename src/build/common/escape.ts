@@ -29,7 +29,8 @@ THE SOFTWARE.
 // deno-fmt-ignore-file
 
 export function Escape(input: string): string {
-  return input.replace(/\n/g, "\\n")
+  return input.replace(/\\/g, '\\\\')
+    .replace(/\n/g, "\\n")
     .replace(/\r/g, "\\r")
     .replace(/"/g, '\\"')
     .replace(/'/g, "\\'");

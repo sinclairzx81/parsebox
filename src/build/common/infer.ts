@@ -31,12 +31,13 @@ THE SOFTWARE.
 
 import { Unreachable } from '../../system/unreachable/index.ts'
 import * as Runtime from '../../runtime/index.ts'
+import { Escape } from './escape.ts'
 
 function InferArray(parser: Runtime.IParser): string {
   return `(${Infer(parser)})[]`
 }
 function InferConst(parser: Runtime.IConst) {
-  return `'${parser.const}'`
+  return `'${Escape(parser.const)}'`
 }
 function InferBigInt(parser: Runtime.IBigInt) {
   return `string`

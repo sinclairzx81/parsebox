@@ -29,7 +29,7 @@ THE SOFTWARE.
 // deno-fmt-ignore-file
 
 import { Static } from '@sinclair/parsebox'
-import { TExpression, TSimple, TParam, TQuery, TFragment, TReserved, TLiteral, TLabel, TPath, TMatrix, TContinuation } from './types.ts'
+import type { TExpression, TSimple, TParam, TQuery, TFragment, TReserved, TLiteral, TLabel, TPath, TMatrix, TContinuation } from './types.ts'
 
 // -------------------------------------------------------------------
 // URI Template Parser (Type Level)
