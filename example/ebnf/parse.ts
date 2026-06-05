@@ -26,9 +26,9 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { Static } from '@sinclair/parsebox'
+import { type Static } from '@sinclair/parsebox'
 import { Module } from './runtime.ts'
-import { Ebnf } from './static.ts'
+import { type Ebnf } from './static.ts'
 
 /** Parses a Ebnf module */
 export function ParseEbnf<S extends string>(value: S): Static.Parse<Ebnf, S>[0] {

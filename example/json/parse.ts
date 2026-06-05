@@ -26,9 +26,9 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { Static } from '@sinclair/parsebox'
+import { type Static } from '@sinclair/parsebox'
+import { type Json } from './static.ts'
 import { JsonModule } from './runtime.ts'
-import { Json } from './static.ts'
 
 /** Parses a Json string */
 export function ParseJson<S extends string>(value: S): Static.Parse<Json, S>[0] {

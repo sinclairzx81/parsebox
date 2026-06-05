@@ -13,7 +13,7 @@
     // --------------------------------------------------------------
     // Tasksmith
     // --------------------------------------------------------------
-    "tasksmith": "https://raw.githubusercontent.com/sinclairzx81/tasksmith/0.8.5/src/index.ts",
+    "tasksmith": "https://raw.githubusercontent.com/sinclairzx81/tasksmith/0.9.13/src/index.ts",
     "test": "./test/common/index.ts",
     // --------------------------------------------------------------
     // ParseBox
