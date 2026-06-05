@@ -37,7 +37,7 @@ function InferArray(parser: Runtime.IParser): string {
   return `(${Infer(parser)})[]`
 }
 function InferConst(parser: Runtime.IConst) {
-  return `'${Escape(parser.const)}'`  
+  return `'${Escape(parser.const)}'`
 }
 function InferBigInt(parser: Runtime.IBigInt) {
   return `string`
